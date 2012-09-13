@@ -1,5 +1,6 @@
 #!/bin/sh
 
+mkdir -p output
 cp -f LICENSE.* output
 cd buildroot-2012.05
 
