@@ -1,7 +1,10 @@
 #!/bin/sh
 
-mkdir -p output
-cp -f LICENSE.* output
+if [ ! -e output ]; then
+	mkdir -p output
+	cp -f LICENSE.* output
+fi
+
 cd buildroot-2012.05
 
 if [ -e output/build ]; then

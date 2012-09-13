@@ -1,3 +1,4 @@
-output/
+output/*gz
+output/*.img
 *.pro.user
 
