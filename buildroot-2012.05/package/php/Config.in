@@ -1,0 +1,53 @@
+config BR2_PACKAGE_PHP
+	bool "php"
+	help
+	  PHP  is a widely-used general-purpose scripting
+	  language that is especially suited for Web development
+	  and can be embedded into HTML.
+
+	  http://www.php.net
+
+if BR2_PACKAGE_PHP
+
+config BR2_PACKAGE_PHP_CLI
+       bool
+
+config BR2_PACKAGE_PHP_CGI
+       bool
+
+choice
+        prompt "PHP interface"
+        default BR2_PACKAGE_PHP_SAPI_CGI
+        help
+          Select the PHP interface(s).
+
+config BR2_PACKAGE_PHP_SAPI_CLI
+        bool "cli interface"
+	select BR2_PACKAGE_PHP_CLI
+        help
+          Command line interface for PHP.
+
+config BR2_PACKAGE_PHP_SAPI_CGI
+        bool "cgi interface"
+        select BR2_PACKAGE_PHP_CGI
+        help
+          CGI interface for PHP.
+
+config BR2_PACKAGE_PHP_SAPI_CLI_CGI
+        bool "cli and cgi interfaces"
+	select BR2_PACKAGE_PHP_CLI
+	select BR2_PACKAGE_PHP_CGI
+	help
+	  Command line and CGI interfaces for PHP.
+
+endchoice
+
+config BR2_PACKAGE_PHP_FASTCGI
+        bool "fastcgi"
+        depends on BR2_PACKAGE_PHP_CGI
+        default y
+        help
+          fast cgi interface for php
+
+source "package/php/Config.ext"
+endif

@@ -1,0 +1,12 @@
+config BR2_PACKAGE_RADVD
+	bool "radvd"
+	select BR2_PACKAGE_FLEX
+	select BR2_PACKAGE_FLEX_LIBFL
+	depends on BR2_INET_IPV6
+	help
+	  IPv6 Router Advertisement Daemon.
+
+	  http://www.litech.org/radvd/
+
+comment "radvd requires a toolchain with IPV6 support"
+	depends on !BR2_INET_IPV6

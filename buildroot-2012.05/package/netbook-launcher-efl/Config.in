@@ -1,0 +1,16 @@
+config BR2_PACKAGE_NETBOOK_LAUNCHER_EFL
+	bool "netbook-launcher-efl"
+	select BR2_PACKAGE_LIBECORE
+	select BR2_PACKAGE_LIBECORE_EVAS
+	select BR2_PACKAGE_LIBEDJE
+	select BR2_PACKAGE_LIBEET
+	select BR2_PACKAGE_LIBEINA
+	select BR2_PACKAGE_LIBELEMENTARY
+	select BR2_PACKAGE_LIBEVAS
+	select BR2_PACKAGE_LIBEFREET
+	
+	help
+	  netbook-launcher-efl
+	  
+	  http://archive.ubuntu.com/ubuntu/pool/universe/n/netbook-launcher-efl
+	  

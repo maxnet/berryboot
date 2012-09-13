@@ -1,0 +1,76 @@
+# Choose uClibc options
+#
+
+comment "uClibc Options"
+
+choice
+	prompt "uClibc C library Version"
+	default BR2_UCLIBC_VERSION_0_9_31 if BR2_avr32 # 0.9.32 broken
+	default BR2_UCLIBC_VERSION_0_9_33
+	help
+	  Select the version of uClibc you wish to use.
+
+	config BR2_UCLIBC_VERSION_0_9_31
+		bool "uClibc 0.9.31.x"
+
+	config BR2_UCLIBC_VERSION_0_9_32
+		bool "uClibc 0.9.32.x"
+		depends on !(BR2_avr32 || BR2_sh)
+
+	config BR2_UCLIBC_VERSION_0_9_33
+		bool "uClibc 0.9.33.x"
+		depends on !BR2_avr32
+
+	config BR2_UCLIBC_VERSION_SNAPSHOT
+		bool "daily snapshot"
+
+endchoice
+
+config BR2_USE_UCLIBC_SNAPSHOT
+	string "Date (yyyymmdd) of snapshot or 'snapshot' for latest"
+	default "snapshot"
+	depends on BR2_UCLIBC_VERSION_SNAPSHOT
+	help
+	    Use latest snapshot or one from a specific date?
+
+config BR2_UCLIBC_VERSION_STRING
+	string
+	default 0.9.31.1	if BR2_UCLIBC_VERSION_0_9_31
+	default 0.9.32.1	if BR2_UCLIBC_VERSION_0_9_32
+	default 0.9.33.2	if BR2_UCLIBC_VERSION_0_9_33
+	default $BR2_USE_UCLIBC_SNAPSHOT	if BR2_UCLIBC_VERSION_SNAPSHOT
+
+config BR2_UCLIBC_CONFIG
+	string "uClibc configuration file to use?"
+	default "toolchain/uClibc/uClibc-0.9.31.config" if BR2_UCLIBC_VERSION_0_9_31
+	default "toolchain/uClibc/uClibc-0.9.32.config" if BR2_UCLIBC_VERSION_0_9_32
+	default "toolchain/uClibc/uClibc-0.9.33.config" if BR2_UCLIBC_VERSION_0_9_33
+	default "toolchain/uClibc/uClibc-snapshot.config" if BR2_UCLIBC_VERSION_SNAPSHOT
+	help
+	  Some people may wish to use their own modified uClibc configuration
+	  file and will specify their config file location with this option.
+	  See also docs/README in this package.
+	  If unsure, use the default.
+
+config BR2_PTHREAD_DEBUG
+	bool "Thread library debugging"
+	depends on BR2_PTHREADS || BR2_PTHREADS_OLD || BR2_PTHREADS_NATIVE
+	help
+	  Build the thread library with debugging enabled.
+
+config BR2_UCLIBC_INSTALL_TEST_SUITE
+	bool "Compile and install uClibc tests"
+	select BR2_PACKAGE_MAKE
+	help
+	  Enabling this option will compile and install the uClibc test suite.
+	  This is useful if you want to check if the uClibc library is working
+	  for your architecture and/or help developing uClibc.
+
+	  The test suite will be installed into /root/uClibc directory. To run
+	  the test suite enter the /root/uClibc/test directory and type
+	  "make UCLIBC_ONLY=1 CC=/bin/true check".
+
+	  See the /root/uClibc/test/README for additional information.
+
+	  This is not needed at all for normal builds, so you can safely say no
+	  if you do not plan to dig into your C library.

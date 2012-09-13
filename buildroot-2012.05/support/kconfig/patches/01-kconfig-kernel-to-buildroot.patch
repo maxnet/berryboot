@@ -1,0 +1,62 @@
+---
+ gconf.glade         |    2 +-
+ mconf.c             |    4 ++--
+ zconf.tab.c_shipped |    2 +-
+ zconf.y             |    2 +-
+ 4 files changed, 5 insertions(+), 5 deletions(-)
+
+Index: config/gconf.glade
+===================================================================
+--- config.orig/gconf.glade
++++ config/gconf.glade
+@@ -4,7 +4,7 @@
+ 
+ <widget class="GtkWindow" id="window1">
+   <property name="visible">True</property>
+-  <property name="title" translatable="yes">Gtk Kernel Configurator</property>
++  <property name="title" translatable="yes">Gtk Buildroot Configurator</property>
+   <property name="type">GTK_WINDOW_TOPLEVEL</property>
+   <property name="window_position">GTK_WIN_POS_NONE</property>
+   <property name="modal">False</property>
+Index: config/mconf.c
+===================================================================
+--- config.orig/mconf.c
++++ config/mconf.c
+@@ -178,9 +178,9 @@
+ 	"Arrow keys navigate the menu.  "
+ 	"<Enter> selects submenus --->.  "
+ 	"Highlighted letters are hotkeys.  "
+-	"Pressing <Y> includes, <N> excludes, <M> modularizes features.  "
++	"Pressing <Y> selectes a feature, while <N> will exclude a feature.  "
+ 	"Press <Esc><Esc> to exit, <?> for Help, </> for Search.  "
+-	"Legend: [*] built-in  [ ] excluded  <M> module  < > module capable"),
++	"Legend: [*] feature is selected  [ ] feature is excluded"),
+ radiolist_instructions[] = N_(
+ 	"Use the arrow keys to navigate this window or "
+ 	"press the hotkey of the item you wish to select "
+Index: config/zconf.tab.c_shipped
+===================================================================
+--- config.orig/zconf.tab.c_shipped
++++ config/zconf.tab.c_shipped
+@@ -2256,7 +2256,7 @@
+ 	modules_sym = sym_lookup(NULL, 0);
+ 	modules_sym->type = S_BOOLEAN;
+ 	modules_sym->flags |= SYMBOL_AUTO;
+-	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
++	rootmenu.prompt = menu_add_prompt(P_MENU, "Buildroot Configuration", NULL);
+ 
+ #if YYDEBUG
+ 	if (getenv("ZCONF_DEBUG"))
+Index: config/zconf.y
+===================================================================
+--- config.orig/zconf.y
++++ config/zconf.y
+@@ -501,7 +501,7 @@
+ 	modules_sym = sym_lookup(NULL, 0);
+ 	modules_sym->type = S_BOOLEAN;
+ 	modules_sym->flags |= SYMBOL_AUTO;
+-	rootmenu.prompt = menu_add_prompt(P_MENU, "Linux Kernel Configuration", NULL);
++	rootmenu.prompt = menu_add_prompt(P_MENU, "Buildroot Configuration", NULL);
+ 
+ #if YYDEBUG
+ 	if (getenv("ZCONF_DEBUG"))

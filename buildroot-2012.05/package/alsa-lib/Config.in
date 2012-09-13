@@ -1,0 +1,73 @@
+config BR2_PACKAGE_ALSA_LIB
+	bool "alsa-lib"
+	# Temporary until
+	# https://bugtrack.alsa-project.org/alsa-bug/view.php?id=4913
+	# is fixed
+	select BR2_PACKAGE_ALSA_LIB_PCM
+	help
+	  The Advanced Linux Sound Architecture (ALSA) provides audio and MIDI
+	  functionality to the Linux operating system.
+
+	  http://www.alsa-project.org/
+
+config BR2_PACKAGE_ALSA_LIB_PYTHON
+	bool "Python support for alsa-lib"
+	depends on BR2_PACKAGE_ALSA_LIB
+	depends on BR2_PACKAGE_PYTHON
+	help
+	  Add python support for alsa-lib.
+	  Python will be built and libpython will be installed
+	  in the target directory
+	  http://www.alsa-project.org/
+
+if BR2_PACKAGE_ALSA_LIB
+menu "ALSA lib selection"
+
+config BR2_PACKAGE_ALSA_LIB_DEVDIR
+	string "directory with ALSA device files"
+	default "/dev/snd"
+
+config BR2_PACKAGE_ALSA_LIB_PCM_PLUGINS
+	string "built PCM plugins"
+	default "all"
+
+config BR2_PACKAGE_ALSA_LIB_CTL_PLUGINS
+	string "built control plugins"
+	default "all"
+
+config BR2_PACKAGE_ALSA_LIB_ALOAD
+	bool "aload"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_MIXER
+	bool "mixer"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_PCM
+	bool "pcm"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_RAWMIDI
+	bool "rawmidi"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_HWDEP
+	bool "hwdep"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_SEQ
+	bool "seq"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_ALISP
+	bool "alisp"
+	default y
+
+config BR2_PACKAGE_ALSA_LIB_OLD_SYMBOLS
+	bool "old-symbols"
+	default y
+
+endmenu
+
+endif
+

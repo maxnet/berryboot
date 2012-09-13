@@ -1,0 +1,5 @@
+config BR2_PACKAGE_XAPP_XMH
+	bool "xmh"
+	select BR2_PACKAGE_XLIB_LIBXAW
+	help
+	  send and read mail with an X interface to MH

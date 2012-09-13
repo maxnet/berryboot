@@ -1,0 +1,6 @@
+config BR2_PACKAGE_XAPP_XINIT
+	bool "xinit"
+	select BR2_PACKAGE_XAPP_XAUTH
+	select BR2_PACKAGE_XLIB_LIBX11
+	help
+	  X Window System initializer
