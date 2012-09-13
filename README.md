@@ -14,9 +14,10 @@ Folders
 ===
 
 ```
-BerrybootUI - source of textual boot menu (uses libdialog)
+BerrybootUI - source of textual boot menu (uses libdialog). It outputs the image chosen in the menu to stderr
 BerrybootInstaller - source of graphical user interface for installation and editing the boot menu (uses Qt)
 buildroot-2012.05 - build system to create a minimal Linux operating system to run the boot menu under
+buildroot-2012.05/package/berryboot/init - script that gets executed on boot, starts BerrybootUI  
 ```
 
 ===
