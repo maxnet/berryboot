@@ -285,10 +285,16 @@ void AddDialog::processData()
 
     foreach (QString section, sections)
     {
-        if (section == "berryboot" || (_ini->contains("device") && _ini->value("device").toString() != _device))
+        if (section == "berryboot")
             continue;
 
         _ini->beginGroup(section);
+        if (_ini->contains("device") && _ini->value("device").toString() != _device)
+        {
+            _ini->endGroup();
+            continue;
+        }
+
         QString name = _ini->value("name").toString();
         QString description = _ini->value("description").toString();
         QString sizeinmb = QString::number(_ini->value("size", 0).toLongLong()/1024/1024);
