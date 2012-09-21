@@ -121,6 +121,20 @@ void DriveFormatThread::run()
     f.write(line.trimmed());
     f.close();
 
+    /* Data dev setting in uEnv.txt (for A10 devices) */
+    f.setFileName("/boot/uEnv.txt");
+    f.open(QIODevice::ReadWrite);
+    line = f.readAll().trimmed();
+    if (_fs == "btrfs")
+        line += " fstype=btrfs";
+    if (_iscsi)
+        line += " datadev=iscsi";
+    else
+        line += " datadev="+_datadev;
+    f.seek(0);
+    f.write(line.trimmed());
+    f.close();
+
     /* Overscan setting */
     bool configchanged = false;
     f.setFileName("/boot/config.txt");

@@ -68,6 +68,16 @@ protected:
      * Boot OS image
      */
     void bootImage(string name);
+
+    /*
+     * Load module
+     */
+    void loadModule(string name);
+
+    /*
+     * Load Allwinner a10 modules
+     */
+    void initializeA10();
 };
 
 #endif // MAINWINDOW_H

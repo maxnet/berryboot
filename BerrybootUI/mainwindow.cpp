@@ -77,6 +77,7 @@ void MainWindow::exec()
     }
     else
     {
+        initializeA10();
         startInstaller();
         return;
     }
@@ -107,7 +108,7 @@ void MainWindow::exec()
             success = b.mountDataPartition(datadev);
         }
     }
-
+    initializeA10();
     reinitScreen();
 
     if (!success)
@@ -195,7 +196,7 @@ void MainWindow::bootImage(string name)
     int currentmemsplit = b.currentMemsplit();
     int needsmemsplit   = b.imageNeedsMemsplit(name);
 
-    if (needsmemsplit && needsmemsplit != currentmemsplit)
+    if (b.isRaspberry() && needsmemsplit && needsmemsplit != currentmemsplit)
     {
         mountSystemPartition();
         progress("Changing memsplit and rebooting...");
@@ -271,4 +272,50 @@ void MainWindow::startISCSI()
     }
     system("ln -s /dev/sda1 /dev/iscsi");
     b.umountSystemPartition();
+}
+
+void MainWindow::loadModule(string name)
+{
+    progress("Loading module: "+name);
+    string cmd = "modprobe "+name;
+    system(cmd.c_str());
+}
+
+void MainWindow::initializeA10()
+{
+    string cpuinfo = b.file_get_contents("/proc/cpuinfo");
+
+    if (cpuinfo.find("sun4i") == string::npos && cpuinfo.find("sun5i") == string::npos)
+        return; /* Not an Allwinner A10/A13, return */
+
+    if (b.file_exists("/mnt/shared/lib/modules"))
+    {
+        /* Use shared modules from disk */
+        symlink("/mnt/shared/lib/modules", "/lib/modules");
+    }
+    else
+    {
+        /* Not yet installed, uncompress shared.tgz from boot partition into ramfs */
+        mountSystemPartition();
+        progress("Uncompressing drivers");
+        system("gzip -dc /boot/shared.tgz | tar x -C /");
+        b.umountSystemPartition();
+    }
+
+    /* Some necessary drivers are not compiled into the kernel
+       load them as module
+       FIXME: driver should be loaded dynamically
+     */
+
+    // Video
+    loadModule("lcd");
+    loadModule("hdmi");
+    loadModule("ump");
+    loadModule("disp");
+    loadModule("mali");
+    loadModule("mali_drm");
+    // Wifi
+    loadModule("8192cu");
+    // Popular external USB Ethernet device
+    loadModule("qf9700");
 }

@@ -91,7 +91,8 @@ ConfEditDialog::ConfEditDialog(QWidget *parent) :
     _tabs.append(new ConfEditDialogTab("config.txt", "/boot/config.txt", false, ui->tabWidget));
     _tabs.append(new ConfEditDialogTab("cmdline.txt", "/boot/cmdline.txt", false, ui->tabWidget));
     _tabs.append(new ConfEditDialogTab("wpa_supplicant.conf", "/boot/wpa_supplicant.conf", false, ui->tabWidget));
-    _tabs.append(new ConfEditDialogTab("iscsi.txt", "/boot/iscsi.txt", false, ui->tabWidget));
+    _tabs.append(new ConfEditDialogTab("iscsi.sh", "/boot/iscsi.txt", false, ui->tabWidget));
+    _tabs.append(new ConfEditDialogTab("uEnv.txt", "/boot/uEnv.txt", false, ui->tabWidget));
 }
 
 ConfEditDialog::~ConfEditDialog()

@@ -394,8 +394,16 @@ void Installer::loadDrivers()
 {
     if ( !QFile::exists("/lib/modules") )
     {
-        /* TODO: error handling */
-        if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }
+        if (QFile::exists("/mnt/shared/lib/modules"))
+        {
+            /* Use shared modules from disk */
+            symlink("/mnt/shared/lib/modules", "/lib/modules");
+        }
+        else
+        {
+            /* Not yet installed, uncompress shared.tgz from boot partition into ramfs */
+            if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }
+        }
     }
 
     QString dirname  = "/sys/bus/usb/devices";

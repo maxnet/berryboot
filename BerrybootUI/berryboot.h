@@ -137,6 +137,11 @@ public:
      */
     void reboot();
 
+    /*
+     * Returns true if device currently running is a Raspberry Pi
+     */
+    bool isRaspberry();
+
 protected:
     /*
      * Returns contents of file with beginning and trailing white space removed

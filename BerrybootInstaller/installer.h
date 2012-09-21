@@ -33,8 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v1.2d"
-#define BERRYBOOT_DEVICE   "rpi"
+#define BERRYBOOT_VERSION  "v1.2e"
 
 class Installer : public QObject
 {

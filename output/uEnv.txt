@@ -1,0 +1,3 @@
+mmcboot=fatload mmc 0 0x43000000 script.bin || fatload nand 0 0x43000000 script.bin || fatload nand 0 0x43000000 evb.bin; fatload mmc 0 0x48000000 uImage; if fatload mmc 0 0x43100000 uInitrd; then bootm 0x48000000 0x43100000; else bootm 0x48000000; fi
+uenvcmd=run mmcboot
+bootargs=console=tty0

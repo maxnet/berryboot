@@ -353,3 +353,9 @@ void BerryBoot::reboot()
     sync();
     ::reboot(RB_AUTOBOOT);
 }
+
+bool BerryBoot::isRaspberry()
+{
+    return file_get_contents("/proc/cpuinfo").find("BCM2708") != string::npos;
+}
+

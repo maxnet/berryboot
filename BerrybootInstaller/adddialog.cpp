@@ -78,6 +78,20 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
         resize(width(), 400);
 #endif
 
+    /* Detect if we are running on a rPi or some ARMv7 device
+       Information is used to decide which operating systems to show */
+    QFile f("/proc/cpuinfo");
+    f.open(f.ReadOnly);
+    QByteArray cpuinfo = f.readAll();
+    f.close();
+
+    if (cpuinfo.contains("ARMv7"))
+        _device = "armv7";
+    else if (cpuinfo.contains("BCM2708"))
+        _device = "rpi";
+    else
+        _device = "other";
+
     /* Disable OK button until an image is selected */
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
     QPushButton *button = new QPushButton(QIcon(":/icons/server.png"), tr("Proxy settings"), this);
@@ -271,7 +285,7 @@ void AddDialog::processData()
 
     foreach (QString section, sections)
     {
-        if (section == "berryboot" || (_ini->contains("device") && _ini->value("device").toString() != BERRYBOOT_DEVICE))
+        if (section == "berryboot" || (_ini->contains("device") && _ini->value("device").toString() != _device))
             continue;
 
         _ini->beginGroup(section);
@@ -380,6 +394,13 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
                 {
                     QMessageBox::critical(this, tr("Error"), tr("Error extracting updated shared.tgz"), QMessageBox::Close);
                 }
+            }
+
+            if (QFile::exists("/boot/post-update.sh"))
+            {
+                qpd.setLabelText(tr("Running post-update script"));
+                QProcess::execute("/bin/sh /boot/post-update.sh");
+                QFile::remove("/boot/post-update.sh");
             }
 
             qpd.setLabelText(tr("Unmounting boot partition"));

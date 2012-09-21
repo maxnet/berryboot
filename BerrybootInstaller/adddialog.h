@@ -56,7 +56,7 @@ protected:
     Installer *_i;
     QNetworkAccessManager *_netaccess;
     QNetworkDiskCache *_cache;
-    QString _cachedir;
+    QString _cachedir, _device;
     QNetworkReply *_reply;
     QSettings *_ini;
 
