@@ -271,7 +271,15 @@ int BerryBoot::currentMemsplit()
     memtotalstr = memtotalstr.substr(memtotalstr.rfind(" ")+1);
     int memtotal = atoi(memtotalstr.c_str());
 
-    if (memtotal > 230000)
+    if (memtotal > 496000) /* 512 MB model. Return corespondening 256 MB model values for compatibility */
+        return 240;
+    else if (memtotal > 480000)
+        return 224;
+    else if (memtotal > 448000)
+        return 192;
+    else if (memtotal > 256000)
+        return 128;
+    else if (memtotal > 230000) /* Original 256 MB model */
         return 240;
     else if (memtotal > 200000)
         return 224;
@@ -297,6 +305,7 @@ int BerryBoot::imageNeedsMemsplit(const string &name)
     }
 }
 
+/*
 const char *BerryBoot::memsplitFilename(int memsplit)
 {
     const char *r;
@@ -314,6 +323,29 @@ const char *BerryBoot::memsplitFilename(int memsplit)
             break;
         default:
             r = "/boot/arm192_start.elf";
+    }
+
+    return r;
+}
+*/
+
+const char *BerryBoot::memsplitParameter(int memsplit)
+{
+    const char *r;
+
+    switch (memsplit)
+    {
+        case 240:
+            r = "gpu_mem=16\n";
+            break;
+        case 224:
+            r = "gpu_mem=32\n";
+            break;
+        case 128:
+            r = "gpu_mem=128\n";
+            break;
+        default:
+            r = "gpu_mem=64\n";
     }
 
     return r;

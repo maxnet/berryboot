@@ -51,22 +51,22 @@
         </item>
         <item>
          <property name="text">
-          <string>128 MB</string>
+          <string>128 MB (gpu_mem=128)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>192 MB</string>
+          <string>192 MB (gpu_mem=64)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>224 MB</string>
+          <string>224 MB (gpu_mem=32)</string>
          </property>
         </item>
         <item>
          <property name="text">
-          <string>240 MB</string>
+          <string>240 MB (gpu_mem=16)</string>
          </property>
         </item>
        </widget>

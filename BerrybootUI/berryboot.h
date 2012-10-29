@@ -104,8 +104,15 @@ public:
 
     /*
      * Returns start.elf file name for certain memory split
+     *
+     * No longer needed with latest firmware
      */
-    const char *memsplitFilename(int memsplit);
+    //const char *memsplitFilename(int memsplit);
+
+    /*
+     * Returns config.txt parameter for certain memory split
+     */
+    const char *memsplitParameter(int memsplit);
 
     /*
      * Returns true if a file exists

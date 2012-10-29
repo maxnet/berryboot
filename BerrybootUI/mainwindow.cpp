@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <iostream>
 #include <vector>
+#include <sstream>
 #include <stdio.h>
 #include <string.h>
 #include <time.h>
@@ -200,8 +201,21 @@ void MainWindow::bootImage(string name)
     {
         mountSystemPartition();
         progress("Changing memsplit and rebooting...");
-        rename("/boot/start.elf", b.memsplitFilename(currentmemsplit));
-        rename(b.memsplitFilename(needsmemsplit), "/boot/start.elf");
+        //rename("/boot/start.elf", b.memsplitFilename(currentmemsplit));
+        //rename(b.memsplitFilename(needsmemsplit), "/boot/start.elf");
+
+        /* Edit config.txt */
+        string line, newconfig, oldconfig = b.file_get_contents("/boot/config.txt");
+        istringstream is(oldconfig);
+        while (!is.eof())
+        {
+            std::getline(is, line);
+            if (line.compare(0,8,"gpu_mem=") != 0) /* Copy all old lines except the gpu_mem one */
+                newconfig += line + "\n";
+        }
+        newconfig += b.memsplitParameter(needsmemsplit);
+        b.file_put_contents("/boot/config.txt", newconfig);
+
         b.umountSystemPartition();
         b.file_put_contents(runonce_file, name);
         system("umount /mnt");
