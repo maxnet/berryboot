@@ -322,10 +322,10 @@ void MainWindow::initializeA10()
      */
 
     // Video
-    loadModule("lcd");
-    loadModule("hdmi");
+    //loadModule("lcd");
+    //loadModule("hdmi");
+    //loadModule("disp");
     loadModule("ump");
-    loadModule("disp");
     loadModule("mali");
     loadModule("mali_drm");
     // Wifi
