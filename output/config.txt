@@ -1,3 +1,2 @@
 disable_overscan=1
-kernel=kernel_rpi_aufs.img
-initramfs berryboot.img
+kernel=kernel_berryboot.img
