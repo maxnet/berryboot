@@ -80,6 +80,17 @@ void DriveFormatThread::run()
 
     if (_reformatBoot)
     {
+        /* A10 devices need to have u-boot written to the spare space before the first partition */
+        if (QFile::exists("/tmp/boot/u-boot.bin") && QFile::exists("/tmp/boot/sunxi-spl.bin"))
+        {
+            emit statusUpdate(tr("Installing u-boot SPL"));
+            if (!installUbootSPL())
+            {
+                emit error(tr("Error writing u-boot to disk"));
+                return;
+            }
+        }
+
         emit statusUpdate(tr("Formatting boot partition (fat)"));
         if (!formatBootPartition())
         {
@@ -223,6 +234,12 @@ bool DriveFormatThread::zeroMbr()
         return QProcess::execute("/bin/dd if=/tmp/boot/mbr.bin of=/dev/"+_dev) == 0;
     else
         return QProcess::execute("/bin/dd count=1 bs=512 if=/dev/zero of=/dev/"+_dev) == 0;
+}
+
+bool DriveFormatThread::installUbootSPL()
+{
+    return (QProcess::execute("/bin/dd bs=1024 seek=8 if=/tmp/boot/sunxi-spl.bin of=/dev/"+_dev) == 0)
+        && (QProcess::execute("/bin/dd bs=1024 seek=32 if=/tmp/boot/u-boot.bin of=/dev/"+_dev) == 0);
 }
 
 QString DriveFormatThread::iscsiDevice()

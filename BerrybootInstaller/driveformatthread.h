@@ -55,6 +55,7 @@ protected:
 
     virtual void run();
     bool zeroMbr();
+    bool installUbootSPL();
     bool partitionDrive();
     bool formatBootPartition();
     bool formatDataPartition();

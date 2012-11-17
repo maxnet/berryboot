@@ -18,5 +18,7 @@ make
 
 # Copy the files we are interested in to the toplevel 'output' directory
 cp output/images/shared.tgz output/images/BerrybootInstaller.gz ../output
-cp output/build/linux-HEAD/arch/arm/boot/Image ../output/kernel_berryboot.img
+#cp output/build/linux-HEAD/arch/arm/boot/Image ../output/kernel_berryboot.img
+cp output/images/zImage ../output/kernel_rpi_aufs.img
+cp output/images/rootfs.cpio.gz ../output/berryboot.img
 echo Build complete. Result is in \'output\' directory 
