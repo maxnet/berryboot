@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v1.2e"
+#define BERRYBOOT_VERSION  "v1.2f"
 
 class Installer : public QObject
 {
