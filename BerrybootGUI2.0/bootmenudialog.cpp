@@ -1,3 +1,29 @@
+/* Berryboot -- boot menu dialog
+ *
+ * Copyright (c) 2012, Floris Bos
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *
+ * 1. Redistributions of source code must retain the above copyright notice, this
+ *    list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright notice,
+ *    this list of conditions and the following disclaimer in the documentation
+ *    and/or other materials provided with the distribution.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "bootmenudialog.h"
 #include "ui_bootmenudialog.h"
 #include "installer.h"
@@ -18,6 +44,8 @@
 #include <QDesktopWidget>
 #include <QTime>
 #include <QDebug>
+
+#include <time.h>
 
 #define runonce_file  "/mnt/data/runonce"
 #define default_file  "/mnt/data/default"
@@ -40,7 +68,7 @@ BootMenuDialog::~BootMenuDialog()
 }
 
 /* Mount data partition and populate menu
- * TODO: move stuff to seperate thread
+ * TODO: move stuff to seperate thread instead of messing with processEvents()
  */
 void BootMenuDialog::initialize()
 {
@@ -79,11 +107,13 @@ void BootMenuDialog::initialize()
         QApplication::processEvents();
         datadev.clear();
 
-        /* Search 4 times */
-        for (unsigned int i=0; i<4 && datadev.isEmpty(); i++)
+        /* Search 10 times */
+        for (unsigned int i=0; i<10 && datadev.isEmpty(); i++)
         {
             if (i != 0)
-                sleep(1);
+            {
+                processEventSleep(1000);
+            }
 
             datadev = getPartitionByLabel();
         }
@@ -99,6 +129,7 @@ void BootMenuDialog::initialize()
 
     if (!success)
     {
+        qpd.hide();
         QMessageBox::critical(this, tr("No data found..."), tr("Cannot find my data partition :-("), QMessageBox::Ok);
         reject();
         return;
@@ -167,6 +198,7 @@ void BootMenuDialog::on_bootButton_clicked()
 
 void BootMenuDialog::on_settingsButton_clicked()
 {
+    stopCountdown();
     startInstaller();
 }
 
@@ -234,12 +266,13 @@ void BootMenuDialog::bootImage(const QString &name)
             if (!line.startsWith("gpu_mem="))
                 newconfig += line + "\n";
         }
+        newconfig = newconfig.trimmed()+"\n";
         newconfig += memsplitParameter(needsmemsplit);
         file_put_contents("/boot/config.txt", newconfig);
         umountSystemPartition();
         file_put_contents(runonce_file, name.toAscii());
         QProcess::execute("umount /mnt");
-        sync(); sleep(1);
+        sync(); //sleep(1);
         reboot();
     }
     else
@@ -416,7 +449,7 @@ QByteArray BootMenuDialog::getPartitionByLabel(const QString &label)
 {
     QByteArray dev;
     QProcess proc;
-    proc.start("findfs LABEL="+label+" 2>/dev/null");
+    proc.start("/sbin/findfs LABEL="+label);
     if (proc.waitForFinished() && proc.exitCode() == 0)
     {
         dev = proc.readAll().trimmed();
@@ -437,10 +470,18 @@ void BootMenuDialog::mountSystemPartition()
         mkdir("/boot", 0755);
 
     waitForDevice("mmcblk0");
-    if (QProcess::execute("mount /dev/mmcblk0p1 /boot") != 0 && QProcess::execute("mount /dev/mmcblk0 /boot") != 0)
+
+    for (unsigned int tries=0; tries<2; tries++)
     {
-        QMessageBox::critical(this, tr("Error mounting system partition"), tr("Unable to mount system partition"), QMessageBox::Ok);
+        if (QProcess::execute("mount /dev/mmcblk0p1 /boot") == 0 || QProcess::execute("mount /dev/mmcblk0 /boot") == 0)
+            return;
+
+        qpd.setLabelText(tr("Error mounting system partition... Retrying..."));
+        processEventSleep(1000);
     }
+
+    qpd.hide();
+    QMessageBox::critical(this, tr("Error mounting system partition"), tr("Unable to mount system partition"), QMessageBox::Ok);
 }
 
 void BootMenuDialog::startNetworking()
@@ -454,7 +495,7 @@ void BootMenuDialog::startNetworking()
     for (unsigned int i=0; i<10 && !eth0available; i++)
     {
         if (i != 0)
-            usleep(500000);
+            processEventSleep(500);
 
         eth0available = QFile::exists("/sys/class/net/eth0");
     }
@@ -547,3 +588,15 @@ bool BootMenuDialog::isRaspberry()
     return file_get_contents("/proc/cpuinfo").contains("BCM2708");
 }
 
+void BootMenuDialog::processEventSleep(int ms)
+{
+    QTime t;
+    t.start();
+
+    while (t.elapsed() < ms)
+    {
+        int sleepfor = ms-t.elapsed();
+        if (sleepfor > 0)
+            QApplication::processEvents(QEventLoop::WaitForMoreEvents, sleepfor);
+    }
+}

@@ -184,6 +184,9 @@ void DriveFormatThread::run()
     emit statusUpdate(tr("Finish writing to disk (sync)"));
     sync();
 
+    emit statusUpdate(tr("Mounting boot partition again"));
+    _i->mountSystemPartition();
+
     emit completed();
 }
 

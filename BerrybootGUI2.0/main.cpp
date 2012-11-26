@@ -30,12 +30,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "adddialog.h"
 #include "logviewer.h"
 #include "localedialog.h"
+#include "logindialog.h"
 #include "wifidialog.h"
 #include "bootmenudialog.h"
 #include <QDebug>
 #include <QStyle>
 #include <QDesktopWidget>
 #include <QImage>
+#include <QSettings>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -65,10 +67,23 @@ int main(int argc, char *argv[])
     BootMenuDialog menu(&i);
     if (menu.exec() == menu.Rejected)
     {
+        /* If menu.exec() returns rejected exit, otherwise show OS installer */
+
 /*        if (system("killall getty") != 0) { qDebug() << "Error killing getty"; }
         if (system("killall syslogd") != 0) {qDebug() << "Error killing syslogd"; }
         if (system("killall klogd") != 0) {qDebug() << "Error killing klogd"; }*/
         return 0;
+    }
+
+    /* Check if installer is protected by password */
+    if (i.hasSettings() && i.settings()->contains("berryboot/passwordhash"))
+    {
+        LoginDialog ld(&i);
+        if (ld.exec() == ld.Rejected)
+        {
+            i.reboot();
+            return 0;
+        }
     }
 
     if (QFile::exists("/boot/wpa_supplicant.conf"))

@@ -31,6 +31,7 @@
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkProxy>
 #include <QMessageBox>
 #include <QProgressDialog>
 #include <QTimer>
@@ -92,8 +93,7 @@ void DownloadDialog::downloadComplete()
         reject();
         return;
     }
-    qDebug() << "Hash expected:" << _expectedHash << "Hash calculated:" << _hasher.result().toHex();
-
+    //qDebug() << "Hash expected:" << _expectedHash << "Hash calculated:" << _hasher.result().toHex();
     _file->close();
 
     QProgressDialog *qpd = new QProgressDialog(tr("Finish writing to disk (sync)"), QString(),0,0,this);

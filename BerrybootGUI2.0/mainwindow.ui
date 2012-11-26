@@ -53,6 +53,7 @@
    <addaction name="actionExit"/>
    <addaction name="actionAdvanced_configuration"/>
    <addaction name="actionConsole"/>
+   <addaction name="actionSetPassword"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_OS">
@@ -164,6 +165,15 @@
    </property>
    <property name="text">
     <string>Console</string>
+   </property>
+  </action>
+  <action name="actionSetPassword">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/encrypted.png</normaloff>:/icons/encrypted.png</iconset>
+   </property>
+   <property name="text">
+    <string>Set password</string>
    </property>
   </action>
  </widget>

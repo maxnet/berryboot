@@ -32,6 +32,7 @@
 #include <QDir>
 #include <QDebug>
 #include <QMessageBox>
+#include <QSettings>
 
 #define HAVE_SYS_STATVFS_H 1
 #define HAVE_STATVFS 1
@@ -49,7 +50,7 @@
 #define SQUASHFS_MAGIC_SWAP		0x68737173
 
 Installer::Installer(QObject *parent) :
-    QObject(parent)
+    QObject(parent), _settings(NULL)
 {
 }
 
@@ -69,6 +70,7 @@ int Installer::sizeofBootFilesInKB()
 {
     QProcess proc;
     proc.start("du -s /boot");
+    proc.waitForFinished();
     return proc.readAll().split('\t').first().toInt();
 }
 
@@ -345,8 +347,7 @@ void Installer::setKeyboardLayout(const QString &layout)
         _keyboardlayout = layout;
 
 #ifdef Q_WS_QWS
-/*
-        QByteArray keymapfile = ":/qmap/"+layout.toAscii();
+/*        QByteArray keymapfile = ":/qmap/"+layout.toAscii();
 
         if (QFile::exists(keymapfile))
         {
@@ -358,7 +359,10 @@ void Installer::setKeyboardLayout(const QString &layout)
             q->setDefaultKeyboard(kbdarg.constData());
             q->openKeyboard();
         }
-        */
+        else
+        {
+            qDebug() << "Keyboard driver not found:" << layout;
+        } */
 #endif
     }
 }
@@ -466,9 +470,42 @@ void Installer::enableCEC()
 void Installer::onKeyPress(int key)
 {
 #ifdef Q_WS_QWS
+    Qt::KeyboardModifiers modifiers = Qt::NoModifier;
+
+    /* Map left/right cursor key to tab */
+    switch (key)
+    {
+    case Qt::Key_Left:
+        key = Qt::Key_Tab;
+        modifiers = Qt::ShiftModifier;
+        break;
+    case Qt::Key_Right:
+        key = Qt::Key_Tab;
+        break;
+    case Qt::Key_F1:
+        key = Qt::Key_A;
+        modifiers = Qt::ControlModifier;
+        break;
+    default:
+        break;
+    }
+
     // key press
-    QWSServer::sendKeyEvent(0, key, Qt::NoModifier, true, false);
+    QWSServer::sendKeyEvent(0, key, modifiers, true, false);
     // key release
-    QWSServer::sendKeyEvent(0, key, Qt::NoModifier, false, false);
+    QWSServer::sendKeyEvent(0, key, modifiers, false, false);
 #endif
+}
+
+QSettings *Installer::settings()
+{
+    if (!_settings)
+        _settings = new QSettings("/boot/berryboot.ini", QSettings::IniFormat);
+
+    return _settings;
+}
+
+bool Installer::hasSettings()
+{
+    return QFile::exists("/boot/berryboot.ini");
 }

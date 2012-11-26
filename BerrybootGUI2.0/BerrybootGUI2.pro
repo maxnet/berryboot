@@ -37,7 +37,9 @@ SOURCES += main.cpp\
     wifidialog.cpp \
     confeditdialog.cpp \
     bootmenudialog.cpp \
-    ceclistener.cpp
+    ceclistener.cpp \
+    logindialog.cpp \
+    berrybootsettingsdialog.cpp
 
 HEADERS  += mainwindow.h \
     diskdialog.h \
@@ -58,7 +60,9 @@ HEADERS  += mainwindow.h \
     wifidialog.h \
     confeditdialog.h \
     bootmenudialog.h \
-    ceclistener.h
+    ceclistener.h \
+    logindialog.h \
+    berrybootsettingsdialog.h
 
 FORMS    += mainwindow.ui \
     diskdialog.ui \
@@ -74,7 +78,9 @@ FORMS    += mainwindow.ui \
     iscsidialog.ui \
     wifidialog.ui \
     confeditdialog.ui \
-    bootmenudialog.ui
+    bootmenudialog.ui \
+    logindialog.ui \
+    berrybootsettingsdialog.ui
 
 RESOURCES += \
     icons.qrc

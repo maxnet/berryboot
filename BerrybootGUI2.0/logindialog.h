@@ -1,7 +1,7 @@
-#ifndef CECLISTENER_H
-#define CECLISTENER_H
+#ifndef LOGINDIALOG_H
+#define LOGINDIALOG_H
 
-/* Berryboot -- CEC handling thread
+/* Berryboot -- login dialog
  *
  * Copyright (c) 2012, Floris Bos
  * All rights reserved.
@@ -27,28 +27,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QThread>
-#include <QWaitCondition>
-#include <QMutex>
-#include <stdint.h>
+#include <QDialog>
 
-class CecListener : public QThread
+namespace Ui {
+class LoginDialog;
+}
+
+class Installer;
+
+class LoginDialog : public QDialog
 {
     Q_OBJECT
+    
 public:
-    explicit CecListener(QObject *parent = 0);
-    virtual ~CecListener();
+    explicit LoginDialog(Installer *i, QWidget *parent = 0);
+    ~LoginDialog();
 
-signals:
-    void keyPress(int key);
 public slots:
-
-protected:
-    virtual void run();
-    static void _cec_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
-    void cec_callback(uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
-
-    QWaitCondition _waitcond;
+    virtual void accept();
+    
+private:
+    Ui::LoginDialog *ui;
+    QByteArray _passwordHash;
 };
 
-#endif // CECLISTENER_H
+#endif // LOGINDIALOG_H

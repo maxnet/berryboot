@@ -1,7 +1,4 @@
-#ifndef CECLISTENER_H
-#define CECLISTENER_H
-
-/* Berryboot -- CEC handling thread
+/* Berryboot -- login dialog
  *
  * Copyright (c) 2012, Floris Bos
  * All rights reserved.
@@ -27,28 +24,41 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QThread>
-#include <QWaitCondition>
-#include <QMutex>
-#include <stdint.h>
+#include "logindialog.h"
+#include "installer.h"
+#include "ui_logindialog.h"
+#include <QSettings>
+#include <QMessageBox>
+#include <QCryptographicHash>
 
-class CecListener : public QThread
+LoginDialog::LoginDialog(Installer *i, QWidget *parent) :
+    QDialog(parent),
+    ui(new Ui::LoginDialog)
 {
-    Q_OBJECT
-public:
-    explicit CecListener(QObject *parent = 0);
-    virtual ~CecListener();
+    QSettings *s = i->settings();
+    s->beginGroup("berryboot");
+    _passwordHash = s->value("passwordhash").toByteArray();
+    s->endGroup();
 
-signals:
-    void keyPress(int key);
-public slots:
+    ui->setupUi(this);
 
-protected:
-    virtual void run();
-    static void _cec_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
-    void cec_callback(uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
+}
 
-    QWaitCondition _waitcond;
-};
+LoginDialog::~LoginDialog()
+{
+    delete ui;
+}
 
-#endif // CECLISTENER_H
+void LoginDialog::accept()
+{
+    QByteArray hashOfEnteredPassword = QCryptographicHash::hash(ui->passEdit->text().toUtf8(), QCryptographicHash::Sha1).toHex();
+
+    if (hashOfEnteredPassword == _passwordHash)
+    {
+        QDialog::accept();
+    }
+    else
+    {
+        QMessageBox::critical(this, tr("Error"), tr("Password incorrect!"), QMessageBox::Close);
+    }
+}

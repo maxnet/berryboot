@@ -34,6 +34,7 @@
 #include "clonedialog.h"
 #include "exportdialog.h"
 #include "confeditdialog.h"
+#include "berrybootsettingsdialog.h"
 #include "copythread.h"
 
 #include <QDateTime>
@@ -439,4 +440,10 @@ void MainWindow::on_actionConsole_triggered()
 void MainWindow::on_list_activated(const QModelIndex &)
 {
     on_actionEdit_triggered();
+}
+
+void MainWindow::on_actionSetPassword_triggered()
+{
+    BerrybootSettingsDialog bsd(_i);
+    bsd.exec();
 }

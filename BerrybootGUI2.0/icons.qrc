@@ -105,6 +105,6 @@
         <file>icons/configure.png</file>
         <file>icons/commandprompt.png</file>
         <file>icons/encrypted.png</file>
-        <file alias="wallpaper.jpg">icons/sunrise_over_the_ligurian_by_pomprint.jpg</file>
+        <file alias="wallpaper.jpg">icons/luminous_lines.jpg</file>
     </qresource>
 </RCC>

@@ -1,7 +1,7 @@
-#ifndef CECLISTENER_H
-#define CECLISTENER_H
+#ifndef BERRYBOOTSETTINGSDIALOG_H
+#define BERRYBOOTSETTINGSDIALOG_H
 
-/* Berryboot -- CEC handling thread
+/* Berryboot -- password settings dialog
  *
  * Copyright (c) 2012, Floris Bos
  * All rights reserved.
@@ -27,28 +27,28 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include <QThread>
-#include <QWaitCondition>
-#include <QMutex>
-#include <stdint.h>
+#include <QDialog>
 
-class CecListener : public QThread
+namespace Ui {
+class BerrybootSettingsDialog;
+}
+
+class Installer;
+
+class BerrybootSettingsDialog : public QDialog
 {
     Q_OBJECT
+    
 public:
-    explicit CecListener(QObject *parent = 0);
-    virtual ~CecListener();
+    explicit BerrybootSettingsDialog(Installer *i, QWidget *parent = 0);
+    ~BerrybootSettingsDialog();
 
-signals:
-    void keyPress(int key);
 public slots:
-
-protected:
-    virtual void run();
-    static void _cec_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
-    void cec_callback(uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
-
-    QWaitCondition _waitcond;
+    virtual void accept();
+    
+private:
+    Ui::BerrybootSettingsDialog *ui;
+    Installer *_i;
 };
 
-#endif // CECLISTENER_H
+#endif // BERRYBOOTSETTINGSDIALOG_H

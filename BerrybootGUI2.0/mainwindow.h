@@ -68,6 +68,8 @@ private slots:
 
     void on_list_activated(const QModelIndex &);
 
+    void on_actionSetPassword_triggered();
+
 protected:
     Ui::MainWindow *ui;
     Installer *_i;

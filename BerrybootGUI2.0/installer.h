@@ -35,6 +35,8 @@
 
 #define BERRYBOOT_VERSION  "v1.9"
 
+class QSettings;
+
 class Installer : public QObject
 {
     Q_OBJECT
@@ -74,10 +76,13 @@ public:
 
     bool isSquashFSimage(QFile &f);
     void enableCEC();
+    QSettings *settings();
+    bool hasSettings();
 
 protected:
     QString _keyboardlayout, _timezone;
     bool _disableOverscan;
+    QSettings *_settings;
 
     void log_error(const QString &msg);
 

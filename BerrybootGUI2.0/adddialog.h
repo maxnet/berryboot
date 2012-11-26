@@ -59,6 +59,7 @@ protected:
     QString _cachedir, _device;
     QNetworkReply *_reply;
     QSettings *_ini;
+    QString _reposerver;
 
     static bool _openSSLinitialized;
     static QByteArray _data;

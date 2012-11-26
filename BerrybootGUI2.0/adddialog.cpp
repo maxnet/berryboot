@@ -36,6 +36,7 @@
 #include <QtNetwork/QNetworkRequest>
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkDiskCache>
+#include <QtNetwork/QNetworkProxy>
 #include <QUrl>
 #include <QSettings>
 #include <QFile>
@@ -48,6 +49,7 @@
 #include <time.h>
 #include <sys/time.h>
 #include <QScreen>
+#include <QSettings>
 
 #include <openssl/pkcs7.h>
 #include <openssl/bio.h>
@@ -61,13 +63,13 @@ bool AddDialog::_openSSLinitialized = false;
 /* parsedate.c */
 extern "C" time_t parse_date(char *p, time_t *now);
 
-#define REPO_SERVER   "http://dl.berryboot.com/distro.zsmime"
+#define DEFAULT_REPO_SERVER   "http://dl.berryboot.com/distro.zsmime"
 
 
 AddDialog::AddDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddDialog),
-    _qpd(NULL), _i(i), _cache(NULL), _cachedir("/mnt/tmp/cache"), _reply(NULL), _ini(NULL)
+    _qpd(NULL), _i(i), _cache(NULL), _cachedir("/mnt/tmp/cache"), _reply(NULL), _ini(NULL), _reposerver(DEFAULT_REPO_SERVER)
 {
     ui->setupUi(this);
 
@@ -77,6 +79,26 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
     if (scr->height() < 600)
         resize(width(), 400);
 #endif
+
+    /* Check if we have any special proxy server or repo settings */
+    if (_i->hasSettings())
+    {
+        QSettings *s = _i->settings();
+        s->beginGroup("proxy");
+        if (s->contains("type"))
+        {
+            QNetworkProxy::setApplicationProxy(QNetworkProxy((QNetworkProxy::ProxyType) s->value("type").toInt(), s->value("hostname").toString(),
+                                                             s->value("port").toInt(),
+                                                             s->value("user").toString(),
+                                                             QByteArray::fromBase64(s->value("password").toByteArray())) );
+        }
+        s->endGroup();
+
+        s->beginGroup("repo");
+        if (s->contains("url"))
+            _reposerver = s->value("url").toString();
+        s->endGroup();
+    }
 
     /* Detect if we are running on a rPi or some ARMv7 device
        Information is used to decide which operating systems to show */
@@ -152,7 +174,7 @@ void AddDialog::downloadList()
     _cache     = new QNetworkDiskCache(this);
     _cache->setCacheDirectory(_cachedir);
     _netaccess->setCache(_cache);
-    _reply     = _netaccess->get(QNetworkRequest(QUrl(REPO_SERVER)));
+    _reply     = _netaccess->get(QNetworkRequest(QUrl(_reposerver)));
     connect(_reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
     connect(_qpd, SIGNAL(canceled()), this, SLOT(cancelDownload()));
 }
@@ -224,8 +246,14 @@ bool AddDialog::verifyData()
         _openSSLinitialized = true;
     }
     QByteArray data_uncompressed = qUncompress(_data);
+    QString certfilename;
 
-    QFile f(":/berryboot.crt");
+    if (QFile::exists("/boot/berryboot.crt"))
+        certfilename = "/boot/berryboot.crt";
+    else
+        certfilename = ":/berryboot.crt";
+
+    QFile f(certfilename);
     f.open(f.ReadOnly);
     QByteArray cert = f.readAll();
     f.close();
@@ -427,7 +455,6 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
     setEnabled(true);
 }
 
-
 void AddDialog::on_osList_currentRowChanged(int)
 {
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(true);
@@ -463,5 +490,17 @@ void AddDialog::onProxySettings()
     NetworkSettingsDialog ns(this);
 
     if (ns.exec() == ns.Accepted)
+    {
+        QSettings *s = _i->settings();
+        QNetworkProxy proxy = QNetworkProxy::applicationProxy();
+        s->beginGroup("proxy");
+        s->setValue("type", (int) proxy.type());
+        s->setValue("hostname", proxy.hostName());
+        s->setValue("port", proxy.port());
+        s->setValue("user", proxy.user());
+        s->setValue("password", proxy.password().toAscii().toBase64());
+        s->endGroup();
+        s->sync();
         downloadList();
+    }
 }
