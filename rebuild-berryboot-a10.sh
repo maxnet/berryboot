@@ -11,11 +11,12 @@ set -e
 # Make uInitrd
 mkimage -A arm -T ramdisk -C none -n "uInitrd" -d buildroot-2012.05/output/images/rootfs.cpio.gz output/uInitrd
 
-
 # Build kernel if it doesn't exist already
 if [ ! -e output/uImage ]; then
 	echo Building A10 kernel
-	git clone --depth=1 https://github.com/maxnet/linux-allwinner-aufs	
+	if [ ! -e linux-allwinner-aufs ]; then
+		git clone --depth=1 https://github.com/maxnet/linux-allwinner-aufs	
+	fi
 	cd linux-allwinner-aufs
 	make sun4i_aufs_defconfig ARCH=arm
 	make -j4 uImage ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
@@ -30,5 +31,5 @@ if [ ! -e output/uImage ]; then
 fi
 
 echo Build complete. Result is in \'output\' directory
-echo Note: you need to manually build u-boot (SPL) for your specific device, and copy script.bin to the output directory
+echo Note: you need to manually build u-boot SPL for your specific device, and copy script.bin to the output directory
  

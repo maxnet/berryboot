@@ -1,6 +1,0 @@
-config BR2_PACKAGE_BERRYBOOT
-        bool "berryboot"
-    select BR2_PACKAGE_DIALOG
-    select BR2_PACKAGE_NCURSES
-        help
-          Berryboot startup scripts and text interface

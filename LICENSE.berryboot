@@ -1,4 +1,4 @@
-Berryboot / BerrybootUI / BerrybootInstaller
+BerrybootGUI2.0
 ===
 
 Copyright (c) 2012, Floris Bos
@@ -27,14 +27,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 Notes: 
 
-- BerrybootUI links to libdialog, licensed LGPL
-
-- BerrybootInstaller:
+- BerrybootGUI:
   * links to the Qt library, available under LGPL and commercial license.
   * links to the OpenSSL library, license included below
+  * links to the Broadcom open source userland libraries for CEC support, license included below
   * uses icons from the Oxygen icon set licensed LGPL 
+  * comes with a wallpaper image by PomPrint under Creative Commons Attribution-Share Alike 3.0 License.
 
-- The 3rd-party packages in the buildroot-2012.05 directory may have different license terms.
+Website: http://www.berryboot.com/
+Source code available at: https://github.com/maxnet/berryboot
+
+- The 3rd-party utility packages in the buildroot-2012.05 directory may have different license terms.
  
 
 
@@ -195,6 +198,35 @@ USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH
 DAMAGE.
 
 ===
+Broadcom open source userspace libraries
+==
+
+Copyright (c) 2012, Broadcom Europe Ltd
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+    * Redistributions in binary form must reproduce the above copyright
+      notice, this list of conditions and the following disclaimer in the
+      documentation and/or other materials provided with the distribution.
+    * Neither the name of the copyright holder nor the
+      names of its contributors may be used to endorse or promote products
+      derived from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY
+DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+(INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+===
+
 Linux kernel
 
 

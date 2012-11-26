@@ -1,5 +1,0 @@
-config BR2_PACKAGE_BERRYBOOTGUI
-        bool "berrybootgui"
-    select BR2_PACKAGE_QT
-        help
-          Berryboot GUI 
