@@ -1,0 +1,6 @@
+config BR2_PACKAGE_BERRYBOOTGUI2
+        bool "berrybootgui 2.0"
+    select BR2_PACKAGE_QT
+    select BR2_PACKAGE_RPI_USERLAND
+        help
+          Berryboot GUI 

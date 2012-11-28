@@ -1,0 +1,61 @@
+#!/bin/sh
+#
+# BerryBoot, ugly but functional image chooser thingy
+#
+# Author: Floris Bos
+#
+
+# Standard busybox init
+/bin/mount -t proc proc /proc
+/bin/mount -o remount,rw,noatime / 
+/bin/mount -t sysfs sysfs /sys
+/bin/mount -t devtmpfs dev /dev
+/bin/hostname -F /etc/hostname
+
+# Prevent kernel messages being printed through our menu
+echo 0 > /proc/sys/kernel/printk
+
+# Show GUI, it will write the OS choosen to /tmp/answer
+if grep -q vncinstall /proc/cmdline; then
+	export QWS_DISPLAY="VNC:size=800x600:depth=32:0"
+	sleep 1
+	/sbin/ifup eth0
+	IP=`ifconfig eth0 | awk '/inet addr/ {split ($2,A,":"); print A[2]}'`
+	echo
+	echo Connect with your VNC client to: $IP
+	echo If you wish to disable VNC mode: remove 'vncinstall' from cmdline.txt
+	echo
+fi
+/usr/bin/BerrybootGUI -qws 2>/tmp/debug 
+
+
+# Clear & re-enable kernel messages
+clear
+echo 1 > /proc/sys/kernel/printk
+
+IMAGE=`cat /tmp/answer`
+DATADIR="/mnt/data/$IMAGE"
+rm /tmp/answer
+
+if [ "$IMAGE" != "" ]; then
+	mkdir -p /squashfs /aufs $DATADIR
+	clear
+	echo Mounting image ${IMAGE}...
+	mount -o loop "/mnt/images/$IMAGE" /squashfs
+	echo Mounting RW data directory on top
+	mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
+	cd /aufs
+	mount -o move /dev dev
+	mount -o move /sys sys
+	mount -o move /proc proc
+	echo Starting operating system ${IMAGE}...
+	exec switch_root . /sbin/init
+fi
+
+# In case the user pressed cancel or something went wrong, show an emergency recovery shell
+clear
+echo
+echo Emergency recovery shell activated
+echo
+
+/bin/sh
