@@ -8,9 +8,10 @@ Author: Floris Bos <bos AT je-eigen-domein DOT nl>
 License: Simplified BSD - see LICENSE.berryboot for details
 Programming language: C++
 
-Website: http://www.berryboot.com/
 Source code available at: https://github.com/maxnet/berryboot
 ```
+
+Website: http://www.berryterminal.com/doku.php/berryboot 
 
 ===
 Folders
