@@ -409,7 +409,8 @@ void Installer::loadDrivers()
         if (QFile::exists("/mnt/shared/lib/modules"))
         {
             /* Use shared modules from disk */
-            if (symlink("/mnt/shared/lib/modules", "/lib/modules"))
+            if (symlink("/mnt/shared/lib/modules", "/lib/modules")
+             || symlink("/mnt/shared/lib/firmware", "/lib/firmware"))
             {
                 // show error?
             }
