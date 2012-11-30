@@ -1,0 +1,209 @@
+aufs3.6 proc_map patch
+
+diff --git a/fs/buffer.c b/fs/buffer.c
+index 58e2e7b..f314bc2 100644
+--- a/fs/buffer.c
++++ b/fs/buffer.c
+@@ -2317,6 +2317,8 @@ int __block_page_mkwrite(struct vm_area_struct *vma, struct vm_fault *vmf,
+ 	 * fault so this update may be superfluous but who really cares...
+ 	 */
+ 	file_update_time(vma->vm_file);
++	if (vma->vm_prfile)
++		file_update_time(vma->vm_prfile);
+ 
+ 	lock_page(page);
+ 	size = i_size_read(inode);
+diff --git a/fs/proc/nommu.c b/fs/proc/nommu.c
+index b1822dd..8b29ab7 100644
+--- a/fs/proc/nommu.c
++++ b/fs/proc/nommu.c
+@@ -46,6 +46,10 @@ static int nommu_region_show(struct seq_file *m, struct vm_region *region)
+ 
+ 	if (file) {
+ 		struct inode *inode = region->vm_file->f_path.dentry->d_inode;
++		if (region->vm_prfile) {
++			file = region->vm_prfile;
++			inode = file->f_path.dentry->d_inode;
++		}
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
+ 	}
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 4540b8f..0411f0f 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -226,6 +226,10 @@ show_map_vma(struct seq_file *m, struct vm_area_struct *vma, int is_pid)
+ 
+ 	if (file) {
+ 		struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
++		if (vma->vm_prfile) {
++			file = vma->vm_prfile;
++			inode = file->f_path.dentry->d_inode;
++		}
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
+ 		pgoff = ((loff_t)vma->vm_pgoff) << PAGE_SHIFT;
+@@ -1185,6 +1189,8 @@ static int show_numa_map(struct seq_file *m, void *v, int is_pid)
+ 
+ 	if (file) {
+ 		seq_printf(m, " file=");
++		if (vma->vm_prfile)
++			file = vma->vm_prfile;
+ 		seq_path(m, &file->f_path, "\n\t= ");
+ 	} else if (vma->vm_start <= mm->brk && vma->vm_end >= mm->start_brk) {
+ 		seq_printf(m, " heap");
+diff --git a/fs/proc/task_nommu.c b/fs/proc/task_nommu.c
+index 1ccfa53..c39acb5 100644
+--- a/fs/proc/task_nommu.c
++++ b/fs/proc/task_nommu.c
+@@ -150,6 +150,10 @@ static int nommu_vma_show(struct seq_file *m, struct vm_area_struct *vma,
+ 
+ 	if (file) {
+ 		struct inode *inode = vma->vm_file->f_path.dentry->d_inode;
++		if (vma->vm_prfile) {
++			file = vma->vm_prfile;
++			inode = file->f_path.dentry->d_inode;
++		}
+ 		dev = inode->i_sb->s_dev;
+ 		ino = inode->i_ino;
+ 		pgoff = (loff_t)vma->vm_pgoff << PAGE_SHIFT;
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index bf78672..cac65b6 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -212,6 +212,7 @@ struct vm_region {
+ 	unsigned long	vm_top;		/* region allocated to here */
+ 	unsigned long	vm_pgoff;	/* the offset in vm_file corresponding to vm_start */
+ 	struct file	*vm_file;	/* the backing file or NULL */
++	struct file	*vm_prfile;	/* the virtual backing file or NULL */
+ 
+ 	int		vm_usage;	/* region usage count (access under nommu_region_sem) */
+ 	bool		vm_icache_flushed : 1; /* true if the icache has been flushed for
+@@ -271,6 +272,7 @@ struct vm_area_struct {
+ 	unsigned long vm_pgoff;		/* Offset (within vm_file) in PAGE_SIZE
+ 					   units, *not* PAGE_CACHE_SIZE */
+ 	struct file * vm_file;		/* File we map to (can be NULL). */
++	struct file *vm_prfile;		/* shadow of vm_file */
+ 	void * vm_private_data;		/* was vm_pte (shared mem) */
+ 
+ #ifndef CONFIG_MMU
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 2c8857e..3709356 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -414,6 +414,8 @@ static int dup_mmap(struct mm_struct *mm, struct mm_struct *oldmm)
+ 			struct address_space *mapping = file->f_mapping;
+ 
+ 			get_file(file);
++			if (tmp->vm_prfile)
++				get_file(tmp->vm_prfile);
+ 			if (tmp->vm_flags & VM_DENYWRITE)
+ 				atomic_dec(&inode->i_writecount);
+ 			mutex_lock(&mapping->i_mmap_mutex);
+diff --git a/mm/memory.c b/mm/memory.c
+index 5736170..908963f 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3355,6 +3355,8 @@ static int __do_fault(struct mm_struct *mm, struct vm_area_struct *vma,
+ 		/* file_update_time outside page_lock */
+ 		if (vma->vm_file && !page_mkwrite)
+ 			file_update_time(vma->vm_file);
++		if (vma->vm_prfile && !page_mkwrite)
++			file_update_time(vma->vm_prfile);
+ 	} else {
+ 		unlock_page(vmf.page);
+ 		if (anon)
+diff --git a/mm/mmap.c b/mm/mmap.c
+index ae18a48..ab6498a 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -233,6 +233,8 @@ static struct vm_area_struct *remove_vma(struct vm_area_struct *vma)
+ 		vma->vm_ops->close(vma);
+ 	if (vma->vm_file) {
+ 		fput(vma->vm_file);
++		if (vma->vm_prfile)
++			fput(vma->vm_prfile);
+ 		if (vma->vm_flags & VM_EXECUTABLE)
+ 			removed_exe_file_vma(vma->vm_mm);
+ 	}
+@@ -636,6 +638,8 @@ again:			remove_next = 1 + (end > next->vm_end);
+ 		if (file) {
+ 			uprobe_munmap(next, next->vm_start, next->vm_end);
+ 			fput(file);
++			if (vma->vm_prfile)
++				fput(vma->vm_prfile);
+ 			if (next->vm_flags & VM_EXECUTABLE)
+ 				removed_exe_file_vma(mm);
+ 		}
+@@ -1991,6 +1995,8 @@ static int __split_vma(struct mm_struct * mm, struct vm_area_struct * vma,
+ 
+ 	if (new->vm_file) {
+ 		get_file(new->vm_file);
++		if (new->vm_prfile)
++			get_file(new->vm_prfile);
+ 		if (vma->vm_flags & VM_EXECUTABLE)
+ 			added_exe_file_vma(mm);
+ 	}
+@@ -2015,6 +2021,8 @@ static int __split_vma(struct mm_struct * mm, struct vm_area_struct * vma,
+ 		if (vma->vm_flags & VM_EXECUTABLE)
+ 			removed_exe_file_vma(mm);
+ 		fput(new->vm_file);
++		if (new->vm_prfile)
++			fput(new->vm_prfile);
+ 	}
+ 	unlink_anon_vmas(new);
+  out_free_mpol:
+@@ -2412,6 +2420,8 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
+ 			new_vma->vm_pgoff = pgoff;
+ 			if (new_vma->vm_file) {
+ 				get_file(new_vma->vm_file);
++				if (new_vma->vm_prfile)
++					get_file(new_vma->vm_prfile);
+ 
+ 				if (vma->vm_flags & VM_EXECUTABLE)
+ 					added_exe_file_vma(mm);
+diff --git a/mm/nommu.c b/mm/nommu.c
+index d4b0c10..a061091 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -633,6 +633,8 @@ static void __put_nommu_region(struct vm_region *region)
+ 
+ 		if (region->vm_file)
+ 			fput(region->vm_file);
++		if (region->vm_prfile)
++			fput(region->vm_prfile);
+ 
+ 		/* IO memory and memory shared directly out of the pagecache
+ 		 * from ramfs/tmpfs mustn't be released here */
+@@ -791,6 +793,8 @@ static void delete_vma(struct mm_struct *mm, struct vm_area_struct *vma)
+ 		vma->vm_ops->close(vma);
+ 	if (vma->vm_file) {
+ 		fput(vma->vm_file);
++		if (vma->vm_prfile)
++			fput(vma->vm_prfile);
+ 		if (vma->vm_flags & VM_EXECUTABLE)
+ 			removed_exe_file_vma(mm);
+ 	}
+@@ -1363,6 +1367,8 @@ unsigned long do_mmap_pgoff(struct file *file,
+ 				}
+ 			}
+ 			fput(region->vm_file);
++			if (region->vm_prfile)
++				fput(region->vm_prfile);
+ 			kmem_cache_free(vm_region_jar, region);
+ 			region = pregion;
+ 			result = start;
+@@ -1439,9 +1445,13 @@ error_just_free:
+ error:
+ 	if (region->vm_file)
+ 		fput(region->vm_file);
++	if (region->vm_prfile)
++		fput(region->vm_prfile);
+ 	kmem_cache_free(vm_region_jar, region);
+ 	if (vma->vm_file)
+ 		fput(vma->vm_file);
++	if (vma->vm_prfile)
++		fput(vma->vm_prfile);
+ 	if (vma->vm_flags & VM_EXECUTABLE)
+ 		removed_exe_file_vma(vma->vm_mm);
+ 	kmem_cache_free(vm_area_cachep, vma);
