@@ -129,6 +129,10 @@ protected:
      * Sleep miliseconds
      */
     void processEventSleep(int ms);
+    /*
+     * False if using CCM
+     */
+    bool memsplitsEnabled();
 
     Ui::BootMenuDialog *ui;
     Installer *_i;

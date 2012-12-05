@@ -55,6 +55,7 @@ public:
     QString datadev();
     double availableDiskSpace(const QString &path = "/mnt");
     void reboot();
+    void prepareDrivers();
     void loadDrivers();
     void startWifi();
 

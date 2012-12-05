@@ -402,7 +402,7 @@ bool Installer::isSquashFSimage(QFile &f)
     return (magic == SQUASHFS_MAGIC || magic == SQUASHFS_MAGIC_SWAP);
 }
 
-void Installer::loadDrivers()
+void Installer::prepareDrivers()
 {
     if ( !QFile::exists("/lib/modules") )
     {
@@ -421,6 +421,11 @@ void Installer::loadDrivers()
             if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }
         }
     }
+}
+
+void Installer::loadDrivers()
+{
+    prepareDrivers();
 
     QString dirname  = "/sys/bus/usb/devices";
     QDir    dir(dirname);
@@ -443,9 +448,7 @@ void Installer::loadDrivers()
 void Installer::startWifi()
 {
     loadDrivers();
-    usleep(100000);
     QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/boot/wpa_supplicant.conf -B");
-    usleep(100000);
 
     if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
     {

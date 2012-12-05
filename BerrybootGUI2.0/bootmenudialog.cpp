@@ -249,7 +249,7 @@ void BootMenuDialog::bootImage(const QString &name)
     int currentmemsplit = currentMemsplit();
     int needsmemsplit   = imageNeedsMemsplit(name);
 
-    if (isRaspberry() && needsmemsplit && needsmemsplit != currentmemsplit)
+    if (isRaspberry() && memsplitsEnabled() && needsmemsplit && needsmemsplit != currentmemsplit)
     {
         mountSystemPartition();
         QProgressDialog qpd(tr("Changing memsplit and rebooting..."), QString(), 0, 0, this);
@@ -282,6 +282,12 @@ void BootMenuDialog::bootImage(const QString &name)
     }
 }
 
+bool BootMenuDialog::memsplitsEnabled()
+{
+    /* CCM for the win */
+    return false;
+}
+
 void BootMenuDialog::startInstaller()
 {
     startNetworking();
@@ -291,27 +297,22 @@ void BootMenuDialog::startInstaller()
 
 void BootMenuDialog::startISCSI()
 {
-    mountSystemPartition();
-    QProgressDialog qpd(tr("Loading iSCSI drivers"), QString(), 0, 0, this);
-    qpd.show();
-    QApplication::processEvents();
-
-    if (system("gzip -dc /boot/shared.tgz | tar x -C /"))
-    {
-        QMessageBox::critical(this, tr("iSCSI error"), tr("Error uncompressing modules"), QMessageBox::Ok);
-    }
-    if (system("modprobe iscsi_tcp"))
-    {
-        // ignore error, module may already be loaded
-    }
-
-    qpd.hide();
+    loadModule("iscsi_tcp");
     startNetworking();
 
-    qpd.setLabelText(tr("Connecting to iSCSI SAN"));
+    QProgressDialog qpd(tr("Waiting for network to be ready"), QString(), 0, 0, this);
     qpd.show();
     QApplication::processEvents();
 
+    for (unsigned int i=0; i<10 && !_i->networkReady(); i++)
+    {
+            processEventSleep(500);
+    }
+
+    qpd.setLabelText(tr("Connecting to iSCSI SAN"));
+    QApplication::processEvents();
+
+    mountSystemPartition();
     if (system("sh /boot/iscsi.sh 2>/dev/null") != 0)
     {
         QMessageBox::critical(this, tr("iSCSI error"), tr("Error connecting to server"), QMessageBox::Ok);
@@ -325,7 +326,28 @@ void BootMenuDialog::startISCSI()
 
 void BootMenuDialog::loadModule(const QByteArray &name)
 {
-    QProgressDialog qpd(tr("Loading module: %1").arg(QString(name)), QString(), 0, 0, this);
+    QProgressDialog qpd(QString(), QString(), 0, 0, this);
+
+    if (!QFile::exists("/lib/modules"))
+    {
+        if (!QFile::exists("/mnt/shared"))
+        {
+            /* Mount boot partition, and uncompress /boot/shared.tgz to memory */
+            mountSystemPartition();
+            qpd.setLabelText(tr("Uncompressing drivers"));
+            qpd.show();
+            QApplication::processEvents();
+            _i->prepareDrivers();
+            unmountSystemPartition();
+        }
+        else
+        {
+            /* Use modules from /mnt/shared on disk */
+            _i->prepareDrivers();
+        }
+    }
+
+    qpd.setLabelText(tr("Loading module: %1").arg(QString(name)));
     qpd.show();
     QApplication::processEvents();
     QProcess::execute("modprobe", QStringList(name));
@@ -337,30 +359,6 @@ void BootMenuDialog::initializeA10()
 
     if (!cpuinfo.contains("sun4i") && !cpuinfo.contains("sun5i"))
         return; /* Not an Allwinner A10/A13, return */
-
-    if (QFile::exists("/mnt/shared/lib/modules"))
-    {
-        /* Use shared modules from disk */
-        if (symlink("/mnt/shared/lib/modules", "/lib/modules"))
-        {
-            // show error?
-        }
-    }
-    else
-    {
-        /* Not yet installed, uncompress shared.tgz from boot partition into ramfs */
-        mountSystemPartition();
-
-        QProgressDialog qpd(tr("Uncompressing drivers"), QString(), 0, 0, this);
-        qpd.show();
-        QApplication::processEvents();
-        if (system("gzip -dc /boot/shared.tgz | tar x -C /"))
-        {
-            QMessageBox::critical(this, tr("Error"), tr("Error uncompressing modules"), QMessageBox::Ok);
-        }
-        umountSystemPartition();
-        qpd.hide();
-    }
 
     /* Some necessary drivers are not compiled into the kernel
        load them as module
@@ -412,7 +410,10 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
         mkdir("/mnt", 0755);
 
     if (getBootOptions().contains("fstype=btrfs"))
+    {
         mountoptions += ",compress=lzo";
+        loadModule("btrfs");
+    }
 
     if (QProcess::execute("mount "+mountoptions+" /dev/"+dev+" /mnt") != 0)
         return false;
