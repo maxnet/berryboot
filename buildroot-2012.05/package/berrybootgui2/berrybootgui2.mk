@@ -23,6 +23,7 @@ define BERRYBOOTGUI2_INSTALL_TARGET_CMDS
         $(INSTALL) -D -m 0644 package/berrybootgui2/interfaces $(TARGET_DIR)/etc/network/interfaces
         rm $(TARGET_DIR)/init || true
         $(INSTALL) -m 0755 package/berrybootgui2/init $(TARGET_DIR)/init
+	$(INSTALL) -m 0755 package/berrybootgui2/hotplug $(TARGET_DIR)/sbin/hotplug
         $(INSTALL) -m 0755 $(STAGING_DIR)/opt/vc/lib/libvchiq_arm.so $(TARGET_DIR)/usr/lib
         $(INSTALL) -m 0755 $(STAGING_DIR)/opt/vc/lib/libvcos.so $(TARGET_DIR)/usr/lib
         $(INSTALL) -m 0755 $(STAGING_DIR)/opt/vc/lib/libbcm_host.so $(TARGET_DIR)/usr/lib

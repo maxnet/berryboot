@@ -41,7 +41,6 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QListWidgetItem>
-#include <unistd.h> // sleep()
 #include <QDebug>
 
 WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
@@ -56,12 +55,10 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     /* Disable OK button until a network is selected */
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
 
-
     QProgressDialog qpd(tr("Loading drivers"), QString(), 0, 0, this);
     qpd.show();
     QApplication::processEvents();
     i->loadDrivers();
-    usleep(100000);
 
     if ( QFile::exists("/sys/class/net/wlan0") )
     {
@@ -172,7 +169,6 @@ void WifiDialog::accept()
     );
     f.close();
     QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant.conf -B");
-    usleep(100000);
 
     if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
     {
