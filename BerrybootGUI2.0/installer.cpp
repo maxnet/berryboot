@@ -130,7 +130,6 @@ void Installer::initializeDataPartition(const QString &dev)
     dir.mkdir("/mnt/shared/etc");
     dir.mkdir("/mnt/shared/etc/default");
     dir.mkdir("/mnt/tmp");
-    //int result = QProcess::execute("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared");
     int result = system("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared");
     if (result != 0)
         log_error(tr("Error extracting shared.tgz ")+QString::number(result) );
@@ -155,6 +154,10 @@ void Installer::initializeDataPartition(const QString &dev)
         f.open(f.WriteOnly);
         f.write(keybconfig);
         f.close();
+    }
+    if (QFile::exists("/boot/wpa_supplicant.conf"))
+    {
+        QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant.conf");
     }
 }
 
@@ -215,6 +218,24 @@ double Installer::availableDiskSpace(const QString &path)
         }
 
         return bytesfree;
+}
+
+double Installer::diskSpaceInUse(const QString &path)
+{
+        double bytes = 0;
+        struct statvfs buf;
+
+        QByteArray pathba = path.toAscii();
+        if (statvfs(pathba.constData(), &buf)) {
+                return -1;
+        }
+        if (buf.f_frsize) {
+                bytes = (((double)buf.f_blocks) * ((double)buf.f_frsize));
+        } else {
+                bytes = (((double)buf.f_blocks) * ((double)buf.f_bsize));
+        }
+
+        return bytes;
 }
 
 void Installer::reboot()

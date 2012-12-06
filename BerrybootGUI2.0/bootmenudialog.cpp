@@ -44,6 +44,7 @@
 #include <QDesktopWidget>
 #include <QTime>
 #include <QDebug>
+#include <QCloseEvent>
 
 #include <time.h>
 
@@ -65,6 +66,11 @@ BootMenuDialog::BootMenuDialog(Installer *i, QWidget *parent) :
 BootMenuDialog::~BootMenuDialog()
 {
     delete ui;
+}
+
+void BootMenuDialog::closeEvent(QCloseEvent *ev)
+{
+    ev->ignore();
 }
 
 /* Mount data partition and populate menu
@@ -338,7 +344,7 @@ void BootMenuDialog::loadModule(const QByteArray &name)
             qpd.show();
             QApplication::processEvents();
             _i->prepareDrivers();
-            unmountSystemPartition();
+            umountSystemPartition();
         }
         else
         {
@@ -350,7 +356,7 @@ void BootMenuDialog::loadModule(const QByteArray &name)
     qpd.setLabelText(tr("Loading module: %1").arg(QString(name)));
     qpd.show();
     QApplication::processEvents();
-    QProcess::execute("modprobe", QStringList(name));
+    QProcess::execute("/sbin/modprobe", QStringList(name));
 }
 
 void BootMenuDialog::initializeA10()

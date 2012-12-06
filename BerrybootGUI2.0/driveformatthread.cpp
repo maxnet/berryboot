@@ -30,23 +30,26 @@
 #include <QFile>
 #include <QDir>
 
-DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent) :
-    QThread(parent), _dev(drive), _fs(filesystem), _iscsi(false), _i(i)
+DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent, const QString &bootdev, bool initializedata) :
+    QThread(parent), _dev(drive), _bootdev(bootdev), _fs(filesystem), _iscsi(false), _initializedata(initializedata), _i(i)
 {
-    if (_dev == "mmcblk0")
-        _datadev = "mmcblk0p2";
-    else if (_dev == "iscsi")
+    if (_dev == "iscsi")
     {
         _iscsi = true;
         _dev = iscsiDevice();
-        _datadev = _dev+"1";
+        _datadev = _dev;
     }
     else if (_dev.startsWith("sd") || _dev.startsWith("hd"))
-        _datadev = _dev+"1";
+        _datadev = _dev;
     else
-        _datadev = _dev+"p1";
+        _datadev = _dev+"p"; // mmcblk0p1 instead of mmcblk01
 
-    _reformatBoot = (_dev == "mmcblk0");
+    _reformatBoot = (_dev == "mmcblk0" || _bootdev != "mmcblk0p1");
+
+    if (_reformatBoot)
+        _datadev += "2";
+    else
+        _datadev += "1";
 }
 
 void DriveFormatThread::run()
@@ -104,12 +107,15 @@ void DriveFormatThread::run()
             return;
         }
 
-        emit statusUpdate(tr("Copying boot files to storage"));
-        _i->mountSystemPartition();
-        _i->restoreBootFiles();
+        if (_initializedata)
+        {
+            emit statusUpdate(tr("Copying boot files to storage"));
+            _i->mountSystemPartition();
+            _i->restoreBootFiles();
 
-        emit statusUpdate(tr("Finish writing boot files to disk (sync)"));
-        sync();
+            emit statusUpdate(tr("Finish writing boot files to disk (sync)"));
+            sync();
+        }
     }
 
     emit statusUpdate(tr("Formatting data partition (%1)").arg(_fs));
@@ -119,73 +125,76 @@ void DriveFormatThread::run()
         return;
     }
 
-    emit statusUpdate(tr("Mounting and initializing data partition"));
-    _i->initializeDataPartition(_datadev);
-
-    emit statusUpdate(tr("Editing cmdline.txt"));
-
-    /* Data dev setting */
-    QFile f("/boot/cmdline.txt");
-    f.open(QIODevice::ReadWrite);
-    QByteArray line = f.readAll().trimmed();
-    if (_fs == "btrfs")
-        line += " fstype=btrfs";
-    if (_iscsi)
-        line += " datadev=iscsi";
-    else
-        line += " datadev="+_datadev;
-    f.seek(0);
-    f.write(line.trimmed());
-    f.close();
-
-    /* Data dev setting in uEnv.txt (for A10 devices) */
-    f.setFileName("/boot/uEnv.txt");
-    f.open(QIODevice::ReadWrite);
-    line = f.readAll().trimmed();
-    if (_fs == "btrfs")
-        line += " fstype=btrfs";
-    if (_iscsi)
-        line += " datadev=iscsi";
-    else
-        line += " datadev="+_datadev;
-    f.seek(0);
-    f.write(line.trimmed());
-    f.close();
-
-    /* Overscan setting */
-    bool configchanged = false;
-    f.setFileName("/boot/config.txt");
-    f.open(QIODevice::ReadOnly);
-    QByteArray configdata = f.readAll();
-    f.close();
-    bool overscanCurrentlyDisabled = configdata.contains("disable_overscan=1");
-
-    if (_i->disableOverscan() && !overscanCurrentlyDisabled)
+    if (_initializedata)
     {
-        configdata += "\ndisable_overscan=1";
-        configchanged = true;
-    }
-    else if (!_i->disableOverscan() && overscanCurrentlyDisabled)
-    {
-        configdata.replace("disable_overscan=1", "");
-        configchanged = true;
-    }
-    if (configchanged)
-    {
-        f.open(QIODevice::WriteOnly);
-        f.write(configdata.trimmed());
+        emit statusUpdate(tr("Mounting and initializing data partition"));
+        _i->initializeDataPartition(_datadev);
+
+        emit statusUpdate(tr("Editing cmdline.txt"));
+
+        /* Data dev setting */
+        QFile f("/boot/cmdline.txt");
+        f.open(QIODevice::ReadWrite);
+        QByteArray line = f.readAll().trimmed();
+        if (_fs == "btrfs")
+            line += " fstype=btrfs";
+        if (_iscsi)
+            line += " datadev=iscsi";
+        else
+            line += " datadev="+_datadev;
+        f.seek(0);
+        f.write(line.trimmed());
         f.close();
+
+        /* Data dev setting in uEnv.txt (for A10 devices) */
+        f.setFileName("/boot/uEnv.txt");
+        f.open(QIODevice::ReadWrite);
+        line = f.readAll().trimmed();
+        if (_fs == "btrfs")
+            line += " fstype=btrfs";
+        if (_iscsi)
+            line += " datadev=iscsi";
+        else
+            line += " datadev="+_datadev;
+        f.seek(0);
+        f.write(line.trimmed());
+        f.close();
+
+        /* Overscan setting */
+        bool configchanged = false;
+        f.setFileName("/boot/config.txt");
+        f.open(QIODevice::ReadOnly);
+        QByteArray configdata = f.readAll();
+        f.close();
+        bool overscanCurrentlyDisabled = configdata.contains("disable_overscan=1");
+
+        if (_i->disableOverscan() && !overscanCurrentlyDisabled)
+        {
+            configdata += "\ndisable_overscan=1";
+            configchanged = true;
+        }
+        else if (!_i->disableOverscan() && overscanCurrentlyDisabled)
+        {
+            configdata.replace("disable_overscan=1", "");
+            configchanged = true;
+        }
+        if (configchanged)
+        {
+            f.open(QIODevice::WriteOnly);
+            f.write(configdata.trimmed());
+            f.close();
+        }
+
+        /* Finished */
+        emit statusUpdate(tr("Unmounting boot partition"));
+        _i->umountSystemPartition();
+
+        emit statusUpdate(tr("Finish writing to disk (sync)"));
+        sync();
+
+        emit statusUpdate(tr("Mounting boot partition again"));
+        _i->mountSystemPartition();
     }
-
-    /* Finished */
-    emit statusUpdate(tr("Unmounting boot partition"));
-    _i->umountSystemPartition();
-
-    emit statusUpdate(tr("Finish writing to disk (sync)"));
-    sync();
-
-    emit statusUpdate(tr("Mounting boot partition again"));
-    _i->mountSystemPartition();
 
     emit completed();
 }
@@ -220,7 +229,7 @@ bool DriveFormatThread::partitionDrive()
 
 bool DriveFormatThread::formatBootPartition()
 {
-    return QProcess::execute("/sbin/mkdosfs /dev/mmcblk0p1") == 0;
+    return QProcess::execute(QString("/sbin/mkdosfs /dev/")+_bootdev) == 0;
 }
 
 bool DriveFormatThread::formatDataPartition()
@@ -267,4 +276,19 @@ QString DriveFormatThread::iscsiDevice()
     }
 
     return "";
+}
+
+QString DriveFormatThread::drive()
+{
+    return _dev;
+}
+
+QString DriveFormatThread::bootdev()
+{
+    return _bootdev;
+}
+
+QString DriveFormatThread::datadev()
+{
+    return _datadev;
 }

@@ -36,6 +36,7 @@
 #include "confeditdialog.h"
 #include "berrybootsettingsdialog.h"
 #include "copythread.h"
+#include "driveformatthread.h"
 
 #include <QDateTime>
 #include <QMenu>
@@ -222,6 +223,33 @@ void MainWindow::cleanupUSBdevices()
     populate();
 }
 
+/* Find an external SD card device to backup to */
+QString MainWindow::externalSDcardDevice()
+{
+    /* Scan for storage devices */
+    QString dirname  = "/sys/class/block";
+    QDir    dir(dirname);
+    QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+    /* we want to make sure not to overwrite the datadev currently in use. so exclude it as backup destionation */
+    /* datadev partition can be like sda1 or mmcblk0p2, get rid of digit and p, as we want to know the drive */
+    QString datadev = _i->datadev();
+    datadev.chop(1);
+    if (datadev.endsWith("p"))
+        datadev.chop(1);
+
+    foreach (QString devname, list)
+    {
+        QString blocklink = QFile::symLinkTarget(dirname+"/"+devname);
+        /* skip virtual things and partitions */
+        if (blocklink.contains("/devices/virtual/") || QFile::exists(blocklink+"/partition"))
+            continue;
+
+        if (devname != "mmcblk0" && devname != datadev)
+            return devname;
+    }
+
+    return QString(); // not found
+}
 
 void MainWindow::on_actionEdit_triggered()
 {
@@ -308,49 +336,91 @@ void MainWindow::setButtonsEnabled(bool enable)
 
 void MainWindow::on_actionExport_triggered()
 {
-    QString imagename = ui->list->currentItem()->data(Qt::UserRole).toString();
+    bool isImageSelected = (ui->list->currentRow() != -1);
 
-    ExportDialog ed(this);
+    ExportDialog ed(isImageSelected, this);
     if (ed.exec() == QDialog::Accepted)
     {
-        if (!scanUSBdevices(true) )
-            return;
-
-        /* Prompt for image file */
-        QString defaultpath = "/media/"+partlist.first()+"/";
-
-        if (ed.exportData())
+        if (ed.backupEverything() )
         {
-            /* Prefix user modified images with date */
-            //defaultpath += QDateTime::currentDateTime().toString("yyyyMMdd")+"-";
-            /* Not working without RTC. duh */
-            defaultpath += "MODIFIED-";
-        }
+            /* Clone entire SD card */
 
-        defaultpath += imagename;
-
-        QString fileName = QFileDialog::getSaveFileName(this, tr("Select image file"), defaultpath, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240)"));
-        if (!fileName.isEmpty() && fileName.startsWith("/media/")) /* TODO: for possibility of symlinks? */
-        {
-            if (ed.exportData() && QFile::exists("/mnt/data/"+imagename))
+            QString sdcardDevice = externalSDcardDevice();
+            if (sdcardDevice.isEmpty())
             {
-                mksquashfs(imagename, fileName, ed.excludeList());
-            }
-            else
-            {
-                QProgressDialog *qpd = new QProgressDialog(tr("Copying file..."), QString(), 0,0,this);
-                qpd->show();
-                CopyThread *ct = new CopyThread("/mnt/images/"+imagename, fileName, this);
-                connect(ct, SIGNAL(finished()), qpd, SLOT(deleteLater()));
-                connect(ct, SIGNAL(completed()), this, SLOT(cleanupUSBdevices()));
-                connect(ct, SIGNAL(failed()), this, SLOT(onCopyFailed()));
-                ct->start();
+                QMessageBox::critical(this, tr("Error"), tr("Connect an external USB SD card reader first!"));
+                return;
             }
 
-            return;
-        }
+            if (QMessageBox::question(this, tr("Confirm"), tr("Are you you want to clone to device '%1'? WARNING: this will overwrite all existing files.").arg(sdcardDevice), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes)
+                return;
 
-        cleanupUSBdevices();
+            /* Check if SD card is large enough */
+            double diskspaceNeeded = _i->diskSpaceInUse()+(64*1024*1024);
+            QFile f("/sys/block/"+sdcardDevice+"/size");
+            f.open(f.ReadOnly);
+            double sizeofsd = f.readAll().trimmed().toDouble()*512;
+            f.close();
+
+            if (sizeofsd && diskspaceNeeded > sizeofsd)
+            {
+                QMessageBox::critical(this, tr("Error"), tr("Capacity too small. Need %1 MB").arg(QString::number(diskspaceNeeded/1024/1024)));
+                return;
+            }
+
+            QProgressDialog *qpd = new QProgressDialog("", QString(), 0, 0, this);
+            qpd->show();
+            DriveFormatThread *dft = new DriveFormatThread(sdcardDevice, "", _i, this);
+            connect(dft, SIGNAL(statusUpdate(QString)), qpd, SLOT(setLabelText(QString)));
+            connect(dft, SIGNAL(error(QString)), this, SLOT(onCopyFailed()));
+            connect(dft, SIGNAL(completed()), this, SLOT(onFormatComplete()));
+            dft->start();
+
+        }
+        else
+        {
+            /* Export single image */
+            QString imagename = ui->list->currentItem()->data(Qt::UserRole).toString();
+
+            if (!scanUSBdevices(true) )
+                return;
+
+            /* Prompt for image file */
+            QString defaultpath = "/media/"+partlist.first()+"/";
+
+            if (ed.exportData())
+            {
+                /* Prefix user modified images with date */
+                //defaultpath += QDateTime::currentDateTime().toString("yyyyMMdd")+"-";
+                /* Not working without RTC. duh */
+                defaultpath += "MODIFIED-";
+            }
+
+            defaultpath += imagename;
+
+            QString fileName = QFileDialog::getSaveFileName(this, tr("Select image file"), defaultpath, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240)"));
+            if (!fileName.isEmpty() && fileName.startsWith("/media/")) /* TODO: for possibility of symlinks? */
+            {
+                if (ed.exportData() && QFile::exists("/mnt/data/"+imagename))
+                {
+                    mksquashfs(imagename, fileName, ed.excludeList());
+                }
+                else
+                {
+                    QProgressDialog *qpd = new QProgressDialog(tr("Copying file..."), QString(), 0,0,this);
+                    qpd->show();
+                    CopyThread *ct = new CopyThread("/mnt/images/"+imagename, fileName, this);
+                    connect(ct, SIGNAL(finished()), qpd, SLOT(deleteLater()));
+                    connect(ct, SIGNAL(completed()), this, SLOT(cleanupUSBdevices()));
+                    connect(ct, SIGNAL(failed()), this, SLOT(onCopyFailed()));
+                    ct->start();
+                }
+
+                return;
+            }
+
+            cleanupUSBdevices();
+        }
     }
 }
 
@@ -415,6 +485,55 @@ void MainWindow::mksquashfsFinished(int code)
     {
         QMessageBox::critical(this, tr("mksquashfs error"), tr("Error creating image.\n\n%1").arg( QString(proc->readAll()) ), QMessageBox::Close);
     }
+
+    proc->deleteLater();
+}
+
+void MainWindow::onFormattingComplete()
+{
+    /* Formatting complete, proceed with copying files to SD card */
+    DriveFormatThread *dft = qobject_cast<DriveFormatThread *>(sender());
+    QString drive   = dft->drive();
+    QString bootdev = dft->bootdev();
+    QString datadev = dft->datadev();
+    dft->deleteLater();
+
+    QProgressDialog *qpd = new QProgressDialog(tr("Copying boot files..."), QString(),0,0,this);
+    qpd->show();
+    QApplication::processEvents();
+
+    QDir dir;
+    dir.mkdir("/tmp/mnt_sd");
+    // Copy 512 KB from boot sector for devices that depend on u-boot SPL
+    QProcess::execute("dd bs=1024 seek=8 skip=8 count=512 if=/dev/mmcblk0p1 of=/dev/"+drive);
+    // Copy boot partition files
+    QProcess::execute("mount /dev/"+bootdev+" /tmp/mnt_sd");
+    QProcess::execute("cp -a /tmp/boot /tmp/mnt_sd");
+    QProcess::execute("rm -rf /tmp/boot");
+    QProcess::execute("umount /tmp/mnt_sd");
+    // Mount data partition
+    QProcess::execute("mount /dev/"+datadev+" /tmp/mnt_sd");
+
+    qpd->setLabelText(tr("Copying data files... Can take half an hour."));
+    QProcess *proc = new QProcess(this);
+    connect(proc, SIGNAL(finished(int)), qpd, SLOT(deleteLater()));
+    connect(proc, SIGNAL(finished(int)), this, SLOT(onBackupComplete(int)));
+    proc->start("cp -a /mnt/. /tmp/mnt_sd");
+}
+
+void MainWindow::onBackupComplete(int code)
+{
+    QProcess *proc = qobject_cast<QProcess *>(sender());
+
+    /* Get rid of persistent-net.rules, as the cloned SD card may be intended for a different device */
+    QProcess::execute("sh -c 'rm /tmp/mnt_sd/data/*/etc/udev/rules.d/70-persistent-net.rules'");
+
+    /* Unmount & sync */
+    QProcess::execute("umount /tmp/mnt_sd");
+    sync();
+
+    if (code != 0)
+        QMessageBox::critical(this, tr("Error"), tr("Error copying files"), QMessageBox::Close);
 
     proc->deleteLater();
 }

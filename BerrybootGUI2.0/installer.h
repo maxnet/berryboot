@@ -54,6 +54,7 @@ public:
     bool networkReady();
     QString datadev();
     double availableDiskSpace(const QString &path = "/mnt");
+    double diskSpaceInUse(const QString &path = "/mnt");
     void reboot();
     void prepareDrivers();
     void loadDrivers();

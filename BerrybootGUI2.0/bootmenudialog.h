@@ -133,6 +133,11 @@ protected:
      * False if using CCM
      */
     bool memsplitsEnabled();
+    /*
+     * Called when the user wants to close the window
+     * We disallow that (ignore the event)
+     */
+    virtual void closeEvent(QCloseEvent *ev);
 
     Ui::BootMenuDialog *ui;
     Installer *_i;

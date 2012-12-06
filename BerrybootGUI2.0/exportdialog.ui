@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>401</height>
+    <width>500</width>
+    <height>447</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,17 +22,37 @@
       </font>
      </property>
      <property name="title">
-      <string>Export image to USB stick</string>
+      <string>Backup to SD card or export to USB stick</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
-      <item row="0" column="0">
-       <widget class="QLabel" name="label_2">
+      <item row="7" column="1" colspan="2">
+       <widget class="QRadioButton" name="dataRadio">
         <property name="text">
-         <string>What to export:</string>
+         <string>Image + data (uncompressed)</string>
+        </property>
+        <property name="checked">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
-      <item row="1" column="1" colspan="2">
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="backupRadio">
+        <property name="text">
+         <string>Clone SD card</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Export single image</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1" colspan="2">
        <widget class="QRadioButton" name="origRadio">
         <property name="text">
          <string>Original image</string>
@@ -42,27 +62,7 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>The original file system image as downloaded from the Internet</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="3" column="1" colspan="2">
-       <widget class="QRadioButton" name="dataRadio">
-        <property name="text">
-         <string>Image + data (uncompressed)</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="2">
+      <item row="8" column="2">
        <widget class="QLabel" name="label_4">
         <property name="text">
          <string>Export an image that includes all modifications I made.</string>
@@ -72,7 +72,34 @@
         </property>
        </widget>
       </item>
-      <item row="5" column="2">
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Backup everything</string>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Export the original file system image as downloaded from the Internet</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Make backup to external USB SD card reader</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
        <widget class="QGroupBox" name="excludeGroupbox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
@@ -105,6 +132,53 @@
           </widget>
          </item>
         </layout>
+       </widget>
+      </item>
+      <item row="3" column="2">
+       <widget class="QLabel" name="label_6">
+        <property name="palette">
+         <palette>
+          <active>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </active>
+          <inactive>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>255</red>
+              <green>0</green>
+              <blue>0</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </inactive>
+          <disabled>
+           <colorrole role="WindowText">
+            <brush brushstyle="SolidPattern">
+             <color alpha="255">
+              <red>144</red>
+              <green>141</green>
+              <blue>139</blue>
+             </color>
+            </brush>
+           </colorrole>
+          </disabled>
+         </palette>
+        </property>
+        <property name="text">
+         <string>WARNING: overwrites any existing files on card</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
        </widget>
       </item>
      </layout>

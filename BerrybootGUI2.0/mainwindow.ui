@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
+    <width>650</width>
     <height>300</height>
    </rect>
   </property>
@@ -139,14 +139,14 @@
   </action>
   <action name="actionExport">
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/filesave.png</normaloff>:/icons/filesave.png</iconset>
    </property>
    <property name="text">
-    <string>Export</string>
+    <string>Backup</string>
    </property>
   </action>
   <action name="actionAdvanced_configuration">

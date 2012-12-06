@@ -51,6 +51,8 @@ private slots:
 
     void copyOSfromUSB();
     void onCopyFailed();
+    void onFormattingComplete();
+    void onBackupComplete(int code);
     void cleanupUSBdevices();
     void mksquashfsFinished(int code);
 
@@ -76,6 +78,7 @@ protected:
     QStringList partlist;
 
     bool scanUSBdevices(bool mountrw = false);
+    QString externalSDcardDevice();
     void populate();
     void mksquashfs(QString imagename, QString destfileName, QStringList exclList);
 

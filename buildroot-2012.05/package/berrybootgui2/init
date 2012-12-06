@@ -15,7 +15,10 @@
 # Prevent kernel messages being printed through our menu
 echo 0 > /proc/sys/kernel/printk
 
-# Show GUI, it will write the OS choosen to /tmp/answer
+if grep -q debugconsole /proc/cmdline; then
+	/sbin/getty -L tty2 0 vt100 &
+fi
+
 if grep -q vncinstall /proc/cmdline; then
 	export QWS_DISPLAY="VNC:size=800x600:depth=32:0"
 	sleep 1
@@ -26,6 +29,8 @@ if grep -q vncinstall /proc/cmdline; then
 	echo If you wish to disable VNC mode: remove 'vncinstall' from cmdline.txt
 	echo
 fi
+
+# Show GUI, it will write the OS choosen to /tmp/answer
 /usr/bin/BerrybootGUI -qws 2>/tmp/debug 
 
 

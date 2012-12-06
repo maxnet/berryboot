@@ -40,8 +40,13 @@ class ExportDialog : public QDialog
     Q_OBJECT
     
 public:
-    explicit ExportDialog(QWidget *parent = 0);
+    explicit ExportDialog(bool allowSingleImage, QWidget *parent = 0);
     ~ExportDialog();
+
+    /*
+     * True if the user wants to backup everything, instead of a single image
+     */
+    bool backupEverything() const;
 
     /*
      * True if the file system modifications made by the user have to be exported as well

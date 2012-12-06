@@ -27,11 +27,17 @@
 #include "exportdialog.h"
 #include "ui_exportdialog.h"
 
-ExportDialog::ExportDialog(QWidget *parent) :
+ExportDialog::ExportDialog(bool allowSingleImage, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ExportDialog)
 {
     ui->setupUi(this);
+
+    if (!allowSingleImage)
+    {
+        ui->origRadio->setEnabled(false);
+        ui->dataRadio->setEnabled(false);
+    }
 }
 
 ExportDialog::~ExportDialog()
@@ -42,6 +48,11 @@ ExportDialog::~ExportDialog()
 bool ExportDialog::exportData() const
 {
     return ui->dataRadio->isChecked();
+}
+
+bool ExportDialog::backupEverything() const
+{
+    return ui->backupRadio->isChecked();
 }
 
 QStringList ExportDialog::excludeList() const

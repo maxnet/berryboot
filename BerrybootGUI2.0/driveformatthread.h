@@ -40,8 +40,13 @@ public:
      * - drive: e.g. mmcblk0
      * - filesystem: ext4 or btrfs
      * - Installer: reference to Installer object
+     * - bootdev: boot device (defaults to mmcblk0p1)
+     * - initializedata: initialize data partition (defaults to true)
      */
-    explicit DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent = 0);
+    explicit DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent = 0, const QString &bootdev = "mmcblk0p1", bool initializedata = true);
+    QString drive();
+    QString bootdev();
+    QString datadev();
     
 signals:
     void error(const QString &msg);
@@ -49,8 +54,8 @@ signals:
     void completed();
     
 protected:
-    QString _dev, _datadev, _fs;
-    bool _reformatBoot, _iscsi;
+    QString _dev, _datadev, _bootdev, _fs;
+    bool _reformatBoot, _iscsi, _initializedata;
     Installer *_i;
 
     virtual void run();
