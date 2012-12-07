@@ -327,11 +327,12 @@ void Installer::deleteImage(const QString &name)
         return;
 
     QStringList param;
+    bool wasDefaultImage = (getDefaultImage() == name);
     param << "-rf" << "/mnt/data/"+name;
     QProcess::execute("rm", param); /* TODO write proper Qt function for recursive delete*/
     QFile::remove("/mnt/images/"+name);
 
-    if ( getDefaultImage() == name)
+    if (wasDefaultImage)
     {
         QMap<QString,QString> images = listInstalledImages();
         if (images.empty())
