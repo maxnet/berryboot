@@ -1,1 +1,1 @@
-quiet bootmenutimeout=10
+coherent_pool=6M smsc95xx.turbo_mode=N quiet bootmenutimeout=10
