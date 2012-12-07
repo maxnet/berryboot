@@ -114,6 +114,13 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
     else
         _device = "other";
 
+    f.setFileName("/proc/version");
+    /* 'Linux version 3.6.2' -> 36 */
+    f.open(f.ReadOnly);
+    QByteArray versioninfo = f.readAll();
+    f.close();
+    _kernelversion = versioninfo.mid(14,4).replace(".", "");
+
     /* Disable OK button until an image is selected */
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
     QPushButton *button = new QPushButton(QIcon(":/icons/server.png"), tr("Proxy settings"), this);
@@ -317,7 +324,7 @@ void AddDialog::processData()
             continue;
 
         _ini->beginGroup(section);
-        if (_ini->contains("device") && _ini->value("device").toString() != _device)
+        if (_ini->contains("device") && _ini->value("device").toString() != _device && _ini->value("device").toString() != _device+_kernelversion)
         {
             _ini->endGroup();
             continue;
