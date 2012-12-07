@@ -37,6 +37,7 @@
 #include <QTimer>
 #include <unistd.h>
 #include <QDebug>
+#include <QCloseEvent>
 
 #define MB  1048576
 
@@ -165,4 +166,17 @@ void DownloadDialog::writeToFile()
         QMessageBox::critical(this, tr("Write error"), tr("Error writing to SD card"), QMessageBox::Close);
         reject();
     }
+}
+
+/* Cancel download */
+void DownloadDialog::closeEvent(QCloseEvent *ev)
+{
+    if (_reply)
+    {
+        _reply->disconnect(this, SLOT(downloadComplete()));
+        _reply->abort();
+        _file->remove();
+    }
+
+    QDialog::closeEvent(ev);
 }

@@ -77,7 +77,10 @@ protected:
      */
     void writeToFile();
 
-    //QSettings *_resumeData;
+    /*
+     * Cancel download
+     */
+    virtual void closeEvent(QCloseEvent *ev);
 
 protected slots:
     void downloadComplete();
