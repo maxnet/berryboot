@@ -1,7 +1,2 @@
 disable_overscan=1
 kernel=kernel_berryboot.img
-gpu_mem_256=112
-gpu_mem_512=368
-cma_lwm=16
-cma_hwm=32
-cma_offline_start=16
