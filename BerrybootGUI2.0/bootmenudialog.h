@@ -118,10 +118,6 @@ protected:
      */
     QByteArray memsplitParameter(int memsplit);
     /*
-     * Returns true if /proc/cpuinfo indicates we are actually running on a Raspberry
-     */
-    bool isRaspberry();
-    /*
      * Reboot system
      */
     void reboot();

@@ -80,6 +80,7 @@ public:
     void enableCEC();
     QSettings *settings();
     bool hasSettings();
+    bool isMemsplitHandlingEnabled();
 
 protected:
     QString _keyboardlayout, _timezone;

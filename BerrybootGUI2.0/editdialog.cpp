@@ -29,7 +29,7 @@
 #include "ui_editdialog.h"
 #include <QRegExp>
 
-EditDialog::EditDialog(const QString &filename, QWidget *parent) :
+EditDialog::EditDialog(const QString &filename, bool usingMemsplits, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::EditDialog)
 {
@@ -56,6 +56,9 @@ EditDialog::EditDialog(const QString &filename, QWidget *parent) :
     //QValidator *validator = new QRegExpValidator(QRegExp("^[^\\_\\/\\\\]+$"), this);
     QValidator *validator = new QRegExpValidator(QRegExp("^[a-zA-Z0-9 \\.\\+\\-]+$"), this);
     ui->nameEdit->setValidator(validator);
+
+    if (usingMemsplits)
+        ui->cmaLabel->setHidden(true);
 }
 
 EditDialog::~EditDialog()

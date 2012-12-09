@@ -106,7 +106,11 @@ void BootMenuDialog::initialize()
 
     /* Wait 10 seconds for named data partition */
     waitForDevice(datadev);
+
+    qpd.setLabelText(tr("Mounting data partition %1").arg(QString(datadev)));
+    QApplication::processEvents();
     success = mountDataPartition(datadev);
+
     if (!success)
     {
         qpd.setLabelText(tr("Data is not at %1. Searching other partitions...").arg(QString(datadev)));
@@ -255,7 +259,7 @@ void BootMenuDialog::bootImage(const QString &name)
     int currentmemsplit = currentMemsplit();
     int needsmemsplit   = imageNeedsMemsplit(name);
 
-    if (isRaspberry() && memsplitsEnabled() && needsmemsplit && needsmemsplit != currentmemsplit)
+    if (_i->isMemsplitHandlingEnabled() && needsmemsplit && needsmemsplit != currentmemsplit)
     {
         mountSystemPartition();
         QProgressDialog qpd(tr("Changing memsplit and rebooting..."), QString(), 0, 0, this);
@@ -274,7 +278,12 @@ void BootMenuDialog::bootImage(const QString &name)
         }
         newconfig = newconfig.trimmed()+"\n";
         newconfig += memsplitParameter(needsmemsplit);
-        file_put_contents("/boot/config.txt", newconfig);
+        /* write new config.txt to temporary file first */
+        file_put_contents("/boot/config.new", newconfig);
+        /* sync() the data of the new file to disk */
+        sync();
+        /* rename() it. This is an atomic operation according to man page */
+        rename("/boot/config.new", "/boot/config.txt");
         umountSystemPartition();
         file_put_contents(runonce_file, name.toAscii());
         QProcess::execute("umount /mnt");
@@ -588,11 +597,6 @@ void BootMenuDialog::reboot()
     QProcess::execute("umount -ar");
     sync();
     ::reboot(RB_AUTOBOOT);
-}
-
-bool BootMenuDialog::isRaspberry()
-{
-    return file_get_contents("/proc/cpuinfo").contains("BCM2708");
 }
 
 void BootMenuDialog::processEventSleep(int ms)

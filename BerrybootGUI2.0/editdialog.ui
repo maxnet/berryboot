@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>155</height>
+    <height>164</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -48,7 +48,7 @@
       <item row="1" column="1">
        <widget class="QComboBox" name="memsplitCombo">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <item>
          <property name="text">
@@ -78,7 +78,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QLabel" name="label_3">
+       <widget class="QLabel" name="cmaLabel">
         <property name="palette">
          <palette>
           <active>

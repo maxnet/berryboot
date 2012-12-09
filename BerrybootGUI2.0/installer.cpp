@@ -535,3 +535,28 @@ bool Installer::hasSettings()
 {
     return QFile::exists("/boot/berryboot.ini");
 }
+
+/* Returns true if Berryboot is responsonsible for changing memsplit settings in config.txt
+ * This is the case when the kernel either doesn't support CMA, or it is not enabled
+ */
+bool Installer::isMemsplitHandlingEnabled()
+{
+    QFile f("/proc/cpuinfo");
+    f.open(f.ReadOnly);
+    QByteArray cpuinfo = f.readAll();
+    f.close();
+
+    if (!cpuinfo.contains("BCM2708"))
+        return false; /* Not a Raspberry Pi. Current do not support memsplit changing on other devices */
+
+    f.setFileName("/proc/vc-cma");
+    if (!f.exists())
+        return true; /* Raspberry Pi kernel without CMA support */
+
+    f.open(f.ReadOnly);
+    QByteArray cmainfo = f.readAll();
+    f.close();
+
+    return cmainfo.contains("Length     : 00000000");
+    /* FIXME: figure out if there is an IOCTL or cleaner way to programaticcaly test if CMA is enabled */
+}

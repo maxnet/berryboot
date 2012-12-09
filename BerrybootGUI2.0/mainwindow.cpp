@@ -255,7 +255,7 @@ void MainWindow::on_actionEdit_triggered()
 {
     QString currentname = ui->list->currentItem()->data(Qt::UserRole).toString();
 
-    EditDialog ed(currentname, this);
+    EditDialog ed(currentname, _i->isMemsplitHandlingEnabled(), this);
     if ( ed.exec() == QDialog::Accepted)
     {
         QString newname = ed.filename();

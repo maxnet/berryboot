@@ -42,8 +42,9 @@ public:
      * Constructor
      *
      * filename: OS image file name
+     * usingMemsplits: if false display notice that memsplits are not being used
      */
-    explicit EditDialog(const QString &filename, QWidget *parent = 0);
+    explicit EditDialog(const QString &filename, bool usingMemsplits, QWidget *parent = 0);
     ~EditDialog();
 
     /*
