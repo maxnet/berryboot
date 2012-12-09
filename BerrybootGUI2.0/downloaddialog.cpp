@@ -65,6 +65,7 @@ DownloadDialog::DownloadDialog(const QString &url, const QString &localfilename,
     _reply     = _netaccess->get(QNetworkRequest(QUrl(url)));
     connect(_reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
     connect(_reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
+    connect(_reply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 
     _time.start();
 }
@@ -76,7 +77,7 @@ DownloadDialog::~DownloadDialog()
 
 void DownloadDialog::downloadComplete()
 {
-    writeToFile();
+    writeToFile(true);
 
     int httpstatuscode = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 
@@ -144,14 +145,24 @@ void DownloadDialog::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
         }
         ui->etaLabel->setText(tr("%1 h %2 m").arg(QString::number(etahr), QString::number(etamin)));
         ui->progressBar->setValue(_100kbdownloaded);
-
-        writeToFile();
     }
 }
 
-void DownloadDialog::writeToFile()
+void DownloadDialog::onReadyRead()
 {
-    QByteArray data = _reply->readAll();
+    if (_reply->bytesAvailable() >= 4096)
+        writeToFile(false);
+}
+
+void DownloadDialog::writeToFile(bool writeAll)
+{
+    QByteArray data;
+
+    if (writeAll)
+        data = _reply->readAll();
+    else
+        data = _reply->read((_reply->bytesAvailable()/4096)*4096);
+
     if (data.isEmpty())
         return;
 

@@ -74,8 +74,12 @@ protected:
 
     /*
      * Write data from memory buffer to disk
+     *
+     * writeAll:
+     * if true  - write entire buffer to disk
+     * if false - write a multiple of 4096 bytes to disk
      */
-    void writeToFile();
+    void writeToFile(bool writeAll);
 
     /*
      * Cancel download
@@ -85,6 +89,7 @@ protected:
 protected slots:
     void downloadComplete();
     void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
+    void onReadyRead();
     void onSyncComplete();
 };
 
