@@ -1,0 +1,22 @@
+diff -ur linux-rpi-3.6.y.orig/drivers/net/usb/usbnet.c linux-rpi-3.6.y/drivers/net/usb/usbnet.c
+--- linux-rpi-3.6.y.orig/drivers/net/usb/usbnet.c	2012-12-05 00:06:01.000000000 +0100
++++ linux-rpi-3.6.y/drivers/net/usb/usbnet.c	2012-12-09 14:37:04.028533918 +0100
+@@ -545,7 +545,7 @@
+ 		if (netif_running (dev->net) &&
+ 		    !test_bit (EVENT_RX_HALT, &dev->flags) &&
+ 		    state != unlink_start) {
+-			rx_submit (dev, urb, GFP_ATOMIC);
++			rx_submit (dev, urb, GFP_ATOMIC | __GFP_NOWARN);
+ 			usb_mark_last_busy(dev->udev);
+ 			return;
+ 		}
+@@ -1267,7 +1267,7 @@
+ 		int	temp = dev->rxq.qlen;
+ 
+ 		if (temp < RX_QLEN(dev)) {
+-			if (rx_alloc_submit(dev, GFP_ATOMIC) == -ENOLINK)
++			if (rx_alloc_submit(dev, GFP_ATOMIC | __GFP_NOWARN) == -ENOLINK)
+ 				return;
+ 			if (temp != dev->rxq.qlen)
+ 				netif_dbg(dev, link, dev->net,
+Only in linux-rpi-3.6.y/drivers/net/usb: usbnet.c~
