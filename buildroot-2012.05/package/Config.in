@@ -659,6 +659,7 @@ source "package/btrfs-progs/Config.in"
 source "package/berrybootgui2/Config.in"
 source "package/openiscsi/Config.in"
 source "package/rpi-userland/Config.in"
+source "package/cryptsetup/Config.in"
 endmenu
 
 endmenu

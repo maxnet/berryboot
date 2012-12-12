@@ -3,7 +3,7 @@
 # lvm2
 #
 #############################################################
-LVM2_VERSION = 2.02.79
+LVM2_VERSION = 2.02.98
 LVM2_SOURCE = LVM2.$(LVM2_VERSION).tgz
 LVM2_SITE = ftp://sources.redhat.com/pub/lvm2/releases
 LVM2_INSTALL_STAGING = YES
@@ -39,6 +39,11 @@ ifeq ($(BR2_PACKAGE_LVM2_DMSETUP_ONLY),y)
 LVM2_MAKE_OPT = device-mapper
 LVM2_INSTALL_STAGING_OPT = DESTDIR=$(STAGING_DIR) install_device-mapper
 LVM2_INSTALL_TARGET_OPT = DESTDIR=$(TARGET_DIR) install_device-mapper
+endif
+
+ifeq ($(BR2_PACKAGE_LIBDEVMAPPER_ONLY),y)
+LVM2_INSTALL_TARGET=NO
+LVM2_CONF_OPT += --enable-static_link
 endif
 
 define LVM2_UNINSTALL_STAGING_CMDS

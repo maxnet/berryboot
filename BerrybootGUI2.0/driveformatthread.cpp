@@ -30,8 +30,10 @@
 #include <QFile>
 #include <QDir>
 
-DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent, const QString &bootdev, bool initializedata) :
-    QThread(parent), _dev(drive), _bootdev(bootdev), _fs(filesystem), _iscsi(false), _initializedata(initializedata), _i(i)
+#include <QWSServer>
+
+DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent, const QString &bootdev, bool initializedata, bool password) :
+    QThread(parent), _dev(drive), _bootdev(bootdev), _fs(filesystem), _iscsi(false), _initializedata(initializedata), _password(password), _i(i)
 {
     if (_dev == "iscsi")
     {
@@ -128,36 +130,34 @@ void DriveFormatThread::run()
     if (_initializedata)
     {
         emit statusUpdate(tr("Mounting and initializing data partition"));
-        _i->initializeDataPartition(_datadev);
+        _i->initializeDataPartition(_password ? "mapper/luks" : _datadev);
 
         emit statusUpdate(tr("Editing cmdline.txt"));
 
         /* Data dev setting */
+        QByteArray param;
+        if (_fs == "btrfs")
+            param += " fstype=btrfs";
+        if (_iscsi)
+            param += " datadev=iscsi";
+        else
+            param += " datadev="+_datadev;
+        if (_password)
+            param += " luks";
+
         QFile f("/boot/cmdline.txt");
         f.open(QIODevice::ReadWrite);
         QByteArray line = f.readAll().trimmed();
-        if (_fs == "btrfs")
-            line += " fstype=btrfs";
-        if (_iscsi)
-            line += " datadev=iscsi";
-        else
-            line += " datadev="+_datadev;
         f.seek(0);
-        f.write(line.trimmed());
+        f.write(line+param);
         f.close();
 
         /* Data dev setting in uEnv.txt (for A10 devices) */
         f.setFileName("/boot/uEnv.txt");
         f.open(QIODevice::ReadWrite);
         line = f.readAll().trimmed();
-        if (_fs == "btrfs")
-            line += " fstype=btrfs";
-        if (_iscsi)
-            line += " datadev=iscsi";
-        else
-            line += " datadev="+_datadev;
         f.seek(0);
-        f.write(line.trimmed());
+        f.write(line+param);
         f.close();
 
         /* Overscan setting */
@@ -235,13 +235,43 @@ bool DriveFormatThread::formatBootPartition()
 bool DriveFormatThread::formatDataPartition()
 {
     QString cmd;
+    QString dev;
+
+    if (!_password)
+    {
+        dev = _datadev;
+    }
+    else
+    {
+        dev = "mapper/luks";
+        _i->loadCryptoModules();
+
+        /* For added security, let the cryptsetup program ask for the password in a text console */
+        QProcess proc;
+        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksFormat /dev/")+_datadev);
+        _i->switchConsole(5);
+        proc.waitForFinished();
+
+        if (proc.exitCode())
+        {
+            _i->switchConsole(1);
+            return false;
+        }
+
+        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksOpen /dev/")+_datadev+" luks");
+        proc.waitForFinished();
+        _i->switchConsole(1);
+
+        if (proc.exitCode())
+            return false;
+    }
 
     if (_fs == "btrfs")
-        cmd = QString("/sbin/mkfs.btrfs -L berryboot /dev/")+_datadev;
+        cmd = QString("/sbin/mkfs.btrfs -L berryboot /dev/")+dev;
     else if (_fs == "ext4")
-        cmd = QString("/usr/sbin/mkfs.ext4 -L berryboot /dev/")+_datadev;
+        cmd = QString("/usr/sbin/mkfs.ext4 -L berryboot /dev/")+dev;
     else
-        cmd = QString("/usr/sbin/mkfs.ext4 -E nodiscard -L berryboot /dev/")+_datadev;
+        cmd = QString("/usr/sbin/mkfs.ext4 -E nodiscard -L berryboot /dev/")+dev;
 
     return QProcess::execute(cmd) == 0;
 }

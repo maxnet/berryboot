@@ -1,0 +1,20 @@
+diff -ur linux-rpi-3.6.y.orig/init/initramfs.c linux-rpi-3.6.y/init/initramfs.c
+--- linux-rpi-3.6.y.orig/init/initramfs.c	2012-12-05 00:06:01.000000000 +0100
++++ linux-rpi-3.6.y/init/initramfs.c	2012-12-11 20:34:41.284185594 +0100
+@@ -588,8 +588,14 @@
+ #ifdef CONFIG_BLK_DEV_RAM
+ 		int fd;
+ 		printk(KERN_INFO "Trying to unpack rootfs image as initramfs...\n");
+-		err = unpack_to_rootfs((char *)initrd_start,
+-			initrd_end - initrd_start);
++		if ((initrd_end - initrd_start) > 64 && memcmp((char *) initrd_start, "\x27\x05\x19\x56", 4) == 0) {
++			printk(KERN_INFO "Skipping 64-byte uInitrd header...\n");
++			err = unpack_to_rootfs((char *)initrd_start + 64,
++				initrd_end - initrd_start - 64);
++		} else {
++			err = unpack_to_rootfs((char *)initrd_start,
++				initrd_end - initrd_start);
++		}
+ 		if (!err) {
+ 			free_initrd();
+ 			return 0;

@@ -9,7 +9,8 @@ set -e
 ./rebuild-berryboot.sh
 
 # Make uInitrd
-mkimage -A arm -T ramdisk -C none -n "uInitrd" -d buildroot-2012.05/output/images/rootfs.cpio.gz output/uInitrd
+# mkimage -A arm -T ramdisk -C none -n "uInitrd" -d buildroot-2012.05/output/images/rootfs.cpio.gz output/uInitrd
+# edit: mkimage now done by rebuild-berryboot.sh
 
 # Build kernel if it doesn't exist already
 if [ ! -e output/uImage ]; then
