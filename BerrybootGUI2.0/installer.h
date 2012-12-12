@@ -46,7 +46,6 @@ public:
     bool saveBootFiles();
     bool restoreBootFiles();
     int sizeofBootFilesInKB();
-    bool mountDataPartition(const QString &dev);
     void initializeDataPartition(const QString &dev);
     bool mountSystemPartition();
     void umountSystemPartition();
@@ -58,6 +57,7 @@ public:
     void reboot();
     void prepareDrivers();
     void loadDrivers();
+    void loadCryptoModules();
     void startWifi();
 
     void setKeyboardLayout(const QString &layout);
@@ -81,6 +81,7 @@ public:
     QSettings *settings();
     bool hasSettings();
     bool isMemsplitHandlingEnabled();
+    void switchConsole(int ttynr);
 
 protected:
     QString _keyboardlayout, _timezone;

@@ -46,8 +46,6 @@
 #include <QDebug>
 #include <QCloseEvent>
 
-#include <time.h>
-
 #define runonce_file  "/mnt/data/runonce"
 #define default_file  "/mnt/data/default"
 
@@ -82,6 +80,7 @@ void BootMenuDialog::initialize()
     int pos;
     QByteArray datadev, options = getBootOptions();
 
+
     if ((pos = options.indexOf("datadev=")) != -1)
     {
         datadev = options.mid(pos+8);
@@ -109,7 +108,16 @@ void BootMenuDialog::initialize()
 
     qpd.setLabelText(tr("Mounting data partition %1").arg(QString(datadev)));
     QApplication::processEvents();
-    success = mountDataPartition(datadev);
+
+    if (options.contains("luks"))
+    {
+        askLuksPassword(datadev);
+        success = mountDataPartition("mapper/luks");
+    }
+    else
+    {
+        success = mountDataPartition(datadev);
+    }
 
     if (!success)
     {
@@ -610,4 +618,27 @@ void BootMenuDialog::processEventSleep(int ms)
         if (sleepfor > 0)
             QApplication::processEvents(QEventLoop::WaitForMoreEvents, sleepfor);
     }
+}
+
+void BootMenuDialog::askLuksPassword(const QString &datadev)
+{
+    loadModule("dm_crypt");
+    loadModule("aes");
+    loadModule("sha256");
+    loadModule("algif_hash");
+
+    /* For added security let cryptsetup ask for password in text console.
+     * Can remain in memory if we do it in the GUI
+     */
+    QProcess proc;
+    _i->switchConsole(5);
+
+    while (!QFile::exists("/dev/mapper/luks"))
+    {
+        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksOpen /dev/")+datadev+" luks");
+        QApplication::processEvents();
+        proc.waitForFinished();
+    }
+
+    _i->switchConsole(1);
 }

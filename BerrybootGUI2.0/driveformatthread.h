@@ -43,7 +43,8 @@ public:
      * - bootdev: boot device (defaults to mmcblk0p1)
      * - initializedata: initialize data partition (defaults to true)
      */
-    explicit DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent = 0, const QString &bootdev = "mmcblk0p1", bool initializedata = true);
+    explicit DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent = 0, const QString &bootdev = "mmcblk0p1", bool initializedata = true, bool password = false);
+    void setPassword(const QByteArray &password);
     QString drive();
     QString bootdev();
     QString datadev();
@@ -55,7 +56,7 @@ signals:
     
 protected:
     QString _dev, _datadev, _bootdev, _fs;
-    bool _reformatBoot, _iscsi, _initializedata;
+    bool _reformatBoot, _iscsi, _initializedata, _password;
     Installer *_i;
 
     virtual void run();

@@ -134,6 +134,10 @@ protected:
      * We disallow that (ignore the event)
      */
     virtual void closeEvent(QCloseEvent *ev);
+    /*
+     * Ask for password in text console
+     */
+    void askLuksPassword(const QString &datadev);
 
     Ui::BootMenuDialog *ui;
     Installer *_i;

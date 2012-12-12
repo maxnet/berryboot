@@ -3,9 +3,10 @@
 if [ -e output/target/lib/modules ]; then
 
 	echo Making shared.tgz with modules
-	(cd output/target ; cp ../staging/sbin/iscsistart ./sbin ; tar czvf ../images/shared.tgz lib/modules lib/firmware sbin/iscsistart)
+	(cd output/target ; cp ../staging/sbin/iscsistart ./sbin ; cp ../staging/usr/sbin/cryptsetup.static ./sbin; tar czvf ../images/shared.tgz lib/modules lib/firmware sbin/iscsistart sbin/cryptsetup.static)
 	rm -rf output/target/lib/modules
 	rm output/target/sbin/iscsistart
+	rm output/target/sbin/cryptsetup.static
 	rm -rf output/target/lib/firmware || true
 fi
 

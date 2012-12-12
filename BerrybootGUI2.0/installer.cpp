@@ -40,6 +40,8 @@
 #include <sys/stat.h>
 #include <unistd.h>
 #include <sys/reboot.h>
+#include <sys/ioctl.h>
+#include <linux/vt.h>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -93,26 +95,6 @@ QString Installer::datadev()
             end = end-pos-8;
         return cmdline.mid(pos+8, end);
     }
-}
-
-bool Installer::mountDataPartition(const QString &dev)
-{
-
-    //if (execute("mount LABEL=berryboot /mnt") != 0)
-
-    if (QProcess::execute("mount /dev/"+dev+" /mnt") != 0)
-        return false;
-
-    if (!QFile::exists("/mnt/images"))
-    {
-        if ( QProcess::execute("umount /mnt") != 0)
-        {
-            log_error(tr("Error unmounting data partition"));
-        }
-        return false;
-    }
-
-    return true;
 }
 
 void Installer::initializeDataPartition(const QString &dev)
@@ -467,6 +449,16 @@ void Installer::loadDrivers()
     }
 }
 
+void Installer::loadCryptoModules()
+{
+    prepareDrivers();
+
+    QProcess::execute("/sbin/modprobe dm_crypt");
+    QProcess::execute("/sbin/modprobe aes");
+    QProcess::execute("/sbin/modprobe sha256");
+    QProcess::execute("/sbin/modprobe algif_hash");
+}
+
 void Installer::startWifi()
 {
     loadDrivers();
@@ -559,4 +551,19 @@ bool Installer::isMemsplitHandlingEnabled()
 
     return cmainfo.contains("Length     : 00000000");
     /* FIXME: figure out if there is an IOCTL or cleaner way to programaticcaly test if CMA is enabled */
+}
+
+void Installer::switchConsole(int ttynr)
+{
+    QFile f("/dev/tty0");
+
+    if (f.open(f.ReadWrite))
+    {
+        ioctl(f.handle(), VT_ACTIVATE, ttynr);
+        f.close();
+    }
+    else
+    {
+        qDebug() << "Error opening tty";
+    }
 }

@@ -21,5 +21,11 @@ config BR2_PACKAGE_LVM2_DMSETUP_ONLY
 	help
 	  Install dmsetup only and skip the LVM2 suite.
 
+config BR2_PACKAGE_LIBDEVMAPPER_ONLY
+	bool "compile static libdevmapper only"
+	depends on BR2_PACKAGE_LVM2
+	help
+	  Installs libdevmapper.a to staging
+
 comment "lvm2 requires a toolchain with LARGEFILE support"
         depends on !BR2_LARGEFILE

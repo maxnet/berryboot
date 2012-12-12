@@ -147,11 +147,17 @@ void DiskDialog::on_formatButton_clicked()
         fs = "ext4 nodiscard";
     }
 
-    _qpd = new QProgressDialog( "", QString(), 0, 0, this);
+    if (ui->luksCheck->isChecked())
+    {
+        QMessageBox::information(this, tr("Info"), tr("You will be switched to a secure text console shortly, where you need to enter the password you wish to use three times"), QMessageBox::Ok);
+    }
+
+    _qpd = new QProgressDialog( tr("Preparing disk format"), QString(), 0, 0, this);
     _qpd->show();
     //_i->mountSystemPartition() // already done by berryboot
 
-    DriveFormatThread *dft = new DriveFormatThread(drive, fs, _i, this);
+
+    DriveFormatThread *dft = new DriveFormatThread(drive, fs, _i, this, "mmcblk0p1", true, ui->luksCheck->isChecked());
     connect(dft, SIGNAL(statusUpdate(QString)), _qpd, SLOT(setLabelText(QString)));
     connect(dft, SIGNAL(error(QString)), this, SLOT(onError(QString)));
     connect(dft, SIGNAL(completed()), this, SLOT(onFormatComplete()));
