@@ -139,7 +139,8 @@ void Installer::initializeDataPartition(const QString &dev)
     }
     if (QFile::exists("/boot/wpa_supplicant.conf"))
     {
-        QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant.conf");
+        dir.mkdir("/mnt/shared/etc/wpa_supplicant");
+        QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
     }
 }
 
