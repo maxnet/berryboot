@@ -78,8 +78,16 @@ void BootMenuDialog::initialize()
 {
     bool success   = false;
     int pos;
-    QByteArray datadev, options = getBootOptions();
+    QByteArray datadev, qmap, options = getBootOptions();
 
+    if ((pos = options.indexOf("qmap=")) != -1)
+    {
+        qmap = options.mid(pos+5);
+        if ((pos = qmap.indexOf(" ")) != -1 || (pos = qmap.indexOf("\n")) != -1)
+            qmap = qmap.mid(0, pos);
+
+        _i->setKeyboardLayout(qmap);
+    }
 
     if ((pos = options.indexOf("datadev=")) != -1)
     {

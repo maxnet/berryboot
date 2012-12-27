@@ -85,9 +85,9 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
     //ui->overscanGroupBox->setHidden(!_i->hasOverscanSettings());
     ui->fixMACbox->setHidden(!_i->hasDynamicMAC());
 
-    //ui->keybtestEdit->setFocus();
-    ui->keybtestEdit->setHidden(true);
-    ui->label_7->setHidden(true);
+    ui->keybtestEdit->setFocus();
+    //ui->keybtestEdit->setHidden(true);
+    //ui->label_7->setHidden(true);
 }
 
 LocaleDialog::~LocaleDialog()

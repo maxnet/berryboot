@@ -45,6 +45,7 @@
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
+#include <QKbdDriverFactory>
 #endif
 
 /* Magic to test if image is a valid SquashFS file */
@@ -353,22 +354,24 @@ void Installer::setKeyboardLayout(const QString &layout)
         _keyboardlayout = layout;
 
 #ifdef Q_WS_QWS
-/*        QByteArray keymapfile = ":/qmap/"+layout.toAscii();
+        QString keymapfile = ":/qmap/"+layout;
 
         if (QFile::exists(keymapfile))
         {
-            QByteArray kbdarg = "TTY:keymap="+keymapfile;
-            qDebug() << "Changing keyboard driver to:" << kbdarg;
+            qDebug() << "Changing keymap to:" << keymapfile;
+
+            // Loading keymaps from resources directly is broken, so copy to /tmp first
+            QFile::copy(keymapfile, "/tmp/"+layout);
+            keymapfile = "/tmp/"+layout;
 
             QWSServer *q = QWSServer::instance();
             q->closeKeyboard();
-            q->setDefaultKeyboard(kbdarg.constData());
-            q->openKeyboard();
+            q->setKeyboardHandler(QKbdDriverFactory::create("TTY", "keymap="+keymapfile));
         }
         else
         {
             qDebug() << "Keyboard driver not found:" << layout;
-        } */
+        }
 #endif
     }
 }

@@ -153,6 +153,10 @@ void DriveFormatThread::run()
                 param += " mac_addr="+mac;
         }
 
+        QString qmap = _i->keyboardlayout();
+        if (!qmap.isEmpty() && qmap != "us")
+            param += " qmap="+qmap;
+
         QFile f("/boot/cmdline.txt");
         f.open(QIODevice::ReadWrite);
         QByteArray line = f.readAll().trimmed();
