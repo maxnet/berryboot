@@ -145,6 +145,14 @@ void DriveFormatThread::run()
         if (_password)
             param += " luks";
 
+        /* Static MAC setting */
+        if (_i->fixateMAC())
+        {
+            QByteArray mac = _i->macAddress();
+            if (!mac.isEmpty())
+                param += " mac_addr="+mac;
+        }
+
         QFile f("/boot/cmdline.txt");
         f.open(QIODevice::ReadWrite);
         QByteArray line = f.readAll().trimmed();

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>480</width>
+    <width>488</width>
     <height>461</height>
    </rect>
   </property>
@@ -42,7 +42,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="QGroupBox" name="overscanGroupBox">
      <property name="minimumSize">
       <size>
        <width>0</width>
@@ -90,7 +90,7 @@
      <property name="minimumSize">
       <size>
        <width>0</width>
-       <height>60</height>
+       <height>70</height>
       </size>
      </property>
      <property name="font">
@@ -116,6 +116,21 @@
           <width>22</width>
           <height>22</height>
          </size>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="fixMACbox">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Make MAC-address static</string>
         </property>
         <property name="checked">
          <bool>true</bool>

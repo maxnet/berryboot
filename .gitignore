@@ -1,5 +1,5 @@
 output/*gz
 output/*.img
 *.pro.user
-linux-allwinner-aufs
+linux-allwinner-aufs*
 uboot-allwinner

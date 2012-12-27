@@ -91,6 +91,7 @@ int main(int argc, char *argv[])
 
     if ( i.datadev().isEmpty() )
     {
+        if (system("/sbin/getty -L tty2 0 vt100 &") != 0) { qDebug() << "Error starting emergency holographic shell"; }
         LocaleDialog ld(&i);
         ld.exec();
         DiskDialog w(&i);

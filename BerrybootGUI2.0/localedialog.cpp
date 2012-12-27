@@ -82,6 +82,9 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
     _gbd = new GreenBorderDialog();
     _gbd->showMaximized();
 
+    //ui->overscanGroupBox->setHidden(!_i->hasOverscanSettings());
+    ui->fixMACbox->setHidden(!_i->hasDynamicMAC());
+
     //ui->keybtestEdit->setFocus();
     ui->keybtestEdit->setHidden(true);
     ui->label_7->setHidden(true);
@@ -170,6 +173,7 @@ void LocaleDialog::done(int r)
     _i->setKeyboardLayout(ui->keybCombo->currentText());
     _i->setTimezone(ui->timezoneCombo->currentText());
     _i->setDisableOverscan(ui->disableOverscanRadio->isChecked());
+    _i->setFixateMAC(!ui->fixMACbox->isHidden() && ui->fixMACbox->isChecked());
     bool wifi = ui->wifiRadio->isChecked();
 
     if (_gbd)

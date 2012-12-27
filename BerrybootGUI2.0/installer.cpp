@@ -141,6 +141,7 @@ void Installer::initializeDataPartition(const QString &dev)
     {
         dir.mkdir("/mnt/shared/etc/wpa_supplicant");
         QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
+        QFile::setPermissions("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf", QFile::ReadOwner | QFile::WriteOwner);
     }
 }
 
@@ -396,6 +397,16 @@ bool Installer::disableOverscan() const
     return _disableOverscan;
 }
 
+void Installer::setFixateMAC(bool fix)
+{
+    _fixMAC = fix;
+}
+
+bool Installer::fixateMAC() const
+{
+    return _fixMAC;
+}
+
 bool Installer::isSquashFSimage(QFile &f)
 {
     quint32 magic = 0;
@@ -534,15 +545,10 @@ bool Installer::hasSettings()
  */
 bool Installer::isMemsplitHandlingEnabled()
 {
-    QFile f("/proc/cpuinfo");
-    f.open(f.ReadOnly);
-    QByteArray cpuinfo = f.readAll();
-    f.close();
-
-    if (!cpuinfo.contains("BCM2708"))
+    if (!cpuinfo().contains("BCM2708"))
         return false; /* Not a Raspberry Pi. Current do not support memsplit changing on other devices */
 
-    f.setFileName("/proc/vc-cma");
+    QFile f("/proc/vc-cma");
     if (!f.exists())
         return true; /* Raspberry Pi kernel without CMA support */
 
@@ -552,6 +558,39 @@ bool Installer::isMemsplitHandlingEnabled()
 
     return cmainfo.contains("Length     : 00000000");
     /* FIXME: figure out if there is an IOCTL or cleaner way to programaticcaly test if CMA is enabled */
+}
+
+bool Installer::hasOverscanSettings()
+{
+    /* Raspberry Pi has overscan settings */
+    return cpuinfo().contains("BCM2708");
+}
+
+bool Installer::hasDynamicMAC()
+{
+    /* Allwinner devices lack a static MAC address by default */
+    QByteArray cpu = cpuinfo();
+    return cpu.contains("sun4i") || cpu.contains("sun5i");
+}
+
+QByteArray Installer::cpuinfo()
+{
+    QFile f("/proc/cpuinfo");
+    f.open(f.ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+
+    return data;
+}
+
+QByteArray Installer::macAddress()
+{
+    QFile f("/sys/class/net/eth0/address");
+    f.open(f.ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+
+    return data;
 }
 
 void Installer::switchConsole(int ttynr)

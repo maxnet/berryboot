@@ -13,12 +13,12 @@ set -e
 # edit: mkimage now done by rebuild-berryboot.sh
 
 # Build kernel if it doesn't exist already
-if [ ! -e output/uImage ]; then
+if [ ! -e output/kernel_a10_aufs.img ]; then
 	echo Building A10 kernel
-	if [ ! -e linux-allwinner-aufs ]; then
-		git clone --depth=1 https://github.com/maxnet/linux-allwinner-aufs	
+	if [ ! -e linux-allwinner-aufs34 ]; then
+		git clone --depth=1 https://github.com/maxnet/linux-allwinner-aufs34
 	fi
-	cd linux-allwinner-aufs
+	cd linux-allwinner-aufs34
 	make sun4i_aufs_defconfig ARCH=arm
 	make -j4 uImage ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 	make -j4 modules ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
@@ -28,7 +28,7 @@ if [ ! -e output/uImage ]; then
 	tar xzf ../../output/shared.tgz
 	tar czf ../../output/shared.tgz *
 	cd ../..
-	cp linux-allwinner-aufs/arch/arm/boot/uImage output
+	cp linux-allwinner-aufs34/arch/arm/boot/uImage output/kernel_a10_aufs.img
 fi
 
 echo Build complete. Result is in \'output\' directory

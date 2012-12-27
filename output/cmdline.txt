@@ -1,1 +1,1 @@
-coherent_pool=6M smsc95xx.turbo_mode=N quiet bootmenutimeout=10
+smsc95xx.turbo_mode=N elevator=deadline quiet bootmenutimeout=10

@@ -66,6 +66,8 @@ public:
     QString keyboardlayout() const;
     void setDisableOverscan(bool disabled);
     bool disableOverscan() const;
+    void setFixateMAC(bool fix);
+    bool fixateMAC() const;
 
     QMap<QString,QString> listInstalledImages();
     QString imageFilenameToFriendlyName(const QString &name);
@@ -81,11 +83,15 @@ public:
     QSettings *settings();
     bool hasSettings();
     bool isMemsplitHandlingEnabled();
+    QByteArray cpuinfo();
+    bool hasOverscanSettings();
+    bool hasDynamicMAC();
+    QByteArray macAddress();
     void switchConsole(int ttynr);
 
 protected:
     QString _keyboardlayout, _timezone;
-    bool _disableOverscan;
+    bool _disableOverscan, _fixMAC;
     QSettings *_settings;
 
     void log_error(const QString &msg);
