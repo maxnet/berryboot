@@ -71,7 +71,10 @@ void DriveFormatThread::run()
             emit error(tr("Error saving boot files to memory. SD card may be damaged."));
             return;
         }
-        _i->umountSystemPartition();
+        if (_initializedata)
+        {
+            _i->umountSystemPartition();
+        }
     }
 
     emit statusUpdate(tr("Zeroing partition table"));

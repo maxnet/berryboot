@@ -352,12 +352,17 @@ void MainWindow::on_actionExport_triggered()
                 return;
             }
 
-            if (QMessageBox::question(this, tr("Confirm"), tr("Are you you want to clone to device '%1'? WARNING: this will overwrite all existing files.").arg(sdcardDevice), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes)
+            QFile f("/sys/class/block/"+sdcardDevice+"/device/model");
+            f.open(f.ReadOnly);
+            QString model = f.readAll().trimmed();
+            f.close();
+
+            if (QMessageBox::question(this, tr("Confirm"), tr("Are you you want to clone to device '%1' (%2)? WARNING: this will overwrite all existing files.").arg(sdcardDevice, model), QMessageBox::Yes, QMessageBox::No) != QMessageBox::Yes)
                 return;
 
             /* Check if SD card is large enough */
             double diskspaceNeeded = _i->diskSpaceInUse()+(64*1024*1024);
-            QFile f("/sys/block/"+sdcardDevice+"/size");
+            f.setFileName("/sys/block/"+sdcardDevice+"/size");
             f.open(f.ReadOnly);
             double sizeofsd = f.readAll().trimmed().toDouble()*512;
             f.close();
@@ -370,10 +375,11 @@ void MainWindow::on_actionExport_triggered()
 
             QProgressDialog *qpd = new QProgressDialog("", QString(), 0, 0, this);
             qpd->show();
-            DriveFormatThread *dft = new DriveFormatThread(sdcardDevice, "", _i, this);
+            DriveFormatThread *dft = new DriveFormatThread(sdcardDevice, "ext4", _i, this, sdcardDevice+"1", false);
             connect(dft, SIGNAL(statusUpdate(QString)), qpd, SLOT(setLabelText(QString)));
             connect(dft, SIGNAL(error(QString)), this, SLOT(onCopyFailed()));
-            connect(dft, SIGNAL(completed()), this, SLOT(onFormatComplete()));
+            connect(dft, SIGNAL(completed()), this, SLOT(onFormattingComplete()));
+            connect(dft, SIGNAL(finished()), qpd, SLOT(deleteLater()));
             dft->start();
 
         }
@@ -506,9 +512,30 @@ void MainWindow::onFormattingComplete()
     dir.mkdir("/tmp/mnt_sd");
     // Copy 512 KB from boot sector for devices that depend on u-boot SPL
     QProcess::execute("dd bs=1024 seek=8 skip=8 count=512 if=/dev/mmcblk0p1 of=/dev/"+drive);
+
+    // Fix cmdline.txt and uEnv.txt to remove device specific options
+    QFile f("/tmp/boot/cmdline.txt");
+    f.open(f.ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+    data.replace(" luks", "");
+    data.replace("mac_addr", "orig_mac");
+    f.open(f.WriteOnly);
+    f.write(data);
+    f.close();
+    f.setFileName("/tmp/boot/uEnv.txt");
+    f.open(f.ReadOnly);
+    data = f.readAll();
+    f.close();
+    data.replace(" luks", "");
+    data.replace("mac_addr", "orig_mac");
+    f.open(f.WriteOnly);
+    f.write(data);
+    f.close();
+
     // Copy boot partition files
     QProcess::execute("mount /dev/"+bootdev+" /tmp/mnt_sd");
-    QProcess::execute("cp -a /tmp/boot /tmp/mnt_sd");
+    QProcess::execute("cp -a /tmp/boot/. /tmp/mnt_sd");
     QProcess::execute("rm -rf /tmp/boot");
     QProcess::execute("umount /tmp/mnt_sd");
     // Mount data partition

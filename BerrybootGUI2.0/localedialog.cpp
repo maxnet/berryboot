@@ -173,7 +173,7 @@ void LocaleDialog::done(int r)
     _i->setKeyboardLayout(ui->keybCombo->currentText());
     _i->setTimezone(ui->timezoneCombo->currentText());
     _i->setDisableOverscan(ui->disableOverscanRadio->isChecked());
-    _i->setFixateMAC(!ui->fixMACbox->isHidden() && ui->fixMACbox->isChecked());
+    _i->setFixateMAC(_i->hasDynamicMAC() && ui->fixMACbox->isChecked());
     bool wifi = ui->wifiRadio->isChecked();
 
     if (_gbd)
