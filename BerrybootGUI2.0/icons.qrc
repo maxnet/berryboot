@@ -106,5 +106,6 @@
         <file>icons/commandprompt.png</file>
         <file>icons/encrypted.png</file>
         <file alias="wallpaper.jpg">icons/luminous_lines.jpg</file>
+        <file>icons/help.png</file>
     </qresource>
 </RCC>

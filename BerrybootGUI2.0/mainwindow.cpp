@@ -593,3 +593,37 @@ void MainWindow::on_actionSetPassword_triggered()
     BerrybootSettingsDialog bsd(_i);
     bsd.exec();
 }
+
+void MainWindow::on_actionRepair_file_system_triggered()
+{
+    QFile f("/proc/cmdline");
+    f.open(f.ReadOnly);
+    QByteArray options = f.readAll();
+    f.close();
+
+    QByteArray datadev, cmd;
+
+    if (options.contains("luks"))
+        datadev = "/dev/mapper/luks";
+    else
+        datadev = "/dev/"+_i->datadev().toAscii();
+
+    if (options.contains("btrfs"))
+        cmd = "fsck.btrfs -y "+datadev;
+    else
+        cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
+
+    if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1' on tty5?").arg(QString(cmd)), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+    {
+        QProcess::execute("umount "+datadev);
+
+        QProcess proc;
+        _i->switchConsole(5);
+        proc.start(QByteArray("openvt -c 5 -w "+cmd));
+        QApplication::processEvents();
+        proc.waitForFinished();
+
+        QProcess::execute("mount "+datadev+" /mnt");
+        _i->switchConsole(1);
+    }
+}

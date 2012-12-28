@@ -54,6 +54,7 @@
    <addaction name="actionAdvanced_configuration"/>
    <addaction name="actionConsole"/>
    <addaction name="actionSetPassword"/>
+   <addaction name="actionRepair_file_system"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_OS">
@@ -174,6 +175,15 @@
    </property>
    <property name="text">
     <string>Set password</string>
+   </property>
+  </action>
+  <action name="actionRepair_file_system">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/help.png</normaloff>:/icons/help.png</iconset>
+   </property>
+   <property name="text">
+    <string>Repair file system</string>
    </property>
   </action>
  </widget>

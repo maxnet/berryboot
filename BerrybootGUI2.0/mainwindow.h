@@ -72,6 +72,8 @@ private slots:
 
     void on_actionSetPassword_triggered();
 
+    void on_actionRepair_file_system_triggered();
+
 protected:
     Ui::MainWindow *ui;
     Installer *_i;
