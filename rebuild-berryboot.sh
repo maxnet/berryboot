@@ -32,12 +32,13 @@ if [ ! -e output/start.elf ]; then
 	cp firmware/boot/start*.elf output
 	cp firmware/boot/fixup*.dat output
 	cp firmware/boot/bootcode.bin output
-
-	# add /opt/vc binaries and libraries to shared.tgz. Leaving out examples
-	cd firmware/hardfp
-	rm -rf opt/vc/src
-	tar xzf ../../output/shared.tgz
-	tar czf ../../output/shared.tgz *
 fi
+
+# add /opt/vc binaries and libraries to shared.tgz. Leaving out examples
+cd firmware/hardfp
+rm -rf opt/vc/src
+rm -rf lib/modules || true
+tar xzf ../../output/shared.tgz
+tar czf ../../output/shared.tgz *
 
 echo Build complete. Result is in \'output\' directory 

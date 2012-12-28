@@ -160,7 +160,7 @@ void WifiDialog::accept()
     QFile f("/etc/wpa_supplicant.conf");
     f.open(f.WriteOnly);
     f.write(
-        "ctrl_interface=/var/run/wpa_supplicant GROUP=netdev\n"
+        "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n"
         "ap_scan=1\n\n"
         "network={\n"
         "\tssid=\""+ui->networkList->currentItem()->text().toAscii()+"\"\n"
