@@ -1,3 +1,10 @@
 disable_overscan=1
+
+gpu_mem=128
+cma_lwm=16
+cma_hwm=32
+cma_offline_start=16
+
+# Berryboot settings, do not change
 kernel=kernel_rpi_aufs.img
 initramfs berryboot.img
