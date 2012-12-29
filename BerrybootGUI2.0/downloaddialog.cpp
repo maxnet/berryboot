@@ -63,6 +63,7 @@ DownloadDialog::DownloadDialog(const QString &url, const QString &localfilename,
     _file->open(_file->WriteOnly);
     _netaccess = new QNetworkAccessManager(this);
     _reply     = _netaccess->get(QNetworkRequest(QUrl(url)));
+    _reply->setReadBufferSize(512*1024);
     connect(_reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
     connect(_reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
     connect(_reply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
@@ -150,8 +151,9 @@ void DownloadDialog::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
 
 void DownloadDialog::onReadyRead()
 {
-    if (_reply->bytesAvailable() >= 4096)
-        writeToFile(false);
+    /*if (_reply->bytesAvailable() >= 4096)
+        writeToFile(false); */
+    writeToFile(true);
 }
 
 void DownloadDialog::writeToFile(bool writeAll)
