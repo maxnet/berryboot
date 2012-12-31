@@ -1,4 +1,4 @@
-#!/bin/bash 
+#!/bin/sh 
 
 PATH="/sbin:/bin" 
 
@@ -11,17 +11,7 @@ load_firmware() {
    if ! cd /sys; then 
       return 1 
    fi 
-   local fst=$(stat -f -c %T .) 
-   if [[ "$fst" != 'sysfs' ]]; then 
-      echo "mounting /sys for $FN -> $DEVPATH" 
-      mount -n -t sysfs sysfs /sys || return 1 
-      if ! cd /sys; then 
-         umount -n -l /sys 
-         return 1 
-      fi 
-   else 
-      echo "loading $FN -> $DEVPATH" 
-   fi 
+   echo "loading $FN -> $DEVPATH" 
    echo 1 >"./$DEVPATH/loading" 
    rc=$? 
    if [[ $rc -eq 0 ]]; then 
@@ -32,9 +22,6 @@ load_firmware() {
       echo 0 >"./$DEVPATH/loading" 
    else 
       echo -1 >"./$DEVPATH/loading" 
-   fi 
-   if [[ "$fst" != 'sysfs' ]]; then 
-      umount -n -l . 
    fi 
    cd / 
    return $rc 
