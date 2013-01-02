@@ -23,6 +23,13 @@ buildroot-2012.05 - build system to create a minimal Linux operating system to r
 buildroot-2012.05/package/berrybootgui2/init - script that gets executed on boot, starts BerrybootGUI  
 ```
 
+==
+Build requirements
+==
+
+Berryboot uses Buildroot to build a minimal Linux operating system to run under.
+Buildroot requires that the following packages are installed: http://www.buildroot.org/downloads/manual/manual.html#requirement
+
 ===
 To build for Raspberry Pi
 ===

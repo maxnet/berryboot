@@ -2,8 +2,6 @@
 
 set -e
 
-command -v mkimage >/dev/null || { echo "mkimage not found. Install u-boot-tools." ; exit 1; }
-
 if [ ! -e output/LICENSE.berryboot ]; then
 	cp -f LICENSE.berryboot output
 fi
@@ -23,7 +21,7 @@ cp output/images/shared.tgz ../output
 #cp output/images/zImage ../output/kernel_berryboot.img
 cp output/images/zImage ../output/kernel_rpi_aufs.img
 #cp output/images/rootfs.cpio.gz ../output/berryboot.img
-mkimage -A arm -T ramdisk -C none -n "uInitrd" -d output/images/rootfs.cpio.gz ../output/berryboot.img
+output/host/usr/bin/mkimage -A arm -T ramdisk -C none -n "uInitrd" -d output/images/rootfs.cpio.gz ../output/berryboot.img
 
 cd ..
 if [ ! -e output/start.elf ]; then
