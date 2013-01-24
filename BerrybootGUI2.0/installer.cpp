@@ -477,12 +477,22 @@ void Installer::loadCryptoModules()
 void Installer::startWifi()
 {
     loadDrivers();
+
     QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/boot/wpa_supplicant.conf -B");
 
-    if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
+    QProcess *p = new QProcess(this);
+    connect(p, SIGNAL(finished(int)), this, SLOT(wifiStarted(int)));
+    p->start("/sbin/udhcpc -i wlan0");
+}
+
+void Installer::wifiStarted(int rc)
+{
+    if (rc != 0)
     {
         QMessageBox::critical(NULL, "Error connecting", "Error connecting to wifi. Check settings in /boot/wpa_supplicant.conf", QMessageBox::Ok);
     }
+
+    sender()->deleteLater();
 }
 
 void Installer::enableCEC()

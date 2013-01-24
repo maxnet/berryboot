@@ -23,13 +23,15 @@ if [ ! -e output/kernel_a10_aufs.img ]; then
 	make -j4 uImage ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 	make -j4 modules ARCH=arm CROSS_COMPILE=arm-linux-gnueabihf-
 	make modules_install ARCH=arm INSTALL_MOD_PATH=output
-	cd output
-	# combine a10 modules with the ones in existing shared.tgz
-	tar xzf ../../output/shared.tgz
-	tar czf ../../output/shared.tgz *
-	cd ../..
+	cd ..
 	cp linux-allwinner-aufs34/arch/arm/boot/uImage output/kernel_a10_aufs.img
 fi
+
+# combine a10 modules with the ones in existing shared.tgz
+cd linux-allwinner-aufs34/output
+tar xzf ../../output/shared.tgz
+tar czf ../../output/shared.tgz *
+cd ../..
 
 echo Build complete. Result is in \'output\' directory
 echo Note: you need to manually build u-boot SPL for your specific device, and copy script.bin to the output directory

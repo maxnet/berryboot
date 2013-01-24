@@ -100,6 +100,7 @@ protected:
 protected slots:
     void ifupFinished(int exitCode);
     void onKeyPress(int key);
+    void wifiStarted(int rc);
 
 signals:
     void networkInterfaceUp();

@@ -38,6 +38,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDesktopWidget>
 #include <QImage>
 #include <QSettings>
+#include <QFile>
+#include <QScreen>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -89,9 +91,29 @@ int main(int argc, char *argv[])
     if (QFile::exists("/boot/wpa_supplicant.conf"))
         i.startWifi();
 
-    if ( i.datadev().isEmpty() )
+    if ( i.datadev().isEmpty() ) /* New installation */
     {
         if (system("/sbin/getty -L tty2 0 vt100 &") != 0) { qDebug() << "Error starting emergency holographic shell"; }
+
+        /* Write a message to serial console */
+        QString serialdev;
+        if (QFile::exists("/dev/ttyS0"))
+            serialdev = "/dev/ttyS0";
+        else if (QFile::exists("/dev/ttyAMA0"))
+            serialdev = "/dev/ttyAMA0";
+
+        if (!serialdev.isEmpty())
+        {
+            QFile f(serialdev);
+            f.open(f.WriteOnly);
+            f.write("Berryboot installer running ");
+            if ( QScreen::instance()->classId() == QScreen::VNCClass)
+                f.write("a headless VNC installation\n");
+            else
+                f.write("on display.\nIf you want a headless installation instead, append the option 'vncinstall' to cmdline.txt + uEnv.txt\n");
+            f.close();
+        }
+
         LocaleDialog ld(&i);
         ld.exec();
         DiskDialog w(&i);

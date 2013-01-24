@@ -41,6 +41,7 @@
 #include <QMessageBox>
 #include <QPushButton>
 #include <QListWidgetItem>
+#include <QTime>
 #include <QDebug>
 
 WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
@@ -155,7 +156,7 @@ void WifiDialog::accept()
     QProcess::execute("/usr/bin/killall wpa_supplicant");
     QProgressDialog qpd(tr("Connecting to access point..."), QString(),0,0, this);
     qpd.show();
-    QApplication::processEvents();
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
     QFile f("/etc/wpa_supplicant.conf");
     f.open(f.WriteOnly);
@@ -169,6 +170,11 @@ void WifiDialog::accept()
     );
     f.close();
     QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant.conf -B");
+
+    /* Ugly workaround: sleep a second to give slow wifi devices some time. */
+    QTime sleepUntil = QTime::currentTime().addSecs(1);
+    while( QTime::currentTime() < sleepUntil )
+        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents, 100);
 
     if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
     {
