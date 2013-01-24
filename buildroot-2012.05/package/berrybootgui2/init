@@ -19,6 +19,12 @@ if grep -q debugconsole /proc/cmdline; then
 	/sbin/getty -L tty2 0 vt100 &
 fi
 
+if grep -q "mmc0_led" /proc/cmdline; then
+	if [ -e /sys/class/leds/ph20:green:led1 ]; then
+		echo mmc0 > /sys/class/leds/ph20:green:led1/trigger
+	fi
+fi
+
 if grep -q vncinstall /proc/cmdline; then
 	export QWS_DISPLAY="VNC:size=800x600:depth=32:0"
 	sleep 1
