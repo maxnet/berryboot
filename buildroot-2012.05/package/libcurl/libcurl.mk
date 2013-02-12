@@ -23,6 +23,9 @@ else
 LIBCURL_CONF_OPT += --without-ssl
 endif
 
+# Berryboot edit for minimal libcurl
+LIBCURL_CONF_OPT = --disable-verbose --enable-hidden-symbols --disable-ftp --disable-file --disable-ldap --disable-ldaps --disable-rtsp --disable-dict --disable-telnet --disable-tftp --disable-pop3 --disable-imap --disable-smtp --disable-gopher --disable-manual --without-ssl
+
 define LIBCURL_TARGET_CLEANUP
 	rm -rf $(TARGET_DIR)/usr/bin/curl-config \
 	       $(if $(BR2_PACKAGE_CURL),,$(TARGET_DIR)/usr/bin/curl)

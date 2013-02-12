@@ -30,14 +30,11 @@
 #include "installer.h"
 #include "greenborderdialog.h"
 #include "wifidialog.h"
+#include "downloadthread.h"
 
 #include <QStringList>
 #include <QFile>
 #include <QProgressDialog>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
-#include <QUrl>
 #include <QRegExp>
 #include <QSettings>
 #include <QDebug>
@@ -101,9 +98,9 @@ void LocaleDialog::checkIfNetworkIsUp()
     /* Determinate location */
     if (_i->networkReady())
     {
-        QNetworkAccessManager *netaccess = new QNetworkAccessManager(this);
-        QNetworkReply *reply = netaccess->get(QNetworkRequest(QUrl(GEOIP_SERVER)));
-        connect(reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
+        DownloadThread *download = new DownloadThread(GEOIP_SERVER);
+        connect(download, SIGNAL(finished()), this, SLOT(downloadComplete()));
+        download->start();
     }
     else
     {
@@ -114,7 +111,7 @@ void LocaleDialog::checkIfNetworkIsUp()
 
 void LocaleDialog::downloadComplete()
 {
-    QNetworkReply *reply = qobject_cast<QNetworkReply *>( sender() );
+    DownloadThread *reply = qobject_cast<DownloadThread *>( sender() );
 
     /* Replies are in format:
 
@@ -135,9 +132,9 @@ void LocaleDialog::downloadComplete()
       </Response>
     */
 
-    if (reply->error() == reply->NoError)
+    if (reply->successfull())
     {
-        QByteArray data = reply->readAll();
+        QByteArray data = reply->data();
         //qDebug() << "Data received" << data;
 
         QRegExp regexp("\\<CountryCode\\>(.*)\\<\\/CountryCode\\>.*\\<CountryName\\>(.*)\\<\\/CountryName\\>.*\\<TimeZone\\>(.*)\\<\\/TimeZone\\>");

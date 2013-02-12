@@ -35,8 +35,7 @@ namespace Ui {
 class DownloadDialog;
 }
 class QSettings;
-class QNetworkAccessManager;
-class QNetworkReply;
+class DownloadThread;
 class QFile;
 
 class DownloadDialog : public QDialog
@@ -61,8 +60,7 @@ protected:
     Ui::DownloadDialog *ui;
     QCryptographicHash _hasher;
     QString _expectedHash, _localfilename;
-    QNetworkAccessManager *_netaccess;
-    QNetworkReply *_reply;
+    DownloadThread *_download;
     QFile *_file;
     Filetype _fileType;
     QTime _time;
@@ -73,23 +71,14 @@ protected:
     int _100kbdownloaded, _100kbtotal;
 
     /*
-     * Write data from memory buffer to disk
-     *
-     * writeAll:
-     * if true  - write entire buffer to disk
-     * if false - write a multiple of 4096 bytes to disk
-     */
-    void writeToFile(bool writeAll);
-
-    /*
      * Cancel download
      */
     virtual void closeEvent(QCloseEvent *ev);
 
 protected slots:
-    void downloadComplete();
+    void onDownloadSuccessful();
+    void onDownloadError(const QString &message);
     void onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal);
-    void onReadyRead();
     void onSyncComplete();
 };
 

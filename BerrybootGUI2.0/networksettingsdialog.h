@@ -33,20 +33,22 @@
 namespace Ui {
 class NetworkSettingsDialog;
 }
+class Installer;
 
 class NetworkSettingsDialog : public QDialog
 {
     Q_OBJECT
     
 public:
-    explicit NetworkSettingsDialog(QWidget *parent = 0);
+    explicit NetworkSettingsDialog(Installer *i, QWidget *parent = 0);
     ~NetworkSettingsDialog();
 
 public slots:
     virtual void accept();
     
-private:
+protected:
     Ui::NetworkSettingsDialog *ui;
+    Installer *_i;
 };
 
 #endif // NETWORKSETTINGSDIALOG_H

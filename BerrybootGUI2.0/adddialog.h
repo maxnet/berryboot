@@ -34,9 +34,7 @@ class AddDialog;
 }
 class QProgressDialog;
 class Installer;
-class QNetworkAccessManager;
-class QNetworkReply;
-class QNetworkDiskCache;
+class DownloadThread;
 class QSettings;
 
 class AddDialog : public QDialog
@@ -54,12 +52,10 @@ protected:
     Ui::AddDialog *ui;
     QProgressDialog *_qpd;
     Installer *_i;
-    QNetworkAccessManager *_netaccess;
-    QNetworkDiskCache *_cache;
     QString _cachedir, _device, _kernelversion;
-    QNetworkReply *_reply;
     QSettings *_ini;
-    QString _reposerver;
+    QByteArray _reposerver;
+    DownloadThread *_download;
 
     static bool _openSSLinitialized;
     static QByteArray _data;
@@ -88,6 +84,11 @@ protected:
      * Returns true if signature matches
      */
     bool verifyData();
+
+    /*
+     * Set proxy settings from berryboot.ini
+     */
+    void setProxy();
 
 protected slots:
     void networkUp();

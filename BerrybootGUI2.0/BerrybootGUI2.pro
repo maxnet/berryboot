@@ -4,14 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = BerrybootInstaller
 TEMPLATE = app
 
-LIBS += -lcrypto
+LIBS += -lcrypto -lcurl
 
 INCLUDEPATH += ../../staging/opt/vc/include ../../staging/opt/vc/include/interface/vcos/pthreads
 LIBS += -lbcm_host -lvcos -lvchiq_arm -L../../staging/opt/vc/lib
@@ -29,7 +29,6 @@ SOURCES += main.cpp\
     syncthread.cpp \
     downloaddialog.cpp \
     networksettingsdialog.cpp \
-    parsedate.c \
     driveformatthread.cpp \
     copythread.cpp \
     exportdialog.cpp \
@@ -39,7 +38,8 @@ SOURCES += main.cpp\
     bootmenudialog.cpp \
     ceclistener.cpp \
     logindialog.cpp \
-    berrybootsettingsdialog.cpp
+    berrybootsettingsdialog.cpp \
+    downloadthread.cpp
 
 HEADERS  += mainwindow.h \
     diskdialog.h \
@@ -62,7 +62,8 @@ HEADERS  += mainwindow.h \
     bootmenudialog.h \
     ceclistener.h \
     logindialog.h \
-    berrybootsettingsdialog.h
+    berrybootsettingsdialog.h \
+    downloadthread.h
 
 FORMS    += mainwindow.ui \
     diskdialog.ui \

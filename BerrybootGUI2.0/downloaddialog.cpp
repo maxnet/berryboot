@@ -27,6 +27,7 @@
 #include "downloaddialog.h"
 #include "ui_downloaddialog.h"
 #include "syncthread.h"
+#include "downloadthread.h"
 #include <QFile>
 #include <QtNetwork/QNetworkAccessManager>
 #include <QtNetwork/QNetworkRequest>
@@ -59,16 +60,13 @@ DownloadDialog::DownloadDialog(const QString &url, const QString &localfilename,
         return;
     }
 
-    _file = new QFile( "/mnt/tmp/"+localfilename, this);
-    _file->open(_file->WriteOnly);
-    _netaccess = new QNetworkAccessManager(this);
-    _reply     = _netaccess->get(QNetworkRequest(QUrl(url)));
-    _reply->setReadBufferSize(512*1024);
-    connect(_reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
-    connect(_reply, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
-    connect(_reply, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
+    _download = new DownloadThread(url.toAscii(), "/mnt/tmp/"+localfilename, this);
+    connect(_download, SIGNAL(downloadSuccessful()), this, SLOT(onDownloadSuccessful()));
+    connect(_download, SIGNAL(downloadError(QString)), this, SLOT(onDownloadError(QString)));
+    connect(_download, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
 
     _time.start();
+    _download->start();
 }
 
 DownloadDialog::~DownloadDialog()
@@ -76,28 +74,22 @@ DownloadDialog::~DownloadDialog()
     delete ui;
 }
 
-void DownloadDialog::downloadComplete()
+void DownloadDialog::onDownloadError(const QString &message)
 {
-    writeToFile(true);
+    QMessageBox::critical(this, tr("Download error"), tr("Error downloading file from Internet: ")+message, QMessageBox::Close);
+    reject();
+}
 
-    int httpstatuscode = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-
-    if (_reply->error() != _reply->NoError || httpstatuscode < 200 || httpstatuscode > 299)
+void DownloadDialog::onDownloadSuccessful()
+{
+    if (!_expectedHash.isEmpty() && _expectedHash != _download->sha1())
     {
-        _file->remove();
-        QMessageBox::critical(this, tr("Download error"), tr("Error downloading file from Internet"), QMessageBox::Close);
-        reject();
-        return;
-    }
-    if (!_expectedHash.isEmpty() && _expectedHash != _hasher.result().toHex())
-    {
-        _file->remove();
+        _download->deleteDownloadedFile();
         QMessageBox::critical(this, tr("Download error"), tr("Downloaded file corrupt (sha1 does not match)"), QMessageBox::Close);
         reject();
         return;
     }
     //qDebug() << "Hash expected:" << _expectedHash << "Hash calculated:" << _hasher.result().toHex();
-    _file->close();
 
     QProgressDialog *qpd = new QProgressDialog(tr("Finish writing to disk (sync)"), QString(),0,0,this);
     qpd->show();
@@ -112,7 +104,7 @@ void DownloadDialog::onSyncComplete()
 {
     if (_fileType == Image)
     {
-        _file->rename("/mnt/images/"+_localfilename);
+        QFile::rename("/mnt/tmp/"+_localfilename, "/mnt/images/"+_localfilename);
         sync();
     }
     accept();
@@ -149,46 +141,12 @@ void DownloadDialog::onDownloadProgress(qint64 bytesReceived, qint64 bytesTotal)
     }
 }
 
-void DownloadDialog::onReadyRead()
-{
-    /*if (_reply->bytesAvailable() >= 4096)
-        writeToFile(false); */
-    writeToFile(true);
-}
-
-void DownloadDialog::writeToFile(bool writeAll)
-{
-    QByteArray data;
-
-    if (writeAll)
-        data = _reply->readAll();
-    else
-        data = _reply->read((_reply->bytesAvailable()/4096)*4096);
-
-    if (data.isEmpty())
-        return;
-
-    _hasher.addData(data);
-
-    if (_file->write(data) != data.size())
-    {
-        // write error
-        _reply->disconnect(this, SLOT(downloadComplete()));
-        _reply->abort();
-        _file->remove();
-        QMessageBox::critical(this, tr("Write error"), tr("Error writing to SD card"), QMessageBox::Close);
-        reject();
-    }
-}
-
 /* Cancel download */
 void DownloadDialog::closeEvent(QCloseEvent *ev)
 {
-    if (_reply)
+    if (_download)
     {
-        _reply->disconnect(this, SLOT(downloadComplete()));
-        _reply->abort();
-        _file->remove();
+        _download->cancelDownload();
     }
 
     QDialog::closeEvent(ev);

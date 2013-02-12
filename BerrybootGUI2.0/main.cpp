@@ -95,6 +95,7 @@ int main(int argc, char *argv[])
     {
         if (system("/sbin/getty -L tty2 0 vt100 &") != 0) { qDebug() << "Error starting emergency holographic shell"; }
 
+#ifdef Q_WS_QWS
         /* Write a message to serial console */
         QString serialdev;
         if (QFile::exists("/dev/ttyS0"))
@@ -113,6 +114,7 @@ int main(int argc, char *argv[])
                 f.write("on display.\nIf you want a headless installation instead, append the option 'vncinstall' to cmdline.txt + uEnv.txt\n");
             f.close();
         }
+#endif
 
         LocaleDialog ld(&i);
         ld.exec();

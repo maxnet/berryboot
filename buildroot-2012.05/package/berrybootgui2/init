@@ -12,9 +12,6 @@
 /bin/mount -t devtmpfs dev /dev
 /bin/hostname -F /etc/hostname
 
-# Prevent kernel messages being printed through our menu
-echo 0 > /proc/sys/kernel/printk
-
 if grep -q debugconsole /proc/cmdline; then
 	/sbin/getty -L tty2 0 vt100 &
 fi
@@ -39,10 +36,8 @@ fi
 # Show GUI, it will write the OS choosen to /tmp/answer
 /usr/bin/BerrybootGUI -qws 2>/tmp/debug 
 
-
-# Clear & re-enable kernel messages
+# Clear screen
 clear
-echo 1 > /proc/sys/kernel/printk
 
 IMAGE=`cat /tmp/answer`
 DATADIR="/mnt/data/$IMAGE"
@@ -53,16 +48,38 @@ if [ "$IMAGE" != "" ]; then
 	clear
 	echo Mounting image ${IMAGE}...
 	mount -o loop "/mnt/images/$IMAGE" /squashfs
-	echo Mounting RW data directory on top
-	mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
-	cd /aufs
-	mount -o move /dev dev
-	mount -o move /sys sys
-	mount -o move /proc proc
-	echo Setting CPU governor to performance
-	echo "performance" > sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-	echo Starting operating system ${IMAGE}...
-	exec switch_root . /sbin/init
+
+	if [ -e /squashfs/berryboot-init ]; then
+		echo Executing init script
+		cd /squashfs
+		. /squashfs/berryboot-init
+	fi
+
+	if [ -L /squashfs/lib -o -L /suashfs/sbin ]; then
+		echo
+		echo Error: having a symlink for /lib and/or /sbin inside your image is not allowed!
+		echo This conflicts with the shared AUFS folders
+		echo
+		sleep 5
+	fi
+
+	if [ -e /squashfs/sbin/init ]; then
+		echo Mounting RW data directory on top
+		mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
+		cd /aufs
+		mount -o move /dev dev
+		mount -o move /sys sys
+		mount -o move /proc proc
+		echo Setting CPU governor to performance
+		echo "performance" > sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+		echo Starting operating system ${IMAGE}...
+		exec switch_root . /sbin/init
+	else
+		echo
+		echo Error: /sbin/init not found inside $IMAGE
+		echo
+		sleep 5
+	fi
 fi
 
 # In case the user pressed cancel or something went wrong, show an emergency recovery shell

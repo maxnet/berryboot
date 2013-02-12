@@ -28,16 +28,11 @@
 #include "ui_adddialog.h"
 #include "installer.h"
 #include "downloaddialog.h"
+#include "downloadthread.h"
 #include "networksettingsdialog.h"
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <QPushButton>
-#include <QtNetwork/QNetworkAccessManager>
-#include <QtNetwork/QNetworkRequest>
-#include <QtNetwork/QNetworkReply>
-#include <QtNetwork/QNetworkDiskCache>
-#include <QtNetwork/QNetworkProxy>
-#include <QUrl>
 #include <QSettings>
 #include <QFile>
 #include <QDir>
@@ -69,7 +64,7 @@ extern "C" time_t parse_date(char *p, time_t *now);
 AddDialog::AddDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddDialog),
-    _qpd(NULL), _i(i), _cache(NULL), _cachedir("/mnt/tmp/cache"), _reply(NULL), _ini(NULL), _reposerver(DEFAULT_REPO_SERVER)
+    _qpd(NULL), _i(i), _cachedir("/mnt/tmp/cache"), _ini(NULL), _reposerver(DEFAULT_REPO_SERVER), _download(NULL)
 {
     ui->setupUi(this);
 
@@ -83,20 +78,11 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
     /* Check if we have any special proxy server or repo settings */
     if (_i->hasSettings())
     {
+        setProxy();
         QSettings *s = _i->settings();
-        s->beginGroup("proxy");
-        if (s->contains("type"))
-        {
-            QNetworkProxy::setApplicationProxy(QNetworkProxy((QNetworkProxy::ProxyType) s->value("type").toInt(), s->value("hostname").toString(),
-                                                             s->value("port").toInt(),
-                                                             s->value("user").toString(),
-                                                             QByteArray::fromBase64(s->value("password").toByteArray())) );
-        }
-        s->endGroup();
-
         s->beginGroup("repo");
         if (s->contains("url"))
-            _reposerver = s->value("url").toString();
+            _reposerver = s->value("url").toByteArray();
         s->endGroup();
     }
 
@@ -172,60 +158,52 @@ void AddDialog::downloadList()
     _qpd = new QProgressDialog(tr("Downloading list of available distributions"), tr("Cancel"), 0,0, this);
     _qpd->show();
 
-    if (!QFile::exists(_cachedir))
+    /*if (!QFile::exists(_cachedir))
     {
         QDir dir;
         dir.mkdir(_cachedir);
-    }
-    _netaccess = new QNetworkAccessManager(this);
-    _cache     = new QNetworkDiskCache(this);
-    _cache->setCacheDirectory(_cachedir);
-    _netaccess->setCache(_cache);
-    _reply     = _netaccess->get(QNetworkRequest(QUrl(_reposerver)));
-    connect(_reply, SIGNAL(finished()), this, SLOT(downloadComplete()));
+    }*/
+    _download = new DownloadThread(_reposerver);
+    connect(_download, SIGNAL(finished()), this, SLOT(downloadComplete()));
     connect(_qpd, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+    _download->start();
 }
 
 void AddDialog::downloadComplete()
 {
-    if (!_reply)
+    if (!_download)
         return; /* Cancelled */
 
     _qpd->hide();
     _qpd->deleteLater();
     _qpd = NULL;
 
-    int httpstatuscode = _reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    if (_reply->error() != _reply->NoError || httpstatuscode < 200 || httpstatuscode > 299)
+    if (!_download->successfull())
     {
         QMessageBox::critical(this, tr("Download error"), tr("Error downloading distribution list from Internet"), QMessageBox::Ok);
     }
     else
     {
-        _data = _reply->readAll();
+        _data = _download->data();
 
-        QByteArray serverTimeStr = _reply->rawHeader("Date");
         time_t localTime  = time(NULL);
-        time_t serverTime = parse_date(serverTimeStr.data(), NULL);
-        qDebug() << "Date from server: " << serverTimeStr << serverTime << "local time:" << localTime;
+        time_t serverTime = _download->serverTime();
+        qDebug() << "Date from server: " << serverTime << "local time:" << localTime;
 
         if (serverTime > localTime)
         {
             qDebug() << "Setting time to server time";
             struct timeval tv;
-            tv.tv_sec = 1;
+            tv.tv_sec = serverTime;
             tv.tv_usec = 0;
-            struct timezone tz;
-            tz.tz_minuteswest = 0;
-            tz.tz_dsttime = 0;
-            settimeofday(&tv, &tz);
+            settimeofday(&tv, NULL);
         }
 
         processData();
     }
 
-    _reply->deleteLater();
-    _reply = NULL;
+    _download->deleteLater();
+    _download = NULL;
 }
 
 void AddDialog::cancelDownload()
@@ -235,11 +213,11 @@ void AddDialog::cancelDownload()
         _qpd->deleteLater();
         _qpd = NULL;
     }
-    if (_reply)
+    if (_download)
     {
-        _reply->abort();
-        _reply->deleteLater();
-        _reply = NULL;
+        _download->cancelDownload();
+        _download->deleteLater();
+        _download = NULL;
     }
 }
 
@@ -307,8 +285,8 @@ void AddDialog::processData()
 {
     if (!verifyData())
     {
-        if (_cache)
-            _cache->clear();
+/*        if (_cache)
+            _cache->clear();*/
         QMessageBox::critical(this, tr("Data corrupt"), tr("Downloaded data corrupt. Signature does not match"), QMessageBox::Close);
         return;
     }
@@ -477,6 +455,23 @@ void AddDialog::accept()
     filename.replace(" ", "_");
     double size = _ini->value("size").toDouble() + 10000000; /* Add 10 MB extra for overhead */
     double availablespace = _i->availableDiskSpace();
+
+    /* If mirrors are available, select a random one */
+    QStringList mirrors;
+    QStringList keys = _ini->childKeys();
+    foreach (QString key, keys)
+    {
+        if (key.startsWith("mirror"))
+        {
+            mirrors.append(_ini->value(key).toString());
+        }
+    }
+    if (!mirrors.isEmpty())
+    {
+        qsrand(QTime::currentTime().msec());
+        url = mirrors.at(qrand() % mirrors.count());
+    }
+
     _ini->endGroup();
 
     if (size > availablespace)
@@ -494,20 +489,33 @@ void AddDialog::accept()
 
 void AddDialog::onProxySettings()
 {
-    NetworkSettingsDialog ns(this);
+    NetworkSettingsDialog ns(_i, this);
 
     if (ns.exec() == ns.Accepted)
     {
-        QSettings *s = _i->settings();
-        QNetworkProxy proxy = QNetworkProxy::applicationProxy();
-        s->beginGroup("proxy");
-        s->setValue("type", (int) proxy.type());
-        s->setValue("hostname", proxy.hostName());
-        s->setValue("port", proxy.port());
-        s->setValue("user", proxy.user());
-        s->setValue("password", proxy.password().toAscii().toBase64());
-        s->endGroup();
-        s->sync();
+        setProxy();
         downloadList();
     }
+}
+
+void AddDialog::setProxy()
+{
+    QSettings *s = _i->settings();
+    s->beginGroup("proxy");
+    if (s->contains("type"))
+    {
+        QByteArray proxy, user, pass;
+        proxy = s->value("hostname").toByteArray()+":"+s->value("port").toByteArray();
+        user = s->value("user").toByteArray();
+        pass = QByteArray::fromBase64(s->value("password").toByteArray());
+        if (!user.isEmpty() && !pass.isEmpty())
+            proxy = user+":"+pass+"@"+proxy;
+
+        DownloadThread::setProxy(proxy);
+    }
+    else
+    {
+        DownloadThread::setProxy("");
+    }
+    s->endGroup();
 }

@@ -27,26 +27,26 @@
 
 #include "networksettingsdialog.h"
 #include "ui_networksettingsdialog.h"
-#include <QtNetwork/QNetworkProxy>
+#include "installer.h"
+#include <QSettings>
 #include <QDebug>
 
-NetworkSettingsDialog::NetworkSettingsDialog(QWidget *parent) :
+NetworkSettingsDialog::NetworkSettingsDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::NetworkSettingsDialog)
+    ui(new Ui::NetworkSettingsDialog),
+    _i(i)
 {
     ui->setupUi(this);
     QValidator *val = new QIntValidator(this);
     ui->proxyportEdit->setValidator(val);
 
-    QNetworkProxy proxy = QNetworkProxy::applicationProxy();
-
-    if (proxy.type() != proxy.NoProxy)
-    {
-        ui->proxyhostEdit->setText(proxy.hostName());
-        ui->proxyportEdit->setText(QString::number(proxy.port()));
-        ui->proxyuserEdit->setText(proxy.user());
-        ui->proxypassEdit->setText(proxy.password());
-    }
+    QSettings *s = _i->settings();
+    s->beginGroup("proxy");
+    ui->proxyhostEdit->setText(s->value("hostname").toString());
+    ui->proxyportEdit->setText(QString::number(s->value("port", 8080).toInt()));
+    ui->proxyuserEdit->setText(s->value("user").toString());
+    ui->proxypassEdit->setText(s->value("password").toString());
+    s->endGroup();
 }
 
 NetworkSettingsDialog::~NetworkSettingsDialog()
@@ -57,18 +57,23 @@ NetworkSettingsDialog::~NetworkSettingsDialog()
 void NetworkSettingsDialog::accept()
 {
     QString host = ui->proxyhostEdit->text().trimmed();
+    QSettings *s = _i->settings();
+    s->beginGroup("proxy");
 
     if (host.isEmpty())
     {
-        QNetworkProxy::setApplicationProxy(QNetworkProxy::NoProxy);
+        s->remove("");
     }
     else
     {
-        QNetworkProxy::setApplicationProxy(QNetworkProxy(QNetworkProxy::HttpCachingProxy, host,
-                                                         ui->proxyportEdit->text().toInt(),
-                                                         ui->proxyuserEdit->text(),
-                                                         ui->proxypassEdit->text()));
+        s->setValue("type", 4 /*QNetworkProxy::HttpCachingProxy*/);
+        s->setValue("hostname", host);
+        s->setValue("port", ui->proxyportEdit->text().toInt());
+        s->setValue("user", ui->proxyuserEdit->text());
+        s->setValue("password", ui->proxypassEdit->text().toAscii().toBase64());
     }
 
+    s->endGroup();
+    s->sync();
     QDialog::accept();
 }
