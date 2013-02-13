@@ -371,7 +371,7 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
     setEnabled(false);
     QString localfile = "/mnt/tmp/berryupdate.tgz";
 
-    DownloadDialog dd(updateurl, "berryupdate.tgz", DownloadDialog::Update, sha1, this);
+    DownloadDialog dd(updateurl, "", "berryupdate.tgz", DownloadDialog::Update, sha1, this);
 
     if ( dd.exec() == dd.Accepted)
     {
@@ -450,6 +450,7 @@ void AddDialog::accept()
     QString imagesection = ui->osList->currentItem()->data(Qt::UserRole).toString();
     _ini->beginGroup(imagesection);
     QString url  = _ini->value("url").toString();
+    QString alternateUrl;
     QString sha1 = _ini->value("sha1").toString();
     QString filename = _ini->value("name").toString() + ".img" + _ini->value("memsplit", "").toString();
     filename.replace(" ", "_");
@@ -468,6 +469,8 @@ void AddDialog::accept()
     }
     if (!mirrors.isEmpty())
     {
+        /* Try a random mirror first, and the main site if downloading from mirror fails */
+        alternateUrl = url;
         qsrand(QTime::currentTime().msec());
         url = mirrors.at(qrand() % mirrors.count());
     }
@@ -480,7 +483,7 @@ void AddDialog::accept()
         return;
     }
 
-    DownloadDialog dd(url, filename, DownloadDialog::Image, sha1, this);
+    DownloadDialog dd(url, alternateUrl, filename, DownloadDialog::Image, sha1, this);
     hide();
     dd.exec();
 

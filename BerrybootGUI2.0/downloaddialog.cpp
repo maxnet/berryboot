@@ -42,12 +42,13 @@
 
 #define MB  1048576
 
-DownloadDialog::DownloadDialog(const QString &url, const QString &localfilename, Filetype fileType, const QString &sha1, QWidget *parent):
+DownloadDialog::DownloadDialog(const QString &url, const QString &alternateUrl, const QString &localfilename, Filetype fileType, const QString &sha1, QWidget *parent):
     QDialog(parent),
     ui(new Ui::DownloadDialog),
     _hasher(QCryptographicHash::Sha1),
     _expectedHash(sha1),
     _localfilename(localfilename),
+    _alternateUrl(alternateUrl),
     _fileType(fileType),
     _100kbdownloaded(0), _100kbtotal(0)
 {
@@ -77,6 +78,23 @@ DownloadDialog::~DownloadDialog()
 void DownloadDialog::onDownloadError(const QString &message)
 {
     QMessageBox::critical(this, tr("Download error"), tr("Error downloading file from Internet: ")+message, QMessageBox::Close);
+
+    if (!_alternateUrl.isEmpty())
+    {
+        if (QMessageBox::question(this, tr("Try other mirror?"), tr("Would you like to retry downloading from a different site?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+        {
+            _download = new DownloadThread(_alternateUrl.toAscii(), "/mnt/tmp/"+_localfilename, this);
+            connect(_download, SIGNAL(downloadSuccessful()), this, SLOT(onDownloadSuccessful()));
+            connect(_download, SIGNAL(downloadError(QString)), this, SLOT(onDownloadError(QString)));
+            connect(_download, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
+            _time.start();
+            _download->start();
+            _100kbdownloaded = _100kbtotal = 0;
+            _alternateUrl.clear();
+            return;
+        }
+    }
+
     reject();
 }
 
@@ -85,8 +103,7 @@ void DownloadDialog::onDownloadSuccessful()
     if (!_expectedHash.isEmpty() && _expectedHash != _download->sha1())
     {
         _download->deleteDownloadedFile();
-        QMessageBox::critical(this, tr("Download error"), tr("Downloaded file corrupt (sha1 does not match)"), QMessageBox::Close);
-        reject();
+        onDownloadError(tr("file corrupt (sha1 does not match)"));
         return;
     }
     //qDebug() << "Hash expected:" << _expectedHash << "Hash calculated:" << _hasher.result().toHex();

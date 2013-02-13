@@ -49,17 +49,18 @@ public:
      * Constructor
      *
      * - url: URL to download
+     * - alternateurl: URL to different mirror site, to try if downloading from first site fails
      * - localfilename: File name to save downloaded file as
      * - fileType: Image (operating system image), Update (Berryboot update) or Other
      * - sha1: SHA1 hash of file
      */
-    explicit DownloadDialog(const QString &url, const QString &localfilename, Filetype fileType, const QString &sha1 = "", QWidget *parent = NULL);
+    explicit DownloadDialog(const QString &url, const QString &alternateUrl, const QString &localfilename, Filetype fileType, const QString &sha1 = "", QWidget *parent = NULL);
     ~DownloadDialog();
 
 protected:
     Ui::DownloadDialog *ui;
     QCryptographicHash _hasher;
-    QString _expectedHash, _localfilename;
+    QString _expectedHash, _localfilename, _alternateUrl;
     DownloadThread *_download;
     QFile *_file;
     Filetype _fileType;
