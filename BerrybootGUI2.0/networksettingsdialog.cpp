@@ -170,7 +170,7 @@ void NetworkSettingsDialog::accept()
         line = f.readAll();
         line.replace(oldParam, "");
         line = line.trimmed();
-        line += newParam;
+        line += newParam+"\n";
         f.close();
         f.open(f.WriteOnly);
         f.write(line);

@@ -172,7 +172,7 @@ void DriveFormatThread::run()
         f.open(QIODevice::ReadWrite);
         line = f.readAll().trimmed();
         f.seek(0);
-        f.write(line+param);
+        f.write(line+param+"\n");
         f.close();
 
         /* Overscan setting */
