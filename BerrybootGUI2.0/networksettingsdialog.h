@@ -49,6 +49,12 @@ public slots:
 protected:
     Ui::NetworkSettingsDialog *ui;
     Installer *_i;
+    void _setCurrentNetInformation();
+    QString getDefaultGateway();
+    QByteArray currentIPparam();
+
+private slots:
+    void on_dhcpRadio_toggled(bool checked);
 };
 
 #endif // NETWORKSETTINGSDIALOG_H

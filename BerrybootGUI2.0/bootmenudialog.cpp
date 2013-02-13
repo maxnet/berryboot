@@ -77,24 +77,14 @@ void BootMenuDialog::closeEvent(QCloseEvent *ev)
 void BootMenuDialog::initialize()
 {
     bool success   = false;
-    int pos;
-    QByteArray datadev, qmap, options = getBootOptions();
+    QByteArray datadev = _i->bootParam("datadev");
+    QByteArray qmap    = _i->bootParam("qmap");
 
-    if ((pos = options.indexOf("qmap=")) != -1)
-    {
-        qmap = options.mid(pos+5);
-        if ((pos = qmap.indexOf(" ")) != -1 || (pos = qmap.indexOf("\n")) != -1)
-            qmap = qmap.mid(0, pos);
-
+    if (!qmap.isEmpty())
         _i->setKeyboardLayout(qmap);
-    }
 
-    if ((pos = options.indexOf("datadev=")) != -1)
+    if (!datadev.isEmpty())
     {
-        datadev = options.mid(pos+8);
-        if ((pos = datadev.indexOf(" ")) != -1 || (pos = datadev.indexOf("\n")) != -1)
-            datadev = datadev.mid(0, pos);
-
         if (datadev == "iscsi")
         {
             startISCSI();
@@ -117,7 +107,7 @@ void BootMenuDialog::initialize()
     qpd.setLabelText(tr("Mounting data partition %1").arg(QString(datadev)));
     QApplication::processEvents();
 
-    if (options.contains("luks"))
+    if (_i->bootoptions().contains("luks"))
     {
         askLuksPassword(datadev);
         success = mountDataPartition("mapper/luks");
@@ -193,17 +183,14 @@ void BootMenuDialog::initialize()
             ui->list->setCurrentItem(item);
     }
 
-    if (!options.contains("nobootmenutimeout"))
+    if (!_i->bootoptions().contains("nobootmenutimeout"))
     {
         // start timer
 
-        int pos = options.indexOf("bootmenutimeout=");
-        if (pos != -1)
+        QByteArray bootmenutimeout = _i->bootParam("bootmenutimeout");
+        if (!bootmenutimeout.isEmpty())
         {
-            QByteArray s = options.mid(pos+16);
-            if ((pos = s.indexOf(" ")) != -1 || (pos = s.indexOf("\n")) != -1)
-                s = s.mid(0, pos);
-            _countdown = s.toInt()+1;
+            _countdown = bootmenutimeout.toInt()+1;
         }
 
         autoBootTimeout();
@@ -430,7 +417,7 @@ void BootMenuDialog::file_put_contents(const QString &filename, const QByteArray
 
 QByteArray BootMenuDialog::getBootOptions()
 {
-    return file_get_contents("/proc/cmdline");
+    return _i->bootoptions();
 }
 
 bool BootMenuDialog::mountDataPartition(const QString &dev)

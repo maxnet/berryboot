@@ -62,9 +62,43 @@ int main(int argc, char *argv[])
     Installer i;
     i.enableCEC();
 
-/*    if (system("syslogd") != 0) { qDebug() << "Error starting syslogd"; }
-    if (system("klogd") != 0) { qDebug() << "Error starting klogd"; }
-    if (system("/sbin/getty -L tty2 0 vt100 &") != 0) { qDebug() << "Error starting emergency holographic shell"; } */
+    /* Handle static network configuration if set */
+    QByteArray ipv4 = i.bootParam("ipv4");
+    if (!ipv4.isEmpty())
+    {
+        QList<QByteArray> p = ipv4.split('/');
+        if (p.count() > 2)
+        {
+            QByteArray ip      = p.at(0);
+            QByteArray netmask = p.at(1);
+            QByteArray gateway = p.at(2);
+            QByteArray dns     = i.bootParam("dns");
+            QByteArray iface   = "eth0";
+            if (p.count() > 3)
+                iface = p.at(3);
+            if (dns.isEmpty())
+                dns = "8.8.8.8";
+
+            QFile f("/etc/network/interfaces");
+            f.open(f.WriteOnly);
+            f.write("auto "+iface+"\n"
+                    "iface "+iface+" inet static\n"
+                    "\taddress "+ip+"\n"
+                    "\tnetmask "+netmask+"\n"
+                    "\tgateway "+gateway+"\n"
+                    "\tup echo 'nameserver "+dns+"' > /etc/resolv.conf\n");
+            f.close();
+        }
+        else
+        {
+            qDebug() << "IPv4 parameter not in the format: ipv4=ip/netmask/gateway";
+        }
+    }
+
+#ifdef Q_WS_QWS
+    if (!ipv4.isEmpty() || QScreen::instance()->classId() == QScreen::VNCClass)
+        i.startNetworking();
+#endif
 
     BootMenuDialog menu(&i);
     if (menu.exec() == menu.Rejected)
@@ -77,6 +111,9 @@ int main(int argc, char *argv[])
         return 0;
     }
 
+    if (QFile::exists("/boot/wpa_supplicant.conf"))
+        i.startWifi();
+
     /* Check if installer is protected by password */
     if (i.hasSettings() && i.settings()->contains("berryboot/passwordhash"))
     {
@@ -87,9 +124,6 @@ int main(int argc, char *argv[])
             return 0;
         }
     }
-
-    if (QFile::exists("/boot/wpa_supplicant.conf"))
-        i.startWifi();
 
     if ( i.datadev().isEmpty() ) /* New installation */
     {
@@ -115,7 +149,6 @@ int main(int argc, char *argv[])
             f.close();
         }
 #endif
-
         LocaleDialog ld(&i);
         ld.exec();
         DiskDialog w(&i);

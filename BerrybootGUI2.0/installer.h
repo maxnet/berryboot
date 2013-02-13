@@ -49,7 +49,6 @@ public:
     void initializeDataPartition(const QString &dev);
     bool mountSystemPartition();
     void umountSystemPartition();
-    void startNetworking();
     bool networkReady();
     QString datadev();
     double availableDiskSpace(const QString &path = "/mnt");
@@ -88,6 +87,11 @@ public:
     bool hasDynamicMAC();
     QByteArray macAddress();
     void switchConsole(int ttynr);
+    QByteArray bootoptions();
+    QByteArray bootParam(const QByteArray &name);
+
+public slots:
+    void startNetworking();
 
 protected:
     QString _keyboardlayout, _timezone;

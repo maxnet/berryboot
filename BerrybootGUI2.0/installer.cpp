@@ -33,6 +33,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QSettings>
+#include <QTimer>
 
 #define HAVE_SYS_STATVFS_H 1
 #define HAVE_STATVFS 1
@@ -77,25 +78,40 @@ int Installer::sizeofBootFilesInKB()
     return proc.readAll().split('\t').first().toInt();
 }
 
-QString Installer::datadev()
+QByteArray Installer::bootoptions()
 {
     QFile f("/proc/cmdline");
     f.open(f.ReadOnly);
     QByteArray cmdline = f.readAll();
     f.close();
+    return cmdline;
+}
 
-    int pos = cmdline.indexOf("datadev=");
+QByteArray Installer::bootParam(const QByteArray &name)
+{
+    /* Search for key=value in /proc/cmdline */
+    QByteArray line = bootoptions();
+    QByteArray searchFor = name+"=";
+    int searchForLen = searchFor.length();
+
+    int pos = line.indexOf(searchFor);
     if (pos == -1)
     {
         return "";
     }
     else
     {
-        int end = cmdline.indexOf(' ', pos+8);
+        int end = line.indexOf(' ', pos+searchForLen);
         if (end != -1)
-            end = end-pos-8;
-        return cmdline.mid(pos+8, end);
+            end = end-pos-searchForLen;
+        return line.mid(pos+searchForLen, end);
     }
+}
+
+
+QString Installer::datadev()
+{
+    return bootParam("datadev");
 }
 
 void Installer::initializeDataPartition(const QString &dev)
@@ -144,6 +160,30 @@ void Installer::initializeDataPartition(const QString &dev)
         QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
         QFile::setPermissions("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf", QFile::ReadOwner | QFile::WriteOwner);
     }
+
+    if (!bootParam("ipv4").isEmpty())
+    {
+        QByteArray dns = bootParam("dns");
+        QDir dir;
+
+        if (dns.isEmpty())
+            dns = "8.8.8.8";
+
+        dir.mkdir("/mnt/shared/etc/network");
+        QByteArray ifaces = "# Static network configuration handled by Berryboot\n"
+                "iface eth0 inet manual\n\n"
+                "auto lo\n"
+                "iface lo inet loopback\n";
+        QFile f("/mnt/shared/etc/network/interfaces");
+        f.open(f.WriteOnly);
+        f.write(ifaces);
+        f.close();
+
+        f.setFileName("/mnt/shared/etc/resolv.conf");
+        f.open(f.WriteOnly);
+        f.write("nameserver "+dns);
+        f.close();
+    }
 }
 
 bool Installer::mountSystemPartition()
@@ -153,6 +193,13 @@ bool Installer::mountSystemPartition()
 
 void Installer::startNetworking()
 {
+    if (!QFile::exists("/sys/class/net/eth0"))
+    {
+        /* eth0 not available yet, check back in a tenth of a second */
+        QTimer::singleShot(100, this, SLOT(startNetworking()));
+        return;
+    }
+
     QProcess *proc = new QProcess(this);
     connect(proc, SIGNAL(finished(int)), SLOT(ifupFinished(int)));
     proc->start("/sbin/ifup eth0");

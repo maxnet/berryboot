@@ -24,11 +24,8 @@ fi
 
 if grep -q vncinstall /proc/cmdline; then
 	export QWS_DISPLAY="VNC:size=800x600:depth=32:0"
-	sleep 1
-	/sbin/ifup eth0
-	IP=`ifconfig eth0 | awk '/inet addr/ {split ($2,A,":"); print A[2]}'`
 	echo
-	echo Connect with your VNC client to: $IP
+	echo Connect with your VNC client
 	echo If you wish to disable VNC mode: remove 'vncinstall' from cmdline.txt
 	echo
 fi
