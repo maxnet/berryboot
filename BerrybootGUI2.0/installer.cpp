@@ -84,7 +84,7 @@ QByteArray Installer::bootoptions()
     f.open(f.ReadOnly);
     QByteArray cmdline = f.readAll();
     f.close();
-    return cmdline;
+    return cmdline.trimmed();
 }
 
 QByteArray Installer::bootParam(const QByteArray &name)
@@ -211,12 +211,15 @@ bool Installer::networkReady()
     return QFile::exists("/tmp/resolv.conf");
 }
 
-void Installer::umountSystemPartition()
+bool Installer::umountSystemPartition()
 {
     if ( QProcess::execute("umount /boot") != 0)
     {
         log_error(tr("Error unmounting system partition"));
+        return false;
     }
+
+    return true;
 }
 
 

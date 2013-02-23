@@ -73,14 +73,18 @@ void DriveFormatThread::run()
         }
         if (_initializedata)
         {
-            _i->umountSystemPartition();
+            if (!_i->umountSystemPartition())
+            {
+                emit error(tr("Error unmounting system partition."));
+                return;
+            }
         }
     }
 
     emit statusUpdate(tr("Zeroing partition table"));
     if (!zeroMbr())
     {
-        emit error(tr("Error zero'ing MBR"));
+        emit error(tr("Error zero'ing MBR/GPT. SD card may be broken or advertising wrong capacity."));
         return;
     }
 
@@ -156,15 +160,16 @@ void DriveFormatThread::run()
                 param += " mac_addr="+mac;
         }
 
-        QString qmap = _i->keyboardlayout();
+        QByteArray qmap = _i->keyboardlayout().toAscii();
         if (!qmap.isEmpty() && qmap != "us")
             param += " qmap="+qmap;
 
         QFile f("/boot/cmdline.txt");
         f.open(QIODevice::ReadWrite);
         QByteArray line = f.readAll().trimmed();
+        QByteArray cmdlinetxt = line+param;
         f.seek(0);
-        f.write(line+param);
+        f.write(cmdlinetxt);
         f.close();
 
         /* Data dev setting in uEnv.txt (for A10 devices) */
@@ -207,8 +212,25 @@ void DriveFormatThread::run()
         emit statusUpdate(tr("Finish writing to disk (sync)"));
         sync();
 
+        /* Drop page cache */
+        f.setFileName("/proc/sys/vm/drop_caches");
+        f.open(f.WriteOnly);
+        f.write("3\n");
+        f.close();
+
         emit statusUpdate(tr("Mounting boot partition again"));
         _i->mountSystemPartition();
+
+        /* Verify that cmdline.txt was written correctly */
+        f.setFileName("/boot/cmdline.txt");
+        f.open(f.ReadOnly);
+        QByteArray cmdlineread = f.readAll();
+        f.close();
+        if (cmdlineread != cmdlinetxt)
+        {
+            emit error(tr("SD card broken (writes do not persist)"));
+            return;
+        }
     }
 
     emit completed();
@@ -296,7 +318,24 @@ bool DriveFormatThread::zeroMbr()
     if (QFile::exists("/tmp/boot/mbr.bin"))
         return QProcess::execute("/bin/dd if=/tmp/boot/mbr.bin of=/dev/"+_dev) == 0;
     else
-        return QProcess::execute("/bin/dd count=1 bs=512 if=/dev/zero of=/dev/"+_dev) == 0;
+    {
+        /* First 512 bytes should be enough to zero out the MBR, but we zero out 8 kb to make sure we also erase any
+         * GPT primary header and get rid of any partitionless FAT headers.
+         * Also zero out the last 4 kb of the card to get rid of any secondary GPT header
+         *
+         * Using conv=fsync to make sure we get notified of write errors
+         */
+        QFile f("/sys/class/block/"+_dev+"/size");
+        f.open(f.ReadOnly);
+        qulonglong blocks = f.readAll().trimmed().toULongLong();
+        f.close();
+
+        if (blocks < 8)
+            return false;
+
+        return QProcess::execute("/bin/dd conv=fsync count=1 bs=8192 if=/dev/zero of=/dev/"+_dev) == 0
+            && QProcess::execute("/bin/dd conv=fsync count=8 bs=512 if=/dev/zero seek="+QString::number(blocks-8)+" of=/dev/"+_dev) == 0;
+    }
 }
 
 bool DriveFormatThread::installUbootSPL()

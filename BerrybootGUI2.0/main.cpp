@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSettings>
 #include <QFile>
 #include <QScreen>
+#include <QPixmap>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -58,6 +59,9 @@ int main(int argc, char *argv[])
     }
     else
         QWSServer::setBackground(Qt::black);
+
+    /* Uncomment to disable use of default Qt icon */
+    //a.setWindowIcon(QPixmap(1,1));
 #endif
     Installer i;
     i.enableCEC();

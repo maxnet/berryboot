@@ -48,7 +48,7 @@ public:
     int sizeofBootFilesInKB();
     void initializeDataPartition(const QString &dev);
     bool mountSystemPartition();
-    void umountSystemPartition();
+    bool umountSystemPartition();
     bool networkReady();
     QString datadev();
     double availableDiskSpace(const QString &path = "/mnt");

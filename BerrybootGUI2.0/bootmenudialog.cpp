@@ -453,8 +453,12 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
 
     if (getBootOptions().contains("fstype=btrfs"))
     {
-        mountoptions += ",compress=lzo";
+        mountoptions += ",compress=lzo -t btrfs";
         loadModule("btrfs");
+    }
+    else
+    {
+        mountoptions += " -t ext4";
     }
 
     if (QProcess::execute("mount "+mountoptions+" /dev/"+dev+" /mnt") != 0)
