@@ -141,15 +141,39 @@ void BootMenuDialog::initialize()
             success = mountDataPartition(datadev);
         }
     }
-    initializeA10();
 
     if (!success)
     {
         qpd.hide();
-        QMessageBox::critical(this, tr("No data found..."), tr("Cannot find my data partition :-("), QMessageBox::Ok);
-        reject();
-        return;
+
+        datadev = _i->bootParam("datadev");
+        if (_i->bootoptions().contains("luks"))
+            datadev = "mapper/luks";
+
+        if (QFile::exists("/dev/"+datadev) && !_i->bootoptions().contains("btrfs"))
+        {
+            if (QMessageBox::question(this, tr("Perform fsck?"),
+                tr("Error mounting data partition. Try to repair file system?"), QMessageBox::Yes, QMessageBox::No)
+                    == QMessageBox::Yes)
+            {
+                QProcess proc;
+                _i->switchConsole(5);
+                proc.start(QByteArray("openvt -c 5 -w /usr/sbin/fsck.ext4 -yf /dev/"+datadev));
+                QApplication::processEvents();
+                proc.waitForFinished();
+                success = mountDataPartition(datadev);
+                _i->switchConsole(1);
+            }
+        }
+
+        if (!success)
+        {
+            QMessageBox::critical(this, tr("No data found..."), tr("Cannot find my data partition :-("), QMessageBox::Ok);
+            reject();
+            return;
+        }
     }
+    initializeA10();
 
     if (QFile::exists(runonce_file))
     {
