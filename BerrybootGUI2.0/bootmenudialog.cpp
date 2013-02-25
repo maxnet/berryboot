@@ -399,25 +399,26 @@ void BootMenuDialog::initializeA10()
 {
     QByteArray cpuinfo = file_get_contents("/proc/cpuinfo");
 
-    if (!cpuinfo.contains("sun4i") && !cpuinfo.contains("sun5i"))
-        return; /* Not an Allwinner A10/A13, return */
+    if (cpuinfo.contains("sun4i") || cpuinfo.contains("sun5i"))
+    {
+        /* Some Allwinner A10/A13 drivers are not compiled into the kernel
+           load them as module
+           FIXME: driver should be loaded dynamically
+         */
+        /*loadModule("ump");
+        loadModule("mali");
+        loadModule("mali_drm");*/
+        // Wifi
+        loadModule("8192cu");
+    }
 
-    /* Some necessary drivers are not compiled into the kernel
-       load them as module
-       FIXME: driver should be loaded dynamically
-     */
-
-    // Video
-    //loadModule("lcd");
-    //loadModule("hdmi");
-    //loadModule("disp");
-    loadModule("ump");
-    loadModule("mali");
-    loadModule("mali_drm");
-    // Wifi
-    loadModule("8192cu");
-    // Popular external USB Ethernet device
-    loadModule("qf9700");
+    /* If using a static wifi configuration, start it now */
+    if (_i->bootParam("ipv4").endsWith("/wlan0"))
+    {
+        mountSystemPartition();
+        _i->startWifi();
+        umountSystemPartition();
+    }
 }
 
 

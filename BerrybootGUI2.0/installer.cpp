@@ -532,7 +532,12 @@ void Installer::startWifi()
 
     QProcess *p = new QProcess(this);
     connect(p, SIGNAL(finished(int)), this, SLOT(wifiStarted(int)));
-    p->start("/sbin/udhcpc -i wlan0");
+
+    if (bootParam("ipv4").endsWith("/wlan0"))
+        /* Using static configuration for wifi */
+        p->start("/sbin/ifup wlan0");
+    else
+        p->start("/sbin/udhcpc -i wlan0");
 }
 
 void Installer::wifiStarted(int rc)

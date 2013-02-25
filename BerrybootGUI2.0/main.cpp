@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFile>
 #include <QScreen>
 #include <QPixmap>
+#include <sys/stat.h>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -51,6 +52,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    bool staticWifi = false;
+
 #ifdef Q_WS_QWS
     if (QFile::exists(":/wallpaper.jpg"))
     {
@@ -101,21 +104,22 @@ int main(int argc, char *argv[])
 
 #ifdef Q_WS_QWS
     if (!ipv4.isEmpty() || QScreen::instance()->classId() == QScreen::VNCClass)
-        i.startNetworking();
+    {
+        if (ipv4.endsWith("/wlan0"))
+            staticWifi = true;
+        else
+            i.startNetworking();
+    }
 #endif
 
     BootMenuDialog menu(&i);
     if (menu.exec() == menu.Rejected)
     {
         /* If menu.exec() returns rejected exit, otherwise show OS installer */
-
-/*        if (system("killall getty") != 0) { qDebug() << "Error killing getty"; }
-        if (system("killall syslogd") != 0) {qDebug() << "Error killing syslogd"; }
-        if (system("killall klogd") != 0) {qDebug() << "Error killing klogd"; }*/
         return 0;
     }
 
-    if (QFile::exists("/boot/wpa_supplicant.conf"))
+    if (!staticWifi && QFile::exists("/boot/wpa_supplicant.conf"))
         i.startWifi();
 
     /* Check if installer is protected by password */

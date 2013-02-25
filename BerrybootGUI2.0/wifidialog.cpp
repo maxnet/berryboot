@@ -176,15 +176,22 @@ void WifiDialog::accept()
     while( QTime::currentTime() < sleepUntil )
         QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents, 100);
 
+    /* Connection is successful if we get a DHCP lease
+     * TODO: support static network configurations. Could ARP ping gateway to check connection */
     if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
     {
-        qpd.hide();
-        QMessageBox::critical(this, tr("Error connecting"), tr("Error connecting or obtaining IP-address. Check settings."), QMessageBox::Ok);
+        qpd.setLabelText(tr("Second try... Connecting to access point..."));
+        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+
+        if (QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
+        {
+            qpd.hide();
+            QMessageBox::critical(this, tr("Error connecting"), tr("Error connecting or obtaining IP-address. Check settings."), QMessageBox::Ok);
+            return;
+        }
     }
-    else
-    {
-        /* Everything ok. Copy wpa_supplicant.conf to boot partition */
-        QFile::copy("/etc/wpa_supplicant.conf", "/boot/wpa_supplicant.conf");
-        QDialog::accept();
-    }
+
+    /* Everything ok. Copy wpa_supplicant.conf to boot partition */
+    QFile::copy("/etc/wpa_supplicant.conf", "/boot/wpa_supplicant.conf");
+    QDialog::accept();
 }

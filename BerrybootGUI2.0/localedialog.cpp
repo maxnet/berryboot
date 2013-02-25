@@ -83,8 +83,12 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
     ui->fixMACbox->setHidden(!_i->hasDynamicMAC());
 
     ui->keybtestEdit->setFocus();
-    //ui->keybtestEdit->setHidden(true);
-    //ui->label_7->setHidden(true);
+
+    if (QFile::exists("/boot/wpa_supplicant.conf"))
+    {
+        ui->wifiRadio->setText(tr("Wifi (using existing wpa_supplicant.conf settings)"));
+        ui->wifiRadio->setChecked(true);
+    }
 }
 
 LocaleDialog::~LocaleDialog()
@@ -177,7 +181,7 @@ void LocaleDialog::done(int r)
         _gbd->hide();
 
     QDialog::done(r);
-    if (wifi)
+    if (wifi && !QFile::exists("/boot/wpa_supplicant.conf"))
     {
         WifiDialog wd(_i);
         wd.exec();
