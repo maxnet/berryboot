@@ -1,0 +1,40 @@
+#!/bin/sh
+#
+# BerryBoot chroot_image script
+#
+# Author: Floris Bos
+#
+
+IMAGE=$1
+IMAGEFILE="/mnt/images/$IMAGE"
+DATADIR="/mnt/data/$IMAGE"
+
+if [ "$IMAGE" != "" -a -e "$IMAGEFILE" ]; then
+	mkdir -p /squashfs /aufs $DATADIR
+	clear
+	echo Mounting image ${IMAGE}...
+	mount -o loop "$IMAGEFILE" /squashfs
+	echo Mounting RW data directory on top
+	mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
+	cd /aufs
+	mount -t devtmpfs none dev
+	mount -t sysfs none sys
+	mount -t proc none proc
+	echo Chrooting into ${IMAGE}... When done enter: exit
+	chroot .
+	echo Unmounting image ${IMAGE}...
+	umount dev
+	umount sys
+	umount proc
+	cd /
+	umount /aufs
+	umount /squashfs
+	echo Syncing...
+	sync
+	echo Done
+else
+	echo "Usage: chroot_image <filename of berryboot image>"
+	echo "Available images:"
+	ls /mnt/images
+fi
+
