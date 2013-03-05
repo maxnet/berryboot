@@ -565,6 +565,7 @@ void Installer::enableCEC()
     }
 }
 
+/* Key on TV remote pressed */
 void Installer::onKeyPress(int key)
 {
 #ifdef Q_WS_QWS
@@ -592,6 +593,8 @@ void Installer::onKeyPress(int key)
     QWSServer::sendKeyEvent(0, key, modifiers, true, false);
     // key release
     QWSServer::sendKeyEvent(0, key, modifiers, false, false);
+#else
+    qDebug() << "onKeyPress" << key;
 #endif
 }
 

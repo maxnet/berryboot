@@ -28,10 +28,6 @@
 #include "ceclistener.h"
 #include <QDebug>
 
-#ifdef Q_WS_QWS
-#define RASPBERRY_CEC_SUPPORT
-#endif
-
 #ifdef RASPBERRY_CEC_SUPPORT
 extern "C" {
 #include <interface/vmcs_host/vc_cecservice.h>
@@ -110,8 +106,6 @@ void CecListener::run()
 void CecListener::cec_callback(uint32_t reason, uint32_t param1, uint32_t, uint32_t, uint32_t)
 {
 #ifdef RASPBERRY_CEC_SUPPORT
-    //qDebug() << "CEC:" << reason << param1;
-
     if (CEC_CB_REASON(reason) == VC_CEC_BUTTON_PRESSED)
     {
         int c = 0;
@@ -150,7 +144,8 @@ void CecListener::cec_callback(uint32_t reason, uint32_t param1, uint32_t, uint3
         if (c)
             emit keyPress(c);
     }
+#else
+    qDebug() << "CEC:" << reason << param1;
 #endif
 }
-
 
