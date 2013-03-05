@@ -496,6 +496,14 @@ void Installer::loadDrivers()
 {
     prepareDrivers();
 
+    /* Tell the kernel to contact our /sbin/hotplug helper script,
+       if a module wants firmware to be loaded */
+    QFile f("/proc/sys/kernel/hotplug");
+    f.open(f.WriteOnly);
+    f.write("/sbin/hotplug\n");
+    f.close();
+
+    /* Load drivers for USB devices found */
     QString dirname  = "/sys/bus/usb/devices";
     QDir    dir(dirname);
     QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -505,7 +513,7 @@ void Installer::loadDrivers()
         QString modalias_file = dirname+"/"+dev+"/modalias";
         if (QFile::exists(modalias_file))
         {
-            QFile f(modalias_file);
+            f.setFileName(modalias_file);
             f.open(f.ReadOnly);
             QString module = f.readAll().trimmed();
             f.close();
