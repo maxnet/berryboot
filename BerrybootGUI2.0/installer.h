@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.1b"
+#define BERRYBOOT_VERSION  "v2.1c"
 
 class QSettings;
 
