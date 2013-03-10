@@ -26,7 +26,7 @@ output/host/usr/bin/mkimage -A arm -T ramdisk -C none -n "uInitrd" -d output/ima
 cd ..
 if [ ! -e output/start.elf ]; then
 	echo "Downloading Raspberry Pi firmware"
-	git clone --depth 1 -b next git://github.com/raspberrypi/firmware.git 
+	git clone --depth 1 git://github.com/raspberrypi/firmware.git
 	cp firmware/boot/start*.elf output
 	cp firmware/boot/fixup*.dat output
 	cp firmware/boot/bootcode.bin output
