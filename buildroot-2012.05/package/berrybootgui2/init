@@ -52,7 +52,7 @@ if [ "$IMAGE" != "" ]; then
 		. /squashfs/berryboot-init
 	fi
 
-	if [ -L /squashfs/lib -o -L /suashfs/sbin ]; then
+	if [ -L /squashfs/lib -o -L /squashfs/sbin ]; then
 		echo
 		echo Error: having a symlink for /lib and/or /sbin inside your image is not allowed!
 		echo This conflicts with the shared AUFS folders
