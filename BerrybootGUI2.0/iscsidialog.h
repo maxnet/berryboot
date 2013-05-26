@@ -48,6 +48,9 @@ protected:
     Installer *_i;
 
     virtual void accept();
+
+protected slots:
+    void onNetworkSettings();
 };
 
 #endif // ISCSIDIALOG_H

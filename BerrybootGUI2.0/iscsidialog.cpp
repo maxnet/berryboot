@@ -26,11 +26,13 @@
 
 #include "iscsidialog.h"
 #include "ui_iscsidialog.h"
+#include "networksettingsdialog.h"
 #include <QProgressDialog>
 #include <QApplication>
 #include <QFile>
 #include <QProcess>
 #include <QMessageBox>
+#include <QPushButton>
 
 iSCSIDialog::iSCSIDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
@@ -39,6 +41,10 @@ iSCSIDialog::iSCSIDialog(Installer *i, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->targetEdit->setFocus();
+
+    QPushButton *button = new QPushButton(QIcon(":/icons/server.png"), tr("Network settings"), this);
+    connect(button, SIGNAL(clicked()), this, SLOT(onNetworkSettings()));
+    ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
 }
 
 iSCSIDialog::~iSCSIDialog()
@@ -85,4 +91,10 @@ void iSCSIDialog::accept()
     f.close();
 
     QDialog::accept();
+}
+
+void iSCSIDialog::onNetworkSettings()
+{
+    NetworkSettingsDialog ns(_i, this);
+    ns.exec();
 }

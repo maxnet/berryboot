@@ -78,13 +78,23 @@ int Installer::sizeofBootFilesInKB()
     return proc.readAll().split('\t').first().toInt();
 }
 
+void Installer::setBootoptions(const QByteArray &newOptions)
+{
+    _bootoptions = newOptions;
+}
+
 QByteArray Installer::bootoptions()
 {
-    QFile f("/proc/cmdline");
-    f.open(f.ReadOnly);
-    QByteArray cmdline = f.readAll();
-    f.close();
-    return cmdline.trimmed();
+    if (_bootoptions.isEmpty())
+    {
+        QFile f("/proc/cmdline");
+        f.open(f.ReadOnly);
+        QByteArray cmdline = f.readAll();
+        f.close();
+        _bootoptions = cmdline.trimmed();
+    }
+
+    return _bootoptions;
 }
 
 QByteArray Installer::bootParam(const QByteArray &name)
@@ -107,7 +117,6 @@ QByteArray Installer::bootParam(const QByteArray &name)
         return line.mid(pos+searchForLen, end);
     }
 }
-
 
 QString Installer::datadev()
 {
@@ -686,3 +695,4 @@ void Installer::switchConsole(int ttynr)
         qDebug() << "Error opening tty";
     }
 }
+

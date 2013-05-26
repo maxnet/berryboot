@@ -89,6 +89,7 @@ public:
     void switchConsole(int ttynr);
     QByteArray bootoptions();
     QByteArray bootParam(const QByteArray &name);
+    void setBootoptions(const QByteArray &newOptions);
 
 public slots:
     void startNetworking();
@@ -97,6 +98,7 @@ protected:
     QString _keyboardlayout, _timezone;
     bool _disableOverscan, _fixMAC;
     QSettings *_settings;
+    QByteArray _bootoptions;
 
     void log_error(const QString &msg);
 

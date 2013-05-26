@@ -109,15 +109,19 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
 
     /* Disable OK button until an image is selected */
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
-    QPushButton *button = new QPushButton(QIcon(":/icons/server.png"), tr("Network settings"), this);
-    connect(button, SIGNAL(clicked()), this, SLOT(onProxySettings()));
-    ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
-    connect(_i, SIGNAL(networkInterfaceUp()), this, SLOT(networkUp()));
+
+    if (!QFile::exists("/boot/iscsi.sh"))
+    {
+        QPushButton *button = new QPushButton(QIcon(":/icons/server.png"), tr("Network settings"), this);
+        connect(button, SIGNAL(clicked()), this, SLOT(onProxySettings()));
+        ui->buttonBox->addButton(button, QDialogButtonBox::ActionRole);
+    }
 
     if (!_i->networkReady())
     {
         _qpd = new QProgressDialog(tr("Enabling network interface"), QString(), 0,0, this);
         _qpd->show();
+        connect(_i, SIGNAL(networkInterfaceUp()), this, SLOT(networkUp()));
         _i->startNetworking();
     }
     else

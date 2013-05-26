@@ -164,6 +164,7 @@ void NetworkSettingsDialog::accept()
         f.open(f.WriteOnly);
         f.write(line);
         f.close();
+        _i->setBootoptions(line);
 
         f.setFileName("/boot/uEnv.txt");
         f.open(f.ReadOnly);
