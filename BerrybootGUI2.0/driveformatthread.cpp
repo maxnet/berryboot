@@ -165,10 +165,11 @@ void DriveFormatThread::run()
             param += " qmap="+qmap;
 
         QFile f("/boot/cmdline.txt");
-        f.open(QIODevice::ReadWrite);
+        f.open(QIODevice::ReadOnly);
         QByteArray line = f.readAll().trimmed();
         QByteArray cmdlinetxt = line+param;
-        f.seek(0);
+        f.close();
+        f.open(QIODevice::WriteOnly);
         f.write(cmdlinetxt);
         f.close();
 
