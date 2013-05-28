@@ -340,7 +340,7 @@ void AddDialog::processData()
         {
             QString changelog = _ini->value("description").toString();
 
-            if (QMessageBox::question(this, tr("New BerryBoot version available"), changelog+"\n\n"+tr("Would you like to upgrade?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+            if (QMessageBox::question(this, tr("New BerryBoot version"), changelog+"\n\n"+tr("Would you like to upgrade?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
             {
                 if (_i->availableDiskSpace() < 50000000)
                     QMessageBox::critical(this, tr("Low disk space"), tr("Less than 50 MB available. Refusing to update"), QMessageBox::Close);

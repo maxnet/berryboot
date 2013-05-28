@@ -74,6 +74,8 @@ private slots:
 
     void on_actionRepair_file_system_triggered();
 
+    void on_actionRecover_triggered();
+
 protected:
     Ui::MainWindow *ui;
     Installer *_i;

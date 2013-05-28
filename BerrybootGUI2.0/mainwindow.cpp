@@ -312,6 +312,19 @@ void MainWindow::on_actionDelete_triggered()
     }
 }
 
+void MainWindow::on_actionRecover_triggered()
+{
+    if (QMessageBox::question(this, tr("Confirm deletion"), tr("Are you sure you want to restore the original image of '%1'\nTHIS WILL DELETE ALL YOUR FILES!").arg(ui->list->currentItem()->text() ), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+    {
+        QProgressDialog qpd(tr("Deleting changed files"),QString(),0,0,this);
+        qpd.show();
+        QApplication::processEvents();
+
+        _i->deleteUserChanges( ui->list->currentItem()->data(Qt::UserRole).toString() );
+        QMessageBox::information(this, tr("Restore complete"), tr("Restore completed successfully."), QMessageBox::Close);
+    }
+}
+
 void MainWindow::on_actionSet_default_triggered()
 {
     int row = ui->list->currentRow();
@@ -332,6 +345,7 @@ void MainWindow::setButtonsEnabled(bool enable)
     ui->actionDelete->setEnabled(enable);
     ui->actionSet_default->setEnabled(enable);
     ui->actionExport->setEnabled(enable);
+    ui->actionRecover->setEnabled(enable);
 }
 
 void MainWindow::on_actionExport_triggered()

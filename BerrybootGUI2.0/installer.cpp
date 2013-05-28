@@ -386,6 +386,16 @@ void Installer::deleteImage(const QString &name)
     }
 }
 
+void Installer::deleteUserChanges(const QString &name)
+{
+    if (name.isEmpty())
+        return;
+
+    QStringList param;
+    param << "-rf" << "/mnt/data/"+name;
+    QProcess::execute("rm", param); /* TODO write proper Qt function for recursive delete*/
+}
+
 void Installer::cloneImage(const QString &oldname, const QString &newname, bool clonedata)
 {
     QByteArray oldnamepath = QByteArray("/mnt/images/")+oldname.toAscii();

@@ -107,5 +107,6 @@
         <file>icons/encrypted.png</file>
         <file alias="wallpaper.jpg">icons/luminous_lines.jpg</file>
         <file>icons/help.png</file>
+        <file>icons/document_revert.png</file>
     </qresource>
 </RCC>

@@ -46,12 +46,13 @@
    </attribute>
    <addaction name="actionAdd_OS"/>
    <addaction name="actionEdit"/>
-   <addaction name="actionClone"/>
+   <addaction name="actionRecover"/>
    <addaction name="actionExport"/>
    <addaction name="actionDelete"/>
    <addaction name="actionSet_default"/>
    <addaction name="actionExit"/>
    <addaction name="actionAdvanced_configuration"/>
+   <addaction name="actionClone"/>
    <addaction name="actionConsole"/>
    <addaction name="actionSetPassword"/>
    <addaction name="actionRepair_file_system"/>
@@ -123,6 +124,9 @@
      <normaloff>:/icons/bookmark.png</normaloff>:/icons/bookmark.png</iconset>
    </property>
    <property name="text">
+    <string>Set default</string>
+   </property>
+   <property name="toolTip">
     <string>Make default</string>
    </property>
   </action>
@@ -156,7 +160,10 @@
      <normaloff>:/icons/configure.png</normaloff>:/icons/configure.png</iconset>
    </property>
    <property name="text">
-    <string>Advanced configuration</string>
+    <string>Edit config</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionConsole">
@@ -166,6 +173,9 @@
    </property>
    <property name="text">
     <string>Console</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionSetPassword">
@@ -184,6 +194,24 @@
    </property>
    <property name="text">
     <string>Repair file system</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionRecover">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/document_revert.png</normaloff>:/icons/document_revert.png</iconset>
+   </property>
+   <property name="text">
+    <string>Recover</string>
+   </property>
+   <property name="toolTip">
+    <string>Restore original image</string>
    </property>
   </action>
  </widget>
