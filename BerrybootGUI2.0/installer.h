@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.1c"
+#define BERRYBOOT_VERSION  "v2.1d"
 
 class QSettings;
 
@@ -75,6 +75,7 @@ public:
     void setDefaultImage(const QString &name);
     void renameImage(const QString &oldname, const QString &newName);
     void deleteImage(const QString &name);
+    void deleteUserChanges(const QString &name);
     void cloneImage(const QString &oldname, const QString &newName, bool clonedata);
 
     bool isSquashFSimage(QFile &f);
