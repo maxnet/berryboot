@@ -207,6 +207,12 @@ void BootMenuDialog::initialize()
             ui->list->setCurrentItem(item);
     }
 
+    if (_i->bootoptions().contains("sound"))
+    {
+        /* Set sound channel (HDMI/headphones) */
+        _i->loadSoundModule(_i->bootParam("sound"));
+    }
+
     if (!_i->bootoptions().contains("nobootmenutimeout"))
     {
         // start timer
@@ -552,7 +558,7 @@ void BootMenuDialog::startNetworking()
 
     QProcess *proc = new QProcess();
     connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-    proc->start("/sbin/ifup eth0");
+    proc->start("sh -c \"/sbin/ifup eth0 || /sbin/ifup eth0\"");
 }
 
 void BootMenuDialog::umountSystemPartition()

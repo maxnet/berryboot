@@ -57,6 +57,7 @@ public:
     void prepareDrivers();
     void loadDrivers();
     void loadCryptoModules();
+    void loadSoundModule(const QByteArray &channel);
     void startWifi();
 
     void setKeyboardLayout(const QString &layout);
@@ -67,6 +68,8 @@ public:
     bool disableOverscan() const;
     void setFixateMAC(bool fix);
     bool fixateMAC() const;
+    void setSound(const QByteArray &sound);
+    QByteArray sound() const;
 
     QMap<QString,QString> listInstalledImages();
     QString imageFilenameToFriendlyName(const QString &name);
@@ -99,7 +102,7 @@ protected:
     QString _keyboardlayout, _timezone;
     bool _disableOverscan, _fixMAC;
     QSettings *_settings;
-    QByteArray _bootoptions;
+    QByteArray _bootoptions, _sound;
 
     void log_error(const QString &msg);
 

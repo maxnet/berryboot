@@ -479,6 +479,16 @@ bool Installer::fixateMAC() const
     return _fixMAC;
 }
 
+void Installer::setSound(const QByteArray &sound)
+{
+    _sound = sound;
+}
+
+QByteArray Installer::sound() const
+{
+    return _sound;
+}
+
 bool Installer::isSquashFSimage(QFile &f)
 {
     quint32 magic = 0;
@@ -549,6 +559,25 @@ void Installer::loadCryptoModules()
     QProcess::execute("/sbin/modprobe aes");
     QProcess::execute("/sbin/modprobe sha256");
     QProcess::execute("/sbin/modprobe algif_hash");
+}
+
+void Installer::loadSoundModule(const QByteArray &channel)
+{
+    if (cpuinfo().contains("BCM2708"))
+    {
+        /* Raspberry Pi */
+        prepareDrivers();
+        QProcess::execute("/sbin/modprobe snd-bcm2835");
+
+        if (channel == "headphones")
+        {
+            QProcess::execute("amixer cset numid=3 1");
+        }
+        else if (channel == "hdmi")
+        {
+            QProcess::execute("amixer cset numid=3 2");
+        }
+    }
 }
 
 void Installer::startWifi()

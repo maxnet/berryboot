@@ -108,5 +108,6 @@
         <file alias="wallpaper.jpg">icons/luminous_lines.jpg</file>
         <file>icons/help.png</file>
         <file>icons/document_revert.png</file>
+        <file>icons/audio_headset.png</file>
     </qresource>
 </RCC>

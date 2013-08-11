@@ -175,6 +175,10 @@ void LocaleDialog::done(int r)
     _i->setTimezone(ui->timezoneCombo->currentText());
     _i->setDisableOverscan(ui->disableOverscanRadio->isChecked());
     _i->setFixateMAC(_i->hasDynamicMAC() && ui->fixMACbox->isChecked());
+    if (ui->audioHDMIradio->isChecked())
+        _i->setSound("hdmi");
+    else if (ui->audioHeadphonesRadio->isChecked())
+        _i->setSound("headphones");
     bool wifi = ui->wifiRadio->isChecked();
 
     if (_gbd)

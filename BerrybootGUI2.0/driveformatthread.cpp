@@ -160,6 +160,12 @@ void DriveFormatThread::run()
                 param += " mac_addr="+mac;
         }
 
+        /* Sound channel selection (hdmi audio/headphones) */
+        if (!_i->sound().isEmpty())
+        {
+            param += " sound="+_i->sound();
+        }
+
         QByteArray qmap = _i->keyboardlayout().toAscii();
         if (!qmap.isEmpty() && qmap != "us")
             param += " qmap="+qmap;
