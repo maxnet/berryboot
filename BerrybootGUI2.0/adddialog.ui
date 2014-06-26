@@ -56,21 +56,17 @@
     </widget>
    </item>
    <item row="2" column="0">
-    <widget class="QListWidget" name="osList">
+    <widget class="QTabWidget" name="groupTabs">
      <property name="font">
       <font>
-       <pointsize>16</pointsize>
+       <pointsize>12</pointsize>
       </font>
      </property>
-     <property name="iconSize">
-      <size>
-       <width>128</width>
-       <height>128</height>
-      </size>
-     </property>
-     <property name="spacing">
-      <number>2</number>
-     </property>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>Loading...</string>
+      </attribute>
+     </widget>
     </widget>
    </item>
   </layout>

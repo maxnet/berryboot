@@ -98,6 +98,7 @@ protected slots:
 private slots:
     void on_osList_currentRowChanged(int currentRow);
     void onProxySettings();
+    void on_groupTabs_currentChanged(int index);
 };
 
 #endif // ADDDIALOG_H

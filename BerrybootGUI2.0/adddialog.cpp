@@ -298,7 +298,7 @@ void AddDialog::processData()
     _ini = new QSettings("/tmp/distro.ini", QSettings::IniFormat, this);
     QStringList sections = _ini->childGroups();
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
-    ui->osList->clear();
+    ui->groupTabs->clear();
 
     foreach (QString section, sections)
     {
@@ -312,6 +312,7 @@ void AddDialog::processData()
             continue;
         }
 
+        QString group = _ini->value("group", "Others").toString();
         QString name = _ini->value("name").toString();
         QString description = _ini->value("description").toString();
         QString sizeinmb = QString::number(_ini->value("size", 0).toLongLong()/1024/1024);
@@ -328,7 +329,32 @@ void AddDialog::processData()
         }
         _ini->endGroup();
 
-        QListWidgetItem *item = new QListWidgetItem(icon, name+" ("+sizeinmb+" MB)\n"+description, ui->osList);
+        /* Search tab corresponding to group */
+        QListWidget *osList = NULL;
+
+        for (int i = 0; i < ui->groupTabs->count(); i++)
+        {
+            if (ui->groupTabs->tabText(i) == group)
+            {
+                osList = qobject_cast<QListWidget *>(ui->groupTabs->widget(i));
+                break;
+            }
+        }
+        if (!osList)
+        {
+            /* No tab for group yet, create one */
+            osList = new QListWidget();
+            osList->setIconSize(QSize(128,128));
+            osList->setSpacing(2);
+            QFont f = osList->font();
+            f.setPointSize(16);
+            osList->setFont(f);
+            connect(osList, SIGNAL(currentRowChanged(int)), this, SLOT(on_osList_currentRowChanged(int)));
+
+            ui->groupTabs->addTab(osList, group);
+        }
+
+        QListWidgetItem *item = new QListWidgetItem(icon, name+" ("+sizeinmb+" MB)\n"+description, osList);
         item->setData(Qt::UserRole, section);
     }
 
@@ -449,9 +475,19 @@ void AddDialog::on_osList_currentRowChanged(int)
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(true);
 }
 
+void AddDialog::on_groupTabs_currentChanged(int)
+{
+    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
+}
+
 void AddDialog::accept()
 {
-    QString imagesection = ui->osList->currentItem()->data(Qt::UserRole).toString();
+    if (ui->groupTabs->currentIndex() == -1)
+        return;
+    QListWidget *osList = qobject_cast<QListWidget *>(ui->groupTabs->currentWidget());
+    if (!osList->currentItem())
+        return;
+    QString imagesection = osList->currentItem()->data(Qt::UserRole).toString();
     _ini->beginGroup(imagesection);
     QString url  = _ini->value("url").toString();
     QString alternateUrl;
@@ -526,3 +562,4 @@ void AddDialog::setProxy()
     }
     s->endGroup();
 }
+
