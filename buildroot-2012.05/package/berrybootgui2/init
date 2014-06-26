@@ -45,14 +45,14 @@ if [ "$IMAGE" != "" ]; then
 	clear
 	echo Mounting image ${IMAGE}...
 	mount -o loop "/mnt/images/$IMAGE" /squashfs
+	cd /squashfs
 
-	if [ -e /squashfs/berryboot-init ]; then
+	if [ -e berryboot-init ]; then
 		echo Executing init script
-		cd /squashfs
-		. /squashfs/berryboot-init
+		. berryboot-init
 	fi
 
-	if [ -L /squashfs/lib -o -L /squashfs/sbin ]; then
+	if [ -L lib -o -L sbin ]; then
 		echo
 		echo Error: having a symlink for /lib and/or /sbin inside your image is not allowed!
 		echo This conflicts with the shared AUFS folders
@@ -60,23 +60,26 @@ if [ "$IMAGE" != "" ]; then
 		sleep 5
 	fi
 
-	if [ -e /squashfs/sbin/init ]; then
-		echo Mounting RW data directory on top
-		mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
-		cd /aufs
-		mount -o move /dev dev
-		mount -o move /sys sys
-		mount -o move /proc proc
-		echo Setting CPU governor to performance
-		echo "performance" > sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
-		echo Starting operating system ${IMAGE}...
-		exec switch_root . /sbin/init
-	else
-		echo
-		echo Error: /sbin/init not found inside $IMAGE
-		echo
-		sleep 5
-	fi
+	for initfile in sbin/init usr/lib/systemd/systemd init
+	do
+		if [ -e $initfile ]; then
+			echo Mounting RW data directory on top
+			mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
+			cd /aufs
+			mount -o move /dev dev
+			mount -o move /sys sys
+			mount -o move /proc proc
+			echo Setting CPU governor to performance
+			echo "performance" > sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+			echo Starting operating system ${IMAGE}...
+			exec switch_root . $initfile
+		fi
+	done
+
+	echo
+	echo Error: unable to locate or execute /sbin/init /usr/lib/systemd/systemd /init inside $IMAGE
+	echo
+	sleep 5
 fi
 
 # In case the user pressed cancel or something went wrong, show an emergency recovery shell
