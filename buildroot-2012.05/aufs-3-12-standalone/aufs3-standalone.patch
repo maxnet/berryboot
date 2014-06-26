@@ -1,0 +1,295 @@
+aufs3.12.x standalone patch
+
+diff --git a/fs/file_table.c b/fs/file_table.c
+index ccd02ee..710c617 100644
+--- a/fs/file_table.c
++++ b/fs/file_table.c
+@@ -37,6 +37,7 @@ struct files_stat_struct files_stat = {
+ };
+ 
+ DEFINE_LGLOCK(files_lglock);
++EXPORT_SYMBOL(files_lglock);
+ 
+ /* SLAB cache for file structures */
+ static struct kmem_cache *filp_cachep __read_mostly;
+@@ -410,6 +411,8 @@ void file_sb_list_del(struct file *file)
+ 	}
+ }
+ 
++EXPORT_SYMBOL(file_sb_list_del);
++
+ #ifdef CONFIG_SMP
+ 
+ /*
+diff --git a/fs/inode.c b/fs/inode.c
+index 9b24434..6ee4b0b 100644
+--- a/fs/inode.c
++++ b/fs/inode.c
+@@ -57,6 +57,7 @@ static struct hlist_head *inode_hashtable __read_mostly;
+ static __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_hash_lock);
+ 
+ __cacheline_aligned_in_smp DEFINE_SPINLOCK(inode_sb_list_lock);
++EXPORT_SYMBOL(inode_sb_list_lock);
+ 
+ /*
+  * Empty aops. Can be used for the cases where the user does not
+@@ -1485,6 +1486,7 @@ int update_time(struct inode *inode, struct timespec *time, int flags)
+ 	mark_inode_dirty_sync(inode);
+ 	return 0;
+ }
++EXPORT_SYMBOL(update_time);
+ 
+ /**
+  *	touch_atime	-	update the access time
+diff --git a/fs/namespace.c b/fs/namespace.c
+index da5c494..f40ae6f 100644
+--- a/fs/namespace.c
++++ b/fs/namespace.c
+@@ -54,6 +54,7 @@ EXPORT_SYMBOL_GPL(fs_kobj);
+  * tree or hash is modified or when a vfsmount structure is modified.
+  */
+ DEFINE_BRLOCK(vfsmount_lock);
++EXPORT_SYMBOL(vfsmount_lock);
+ 
+ static inline unsigned long hash(struct vfsmount *mnt, struct dentry *dentry)
+ {
+@@ -427,6 +428,7 @@ void __mnt_drop_write(struct vfsmount *mnt)
+ 	mnt_dec_writers(real_mount(mnt));
+ 	preempt_enable();
+ }
++EXPORT_SYMBOL_GPL(__mnt_drop_write);
+ 
+ /**
+  * mnt_drop_write - give up write access to a mount
+@@ -1480,6 +1482,7 @@ int iterate_mounts(int (*f)(struct vfsmount *, void *), void *arg,
+ 	}
+ 	return 0;
+ }
++EXPORT_SYMBOL(iterate_mounts);
+ 
+ static void cleanup_group_ids(struct mount *mnt, struct mount *end)
+ {
+diff --git a/fs/notify/group.c b/fs/notify/group.c
+index bd2625b..2ff2a0f 100644
+--- a/fs/notify/group.c
++++ b/fs/notify/group.c
+@@ -22,6 +22,7 @@
+ #include <linux/srcu.h>
+ #include <linux/rculist.h>
+ #include <linux/wait.h>
++#include <linux/module.h>
+ 
+ #include <linux/fsnotify_backend.h>
+ #include "fsnotify.h"
+@@ -65,6 +66,7 @@ void fsnotify_get_group(struct fsnotify_group *group)
+ {
+ 	atomic_inc(&group->refcnt);
+ }
++EXPORT_SYMBOL(fsnotify_get_group);
+ 
+ /*
+  * Drop a reference to a group.  Free it if it's through.
+@@ -74,6 +76,7 @@ void fsnotify_put_group(struct fsnotify_group *group)
+ 	if (atomic_dec_and_test(&group->refcnt))
+ 		fsnotify_final_destroy_group(group);
+ }
++EXPORT_SYMBOL(fsnotify_put_group);
+ 
+ /*
+  * Create a new fsnotify_group and hold a reference for the group returned.
+@@ -102,6 +105,7 @@ struct fsnotify_group *fsnotify_alloc_group(const struct fsnotify_ops *ops)
+ 
+ 	return group;
+ }
++EXPORT_SYMBOL(fsnotify_alloc_group);
+ 
+ int fsnotify_fasync(int fd, struct file *file, int on)
+ {
+diff --git a/fs/notify/mark.c b/fs/notify/mark.c
+index 923fe4a..176b435 100644
+--- a/fs/notify/mark.c
++++ b/fs/notify/mark.c
+@@ -109,6 +109,7 @@ void fsnotify_put_mark(struct fsnotify_mark *mark)
+ 		mark->free_mark(mark);
+ 	}
+ }
++EXPORT_SYMBOL(fsnotify_put_mark);
+ 
+ /*
+  * Any time a mark is getting freed we end up here.
+@@ -191,6 +192,7 @@ void fsnotify_destroy_mark(struct fsnotify_mark *mark,
+ 	fsnotify_destroy_mark_locked(mark, group);
+ 	mutex_unlock(&group->mark_mutex);
+ }
++EXPORT_SYMBOL(fsnotify_destroy_mark);
+ 
+ void fsnotify_set_mark_mask_locked(struct fsnotify_mark *mark, __u32 mask)
+ {
+@@ -275,6 +277,7 @@ err:
+ 
+ 	return ret;
+ }
++EXPORT_SYMBOL(fsnotify_add_mark);
+ 
+ int fsnotify_add_mark(struct fsnotify_mark *mark, struct fsnotify_group *group,
+ 		      struct inode *inode, struct vfsmount *mnt, int allow_dups)
+@@ -336,6 +339,7 @@ void fsnotify_init_mark(struct fsnotify_mark *mark,
+ 	atomic_set(&mark->refcnt, 1);
+ 	mark->free_mark = free_mark;
+ }
++EXPORT_SYMBOL(fsnotify_init_mark);
+ 
+ static int fsnotify_mark_destroy(void *ignored)
+ {
+diff --git a/fs/open.c b/fs/open.c
+index d420331..6dd3b03 100644
+--- a/fs/open.c
++++ b/fs/open.c
+@@ -61,6 +61,7 @@ int do_truncate(struct dentry *dentry, loff_t length, unsigned int time_attrs,
+ 	mutex_unlock(&dentry->d_inode->i_mutex);
+ 	return ret;
+ }
++EXPORT_SYMBOL(do_truncate);
+ 
+ long vfs_truncate(struct path *path, loff_t length)
+ {
+diff --git a/fs/splice.c b/fs/splice.c
+index e147583..789f6b2 100644
+--- a/fs/splice.c
++++ b/fs/splice.c
+@@ -1106,6 +1106,7 @@ long do_splice_from(struct pipe_inode_info *pipe, struct file *out,
+ 
+ 	return splice_write(pipe, out, ppos, len, flags);
+ }
++EXPORT_SYMBOL(do_splice_from);
+ 
+ /*
+  * Attempt to initiate a splice from a file to a pipe.
+@@ -1132,6 +1133,7 @@ long do_splice_to(struct file *in, loff_t *ppos,
+ 
+ 	return splice_read(in, ppos, pipe, len, flags);
+ }
++EXPORT_SYMBOL(do_splice_to);
+ 
+ /**
+  * splice_direct_to_actor - splices data directly between two non-pipes
+diff --git a/security/commoncap.c b/security/commoncap.c
+index b9d613e..ba3b618 100644
+--- a/security/commoncap.c
++++ b/security/commoncap.c
+@@ -988,9 +988,11 @@ int cap_mmap_addr(unsigned long addr)
+ 	}
+ 	return ret;
+ }
++EXPORT_SYMBOL(cap_mmap_addr);
+ 
+ int cap_mmap_file(struct file *file, unsigned long reqprot,
+ 		  unsigned long prot, unsigned long flags)
+ {
+ 	return 0;
+ }
++EXPORT_SYMBOL(cap_mmap_file);
+diff --git a/security/device_cgroup.c b/security/device_cgroup.c
+index c123628..efc6f68 100644
+--- a/security/device_cgroup.c
++++ b/security/device_cgroup.c
+@@ -7,6 +7,7 @@
+ #include <linux/device_cgroup.h>
+ #include <linux/cgroup.h>
+ #include <linux/ctype.h>
++#include <linux/export.h>
+ #include <linux/list.h>
+ #include <linux/uaccess.h>
+ #include <linux/seq_file.h>
+@@ -756,6 +757,7 @@ int __devcgroup_inode_permission(struct inode *inode, int mask)
+ 	return __devcgroup_check_permission(type, imajor(inode), iminor(inode),
+ 			access);
+ }
++EXPORT_SYMBOL(__devcgroup_inode_permission);
+ 
+ int devcgroup_inode_mknod(int mode, dev_t dev)
+ {
+diff --git a/security/security.c b/security/security.c
+index 4dc31f4..1f272bc 100644
+--- a/security/security.c
++++ b/security/security.c
+@@ -407,6 +407,7 @@ int security_path_rmdir(struct path *dir, struct dentry *dentry)
+ 		return 0;
+ 	return security_ops->path_rmdir(dir, dentry);
+ }
++EXPORT_SYMBOL(security_path_rmdir);
+ 
+ int security_path_unlink(struct path *dir, struct dentry *dentry)
+ {
+@@ -423,6 +424,7 @@ int security_path_symlink(struct path *dir, struct dentry *dentry,
+ 		return 0;
+ 	return security_ops->path_symlink(dir, dentry, old_name);
+ }
++EXPORT_SYMBOL(security_path_symlink);
+ 
+ int security_path_link(struct dentry *old_dentry, struct path *new_dir,
+ 		       struct dentry *new_dentry)
+@@ -431,6 +433,7 @@ int security_path_link(struct dentry *old_dentry, struct path *new_dir,
+ 		return 0;
+ 	return security_ops->path_link(old_dentry, new_dir, new_dentry);
+ }
++EXPORT_SYMBOL(security_path_link);
+ 
+ int security_path_rename(struct path *old_dir, struct dentry *old_dentry,
+ 			 struct path *new_dir, struct dentry *new_dentry)
+@@ -449,6 +452,7 @@ int security_path_truncate(struct path *path)
+ 		return 0;
+ 	return security_ops->path_truncate(path);
+ }
++EXPORT_SYMBOL(security_path_truncate);
+ 
+ int security_path_chmod(struct path *path, umode_t mode)
+ {
+@@ -456,6 +460,7 @@ int security_path_chmod(struct path *path, umode_t mode)
+ 		return 0;
+ 	return security_ops->path_chmod(path, mode);
+ }
++EXPORT_SYMBOL(security_path_chmod);
+ 
+ int security_path_chown(struct path *path, kuid_t uid, kgid_t gid)
+ {
+@@ -463,6 +468,7 @@ int security_path_chown(struct path *path, kuid_t uid, kgid_t gid)
+ 		return 0;
+ 	return security_ops->path_chown(path, uid, gid);
+ }
++EXPORT_SYMBOL(security_path_chown);
+ 
+ int security_path_chroot(struct path *path)
+ {
+@@ -539,6 +545,7 @@ int security_inode_readlink(struct dentry *dentry)
+ 		return 0;
+ 	return security_ops->inode_readlink(dentry);
+ }
++EXPORT_SYMBOL(security_inode_readlink);
+ 
+ int security_inode_follow_link(struct dentry *dentry, struct nameidata *nd)
+ {
+@@ -553,6 +560,7 @@ int security_inode_permission(struct inode *inode, int mask)
+ 		return 0;
+ 	return security_ops->inode_permission(inode, mask);
+ }
++EXPORT_SYMBOL(security_inode_permission);
+ 
+ int security_inode_setattr(struct dentry *dentry, struct iattr *attr)
+ {
+@@ -675,6 +683,7 @@ int security_file_permission(struct file *file, int mask)
+ 
+ 	return fsnotify_perm(file, mask);
+ }
++EXPORT_SYMBOL(security_file_permission);
+ 
+ int security_file_alloc(struct file *file)
+ {
+@@ -735,6 +744,7 @@ int security_mmap_file(struct file *file, unsigned long prot,
+ 		return ret;
+ 	return ima_file_mmap(file, prot);
+ }
++EXPORT_SYMBOL(security_mmap_file);
+ 
+ int security_mmap_addr(unsigned long addr)
+ {

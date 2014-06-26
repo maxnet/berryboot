@@ -1,0 +1,35 @@
+aufs3.12.x kbuild patch
+
+diff --git a/fs/Kconfig b/fs/Kconfig
+index c229f82..397b473 100644
+--- a/fs/Kconfig
++++ b/fs/Kconfig
+@@ -212,6 +212,7 @@ source "fs/ufs/Kconfig"
+ source "fs/exofs/Kconfig"
+ source "fs/f2fs/Kconfig"
+ source "fs/efivarfs/Kconfig"
++source "fs/aufs/Kconfig"
+ 
+ endif # MISC_FILESYSTEMS
+ 
+diff --git a/fs/Makefile b/fs/Makefile
+index 4fe6df3..4a57676 100644
+--- a/fs/Makefile
++++ b/fs/Makefile
+@@ -126,3 +126,4 @@ obj-y				+= exofs/ # Multiple modules
+ obj-$(CONFIG_CEPH_FS)		+= ceph/
+ obj-$(CONFIG_PSTORE)		+= pstore/
+ obj-$(CONFIG_EFIVAR_FS)		+= efivarfs/
++obj-$(CONFIG_AUFS_FS)           += aufs/
+diff --git a/include/uapi/linux/Kbuild b/include/uapi/linux/Kbuild
+index 115add2..ce305b3 100644
+--- a/include/uapi/linux/Kbuild
++++ b/include/uapi/linux/Kbuild
+@@ -56,6 +56,7 @@ header-y += atmppp.h
+ header-y += atmsap.h
+ header-y += atmsvc.h
+ header-y += audit.h
++header-y += aufs_type.h
+ header-y += auto_fs.h
+ header-y += auto_fs4.h
+ header-y += auxvec.h
