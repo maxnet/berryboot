@@ -477,7 +477,9 @@ void AddDialog::on_osList_currentRowChanged(int)
 
 void AddDialog::on_groupTabs_currentChanged(int)
 {
-    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
+    QListWidget *osList = qobject_cast<QListWidget *>(ui->groupTabs->currentWidget());
+    bool selected = osList && !osList->selectedItems().isEmpty();
+    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(selected);
 }
 
 void AddDialog::accept()
