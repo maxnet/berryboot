@@ -122,6 +122,10 @@ protected:
      */
     void reboot();
     /*
+     * Halt the system
+     */
+    void halt();
+    /*
      * Sleep miliseconds
      */
     void processEventSleep(int ms);
@@ -147,6 +151,7 @@ protected:
 protected slots:
     void on_bootButton_clicked();
     void on_settingsButton_clicked();
+    void on_poweroffButton_clicked();
     void on_list_activated(const QModelIndex &index);
     void autoBootTimeout();
     void stopCountdown();

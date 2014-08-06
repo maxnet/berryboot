@@ -19,7 +19,33 @@
    <string>BerryBoot menu</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="1" column="2">
+   <item row="0" column="0" colspan="4">
+    <widget class="QListWidget" name="list">
+     <property name="font">
+      <font>
+       <pointsize>16</pointsize>
+      </font>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QPushButton" name="bootButton">
+     <property name="text">
+      <string>Boot </string>
+     </property>
+     <property name="icon">
+      <iconset resource="icons.qrc">
+       <normaloff>:/icons/launch.png</normaloff>:/icons/launch.png</iconset>
+     </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="3">
     <widget class="QPushButton" name="settingsButton">
      <property name="text">
       <string>Edit menu</string>
@@ -36,7 +62,7 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="3" column="1">
     <spacer name="horizontalSpacer">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -49,29 +75,14 @@
      </property>
     </spacer>
    </item>
-   <item row="0" column="0" colspan="3">
-    <widget class="QListWidget" name="list">
-     <property name="font">
-      <font>
-       <pointsize>16</pointsize>
-      </font>
-     </property>
-    </widget>
-   </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="bootButton">
+   <item row="3" column="2">
+    <widget class="QPushButton" name="poweroffButton">
      <property name="text">
-      <string>Boot </string>
+      <string>Shut down</string>
      </property>
      <property name="icon">
       <iconset resource="icons.qrc">
-       <normaloff>:/icons/launch.png</normaloff>:/icons/launch.png</iconset>
-     </property>
-     <property name="iconSize">
-      <size>
-       <width>22</width>
-       <height>22</height>
-      </size>
+       <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
      </property>
     </widget>
    </item>

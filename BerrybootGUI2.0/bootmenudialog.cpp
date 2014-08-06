@@ -245,6 +245,10 @@ void BootMenuDialog::on_settingsButton_clicked()
     startInstaller();
 }
 
+void BootMenuDialog::on_poweroffButton_clicked()
+{
+    halt();
+}
 
 void BootMenuDialog::on_list_activated(const QModelIndex &)
 {
@@ -635,6 +639,13 @@ void BootMenuDialog::reboot()
     QProcess::execute("umount -ar");
     sync();
     ::reboot(RB_AUTOBOOT);
+}
+
+void BootMenuDialog::halt()
+{
+    QProcess::execute("umount -ar");
+    sync();
+    ::reboot(RB_POWER_OFF);
 }
 
 void BootMenuDialog::processEventSleep(int ms)
