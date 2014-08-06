@@ -47,6 +47,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QWSServer>
 #endif
 
+#define MINIMUM_TMPFS_SIZE 110
+
 #include <QMessageBox>
 
 int main(int argc, char *argv[])
@@ -68,6 +70,19 @@ int main(int argc, char *argv[])
 #endif
     Installer i;
     i.enableCEC();
+
+#ifdef MINIMUM_TMPFS_SIZE
+    /* Make sure we have enough tmpfs space */
+    double tmpfsSpace = i.availableDiskSpace("/") / 1024 / 1024;
+    qDebug() << "Available tmpfs space:" << tmpfsSpace << "MB";
+    if (tmpfsSpace < MINIMUM_TMPFS_SIZE)
+    {
+        QString resizeCMD = QString("mount -o remount,size=%1M /").arg(MINIMUM_TMPFS_SIZE);
+        QProcess::execute(resizeCMD);
+        tmpfsSpace = i.availableDiskSpace("/") / 1024 / 1024;
+        qDebug() << "Resized tmpfs space, now available:" << tmpfsSpace << "MB";
+    }
+#endif
 
     /* Handle static network configuration if set */
     QByteArray ipv4 = i.bootParam("ipv4");
