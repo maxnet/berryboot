@@ -84,6 +84,12 @@
       <iconset resource="icons.qrc">
        <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
      </property>
+     <property name="iconSize">
+      <size>
+       <width>22</width>
+       <height>22</height>
+      </size>
+     </property>
     </widget>
    </item>
   </layout>

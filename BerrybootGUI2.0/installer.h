@@ -58,6 +58,7 @@ public:
     void loadDrivers();
     void loadCryptoModules();
     void loadSoundModule(const QByteArray &channel);
+    void loadFilesystemModule(const QByteArray &fs);
     void startWifi();
 
     void setKeyboardLayout(const QString &layout);

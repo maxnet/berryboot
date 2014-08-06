@@ -79,11 +79,6 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
     if (_i->hasSettings())
     {
         setProxy();
-        QSettings *s = _i->settings();
-        s->beginGroup("repo");
-        if (s->contains("url"))
-            _reposerver = s->value("url").toByteArray();
-        s->endGroup();
     }
 
     /* Detect if we are running on a rPi or some ARMv7 device
@@ -167,10 +162,17 @@ void AddDialog::downloadList()
         QDir dir;
         dir.mkdir(_cachedir);
     }*/
-    _download = new DownloadThread(_reposerver);
-    connect(_download, SIGNAL(finished()), this, SLOT(downloadComplete()));
-    connect(_qpd, SIGNAL(canceled()), this, SLOT(cancelDownload()));
-    _download->start();
+    if (_reposerver.startsWith("cifs:") || _reposerver.startsWith("nfs:"))
+    {
+        generateListFromShare(_reposerver, _repouser, _repopass);
+    }
+    else
+    {
+        _download = new DownloadThread(_reposerver);
+        connect(_download, SIGNAL(finished()), this, SLOT(downloadComplete()));
+        connect(_qpd, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+        _download->start();
+    }
 }
 
 void AddDialog::downloadComplete()
@@ -234,7 +236,11 @@ bool AddDialog::verifyData()
         OpenSSL_add_all_algorithms();
         _openSSLinitialized = true;
     }
-    QByteArray data_uncompressed = qUncompress(_data);
+    QByteArray data_uncompressed;
+    if (_reposerver.endsWith(".smime"))
+        data_uncompressed = _data;
+    else
+        data_uncompressed = qUncompress(_data);
     QString certfilename;
 
     if (QFile::exists("/boot/berryboot.crt"))
@@ -349,7 +355,7 @@ void AddDialog::processData()
             QFont f = osList->font();
             f.setPointSize(16);
             osList->setFont(f);
-            connect(osList, SIGNAL(currentRowChanged(int)), this, SLOT(on_osList_currentRowChanged(int)));
+            connect(osList, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
 
             ui->groupTabs->addTab(osList, group);
         }
@@ -470,7 +476,7 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
     setEnabled(true);
 }
 
-void AddDialog::on_osList_currentRowChanged(int)
+void AddDialog::onSelectionChanged()
 {
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(true);
 }
@@ -489,35 +495,49 @@ void AddDialog::accept()
     QListWidget *osList = qobject_cast<QListWidget *>(ui->groupTabs->currentWidget());
     if (!osList->currentItem())
         return;
-    QString imagesection = osList->currentItem()->data(Qt::UserRole).toString();
-    _ini->beginGroup(imagesection);
-    QString url  = _ini->value("url").toString();
-    QString alternateUrl;
-    QString sha1 = _ini->value("sha1").toString();
-    QString filename = _ini->value("name").toString() + ".img" + _ini->value("memsplit", "").toString();
-    filename.replace(" ", "_");
-    double size = _ini->value("size").toDouble() + 10000000; /* Add 10 MB extra for overhead */
-    double availablespace = _i->availableDiskSpace();
 
-    /* If mirrors are available, select a random one */
-    QStringList mirrors;
-    QStringList keys = _ini->childKeys();
-    foreach (QString key, keys)
+    QString url, alternateUrl, sha1, filename;
+    double size, availablespace = _i->availableDiskSpace();
+
+    if (_ini)
     {
-        if (key.startsWith("mirror"))
+        QString imagesection = osList->currentItem()->data(Qt::UserRole).toString();
+        _ini->beginGroup(imagesection);
+        url  = _ini->value("url").toString();
+        sha1 = _ini->value("sha1").toString();
+        filename = _ini->value("name").toString() + ".img" + _ini->value("memsplit", "").toString();
+        filename.replace(" ", "_");
+        size = _ini->value("size").toDouble() + 10000000; /* Add 10 MB extra for overhead */
+
+        /* If mirrors are available, select a random one */
+        QStringList mirrors;
+        QStringList keys = _ini->childKeys();
+        foreach (QString key, keys)
         {
-            mirrors.append(_ini->value(key).toString());
+            if (key.startsWith("mirror"))
+            {
+                mirrors.append(_ini->value(key).toString());
+            }
         }
-    }
-    if (!mirrors.isEmpty())
-    {
-        /* Try a random mirror first, and the main site if downloading from mirror fails */
-        alternateUrl = url;
-        qsrand(QTime::currentTime().msec());
-        url = mirrors.at(qrand() % mirrors.count());
-    }
+        if (!mirrors.isEmpty())
+        {
+            /* Try a random mirror first, and the main site if downloading from mirror fails */
+            alternateUrl = url;
+            qsrand(QTime::currentTime().msec());
+            url = mirrors.at(qrand() % mirrors.count());
+        }
 
-    _ini->endGroup();
+        _ini->endGroup();
+    }
+    else
+    {
+        /* File on network share */
+        filename = osList->currentItem()->data(Qt::UserRole).toString();
+        QFileInfo fi(filename);
+        size = fi.size() + 10000000; /* Add 10 MB extra for overhead */
+        url = "file://"+filename;
+        filename = fi.fileName();
+    }
 
     if (size > availablespace)
     {
@@ -563,5 +583,102 @@ void AddDialog::setProxy()
         DownloadThread::setProxy("");
     }
     s->endGroup();
+
+    s->beginGroup("repo");
+    if (s->contains("url"))
+    {
+        _reposerver = s->value("url").toByteArray();
+        _repouser = s->value("user").toByteArray();
+        _repopass = QByteArray::fromBase64(s->value("password").toByteArray());
+    }
+    else
+    {
+        _reposerver = DEFAULT_REPO_SERVER;
+        _repouser = _repopass = "";
+    }
+    s->endGroup();
 }
 
+void AddDialog::generateListFromShare(const QByteArray &url, QByteArray username, QByteArray password)
+{
+    QApplication::processEvents();
+    QByteArray shareType, share;
+
+    if (url.startsWith("cifs:"))
+    {
+        shareType = "cifs";
+        share = url.mid(5);
+        if (username.isEmpty())
+            username = "guest";
+    }
+    else if (url.startsWith("nfs:"))
+    {
+        shareType = "nfs";
+        share = url.mid(4);
+    }
+    else
+    {
+        return;
+    }
+
+    _i->loadFilesystemModule(shareType);
+
+    QDir dir("/share");
+    if (dir.exists())
+    {
+        QProcess::execute("umount /share");
+    }
+    else
+    {
+        dir.mkdir("/share");
+    }
+
+    QStringList args;
+    args << "-t" << shareType << share << "/share";
+
+    if (!username.isEmpty())
+    {
+        args << "-o" << "username="+username;
+        if (!password.isEmpty())
+            args << "-o" << "password="+password;
+    }
+    if (QProcess::execute("mount", args) != 0)
+    {
+        dir.rmdir("/share");
+        QMessageBox::critical(this, tr("Mount error"), tr("Error mounting network share %1").arg(QString(share)), QMessageBox::Ok);
+    }
+    else
+    {
+        _ini = NULL;
+        ui->groupTabs->clear();
+
+        /* Create tab */
+        QListWidget *osList = new QListWidget();
+        osList->setIconSize(QSize(128,128));
+        osList->setSpacing(2);
+        QFont f = osList->font();
+        f.setPointSize(16);
+        osList->setFont(f);
+        connect(osList, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
+        ui->groupTabs->addTab(osList, tr("Network share"));
+
+        QStringList namefilters;
+        namefilters << "*.img*";
+
+        QFileInfoList list = dir.entryInfoList(namefilters, QDir::Files, QDir::Name);
+        foreach (QFileInfo fi, list)
+        {
+            QString name = fi.fileName().replace('_',' ');
+            QString sizeinmb = QString::number(fi.size()/1024/1024);
+            QListWidgetItem *item = new QListWidgetItem(name+" ("+sizeinmb+" MB)", osList);
+            item->setData(Qt::UserRole, fi.absoluteFilePath() );
+        }
+    }
+
+    if (_qpd)
+    {
+        _qpd->hide();
+        _qpd->deleteLater();
+        _qpd = NULL;
+    }
+}

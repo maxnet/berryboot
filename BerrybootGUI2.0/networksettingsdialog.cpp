@@ -61,7 +61,14 @@ NetworkSettingsDialog::NetworkSettingsDialog(Installer *i, QWidget *parent) :
     ui->proxyhostEdit->setText(s->value("hostname").toString());
     ui->proxyportEdit->setText(QString::number(s->value("port", 8080).toInt()));
     ui->proxyuserEdit->setText(s->value("user").toString());
-    ui->proxypassEdit->setText(s->value("password").toString());
+    ui->proxypassEdit->setText(QByteArray::fromBase64(s->value("password").toByteArray()));
+    s->endGroup();
+
+    /* Repo tab */
+    s->beginGroup("repo");
+    ui->repoEdit->setText(s->value("url").toString());
+    ui->repoUserEdit->setText(s->value("user").toString());
+    ui->repoPassEdit->setText(QByteArray::fromBase64(s->value("password").toByteArray()));
     s->endGroup();
 }
 
@@ -195,6 +202,22 @@ void NetworkSettingsDialog::accept()
         s->setValue("user", ui->proxyuserEdit->text());
         s->setValue("password", ui->proxypassEdit->text().toAscii().toBase64());
     }
+
+    s->endGroup();
+
+    s->beginGroup("repo");
+    if (ui->repoEdit->text().isEmpty())
+        s->remove("url");
+    else
+        s->setValue("url", ui->repoEdit->text() );
+    if (ui->repoUserEdit->text().isEmpty())
+        s->remove("user");
+    else
+        s->setValue("user", ui->repoUserEdit->text() );
+    if (ui->repoPassEdit->text().isEmpty())
+        s->remove("password");
+    else
+        s->setValue("password", ui->repoPassEdit->text().toAscii().toBase64());
 
     s->endGroup();
     s->sync();

@@ -580,6 +580,21 @@ void Installer::loadSoundModule(const QByteArray &channel)
     }
 }
 
+void Installer::loadFilesystemModule(const QByteArray &fs)
+{
+    /* Only load module if fs is not already supported */
+    QFile f("/proc/filesystems");
+    f.open(f.ReadOnly);
+    QByteArray fsSupported = f.readAll();
+    f.close();
+
+    if (!fsSupported.contains(fs))
+    {
+        prepareDrivers();
+        QProcess::execute("/sbin/modprobe "+fs);
+    }
+}
+
 void Installer::startWifi()
 {
     loadDrivers();

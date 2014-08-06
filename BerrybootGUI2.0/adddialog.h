@@ -54,7 +54,7 @@ protected:
     Installer *_i;
     QString _cachedir, _device, _kernelversion;
     QSettings *_ini;
-    QByteArray _reposerver;
+    QByteArray _reposerver, _repouser, _repopass;
     DownloadThread *_download;
 
     static bool _openSSLinitialized;
@@ -69,6 +69,11 @@ protected:
      * Parse distribution list, and fill GUI listwidget
      */
     void processData();
+
+    /*
+     * Generate the list from files in a CIFS or NFS network share
+     */
+    void generateListFromShare(const QByteArray &share, QByteArray username = "", QByteArray password = "");
 
     /*
      * Return SHA1 hash of file
@@ -96,7 +101,7 @@ protected slots:
     void cancelDownload();
 
 private slots:
-    void on_osList_currentRowChanged(int currentRow);
+    void onSelectionChanged();
     void onProxySettings();
     void on_groupTabs_currentChanged(int index);
 };
