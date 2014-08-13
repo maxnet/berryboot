@@ -266,9 +266,18 @@ void NetworkSettingsDialog::_setCurrentNetInformation()
     ifaces.sort();
     ui->interfaceCombo->addItems(ifaces);
 
-    if (ui->interfaceCombo->currentIndex() == -1 && ui->interfaceCombo->count())
-        ui->interfaceCombo->setCurrentIndex(0);
-    ui->gwEdit->setText(getDefaultGateway());
+    QString defaultInterface;
+    ui->gwEdit->setText(getDefaultGateway(defaultInterface));
+
+    if (ui->interfaceCombo->count())
+    {
+        int ifIdx = ui->interfaceCombo->findText(defaultInterface);
+
+        if (ifIdx != -1)
+            ui->interfaceCombo->setCurrentIndex(ifIdx);
+        else
+            ui->interfaceCombo->setCurrentIndex(0);
+    }
 
     if (currentIPparam().isEmpty())
         ui->dhcpRadio->setChecked(true);
@@ -276,7 +285,7 @@ void NetworkSettingsDialog::_setCurrentNetInformation()
         ui->staticRadio->setChecked(true);
 }
 
-QString NetworkSettingsDialog::getDefaultGateway()
+QString NetworkSettingsDialog::getDefaultGateway(QString &interface)
 {
     /* Probably better to use ioctl()s but this will do for now */
 
@@ -296,6 +305,7 @@ QString NetworkSettingsDialog::getDefaultGateway()
         if (parts.count() > 10 && parts[1] == "00000000" && parts[2].length() == 8) /* default IPv4 gateway */
         {
             QByteArray gwhex = parts[2];
+            interface = parts[0];
             return QString::number(gwhex.mid(6,2).toInt(NULL, 16))+"."+
                    QString::number(gwhex.mid(4,2).toInt(NULL, 16))+"."+
                    QString::number(gwhex.mid(2,2).toInt(NULL, 16))+"."+

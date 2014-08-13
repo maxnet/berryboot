@@ -50,7 +50,7 @@ protected:
     Ui::NetworkSettingsDialog *ui;
     Installer *_i;
     void _setCurrentNetInformation();
-    QString getDefaultGateway();
+    QString getDefaultGateway(QString &interface);
     QByteArray currentIPparam();
 
 private slots:
