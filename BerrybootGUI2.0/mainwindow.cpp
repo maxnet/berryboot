@@ -610,34 +610,36 @@ void MainWindow::on_actionSetPassword_triggered()
 
 void MainWindow::on_actionRepair_file_system_triggered()
 {
-    QFile f("/proc/cmdline");
-    f.open(f.ReadOnly);
-    QByteArray options = f.readAll();
-    f.close();
+    QString datadev, cmd, cmd2;
 
-    QByteArray datadev, cmd;
-
-    if (options.contains("luks"))
+    if (_i->bootoptions().contains("luks"))
         datadev = "/dev/mapper/luks";
     else
         datadev = "/dev/"+_i->datadev().toAscii();
 
-    if (options.contains("btrfs"))
+    /*if (_i->bootoptions().contains("btrfs"))
         cmd = "fsck.btrfs -y "+datadev;
-    else
-        cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
+    else */
 
-    if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1' on tty5?").arg(QString(cmd)), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+    cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
+    cmd2 = "/sbin/dosfsck -a /dev/mmcblk0p1";
+
+    if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1'\n'%2'\n on tty5?").arg(cmd, cmd2), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
     {
+        _i->umountSystemPartition();
         QProcess::execute("umount "+datadev);
 
         QProcess proc;
         _i->switchConsole(5);
-        proc.start(QByteArray("openvt -c 5 -w "+cmd));
+        proc.start("openvt -c 5 -w "+cmd);
         QApplication::processEvents();
         proc.waitForFinished();
 
-        QProcess::execute("mount "+datadev+" /mnt");
+        proc.start("openvt -c 5 -w "+cmd2);
+        proc.waitForFinished();
+
+        _i->mountSystemPartition();
+        QProcess::execute("mount -t ext4 "+datadev+" /mnt");
         _i->switchConsole(1);
     }
 }
