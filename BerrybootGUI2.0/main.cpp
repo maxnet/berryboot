@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "logindialog.h"
 #include "wifidialog.h"
 #include "bootmenudialog.h"
+#include "networksettingsdialog.h"
 #include <QDebug>
 #include <QStyle>
 #include <QDesktopWidget>
@@ -176,6 +177,11 @@ int main(int argc, char *argv[])
         ld.exec();
         DiskDialog w(&i);
         w.exec();
+        if ( i.bootoptions().contains("netconfig"))
+        {
+            NetworkSettingsDialog nd(&i);
+            nd.exec();
+        }
         AddDialog a(&i);
         a.exec();
     }
