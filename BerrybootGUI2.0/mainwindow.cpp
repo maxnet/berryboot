@@ -269,8 +269,8 @@ void MainWindow::on_actionEdit_triggered()
             }
 
             _i->renameImage(currentname, newname);
-            setButtonsEnabled(false);
             populate();
+            setButtonsEnabled(false);
         }
     }
 }
@@ -293,8 +293,8 @@ void MainWindow::on_actionClone_triggered()
 
         _i->cloneImage(currentname, newname, cd.cloneData());
 
-        setButtonsEnabled(false);
         populate();
+        setButtonsEnabled(false);
     }
 }
 
@@ -307,8 +307,8 @@ void MainWindow::on_actionDelete_triggered()
         QApplication::processEvents();
 
         _i->deleteImage( ui->list->currentItem()->data(Qt::UserRole).toString() );
-        setButtonsEnabled(false);
         populate();
+        setButtonsEnabled(false);
     }
 }
 
