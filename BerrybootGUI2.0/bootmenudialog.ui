@@ -45,7 +45,7 @@
      </property>
     </widget>
    </item>
-   <item row="3" column="3">
+   <item row="3" column="2">
     <widget class="QPushButton" name="settingsButton">
      <property name="text">
       <string>Edit menu</string>
@@ -75,10 +75,10 @@
      </property>
     </spacer>
    </item>
-   <item row="3" column="2">
+   <item row="3" column="3">
     <widget class="QPushButton" name="poweroffButton">
      <property name="text">
-      <string>Shut down</string>
+      <string/>
      </property>
      <property name="icon">
       <iconset resource="icons.qrc">
