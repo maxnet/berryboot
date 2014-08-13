@@ -63,6 +63,7 @@ BootMenuDialog::BootMenuDialog(Installer *i, QWidget *parent) :
 
 BootMenuDialog::~BootMenuDialog()
 {
+    stopSSHserver();
     delete ui;
 }
 
@@ -82,6 +83,8 @@ void BootMenuDialog::initialize()
 
     if (!qmap.isEmpty())
         _i->setKeyboardLayout(qmap);
+
+    startSSHserverIfEnabled();
 
     if (!datadev.isEmpty())
     {
@@ -668,12 +671,18 @@ void BootMenuDialog::askLuksPassword(const QString &datadev)
     loadModule("sha256");
     loadModule("algif_hash");
 
-    /* For added security let cryptsetup ask for password in text console.
-     * Can remain in memory if we do it in the GUI
+    /* For added security let cryptsetup ask for password in a text console,
+     * as it can remain in memory if we do it in the GUI.
+     * Also allow it to be entered through SSH if enabled.
      */
     QProcess proc;
-    _i->switchConsole(5);
+    ::mkdir("/etc/profile.d", 0755);
+    QFile f("/etc/profile.d/ssh-luks-prompt.sh");
+    f.open(f.WriteOnly);
+    f.write("/sbin/cryptsetup.static luksOpen /dev/"+datadev.toAscii()+" luks && killall openvt");
+    f.close();
 
+    _i->switchConsole(5);
     while (!QFile::exists("/dev/mapper/luks"))
     {
         proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksOpen /dev/")+datadev+" luks");
@@ -682,4 +691,43 @@ void BootMenuDialog::askLuksPassword(const QString &datadev)
     }
 
     _i->switchConsole(1);
+    QFile::remove("/etc/profile.d/ssh-luks-prompt.sh");
+}
+
+void BootMenuDialog::startSSHserverIfEnabled()
+{
+    QByteArray sshkey = _i->bootParam("ssh_authorized_key");
+    if (sshkey.isEmpty())
+        return;
+
+    /* Write authorized_key provided through boot parameter to tmpfs */
+    ::chmod("/root", 0700);
+    ::mkdir("/root/.ssh", 0700);
+    QFile f("/root/.ssh/authorized_keys");
+    f.open(f.WriteOnly);
+    f.write(sshkey);
+    f.close();
+
+    /* Let dropbear store the host's public key on the FAT partition */
+    mountSystemPartition();
+
+    QProgressDialog qpd(tr("Starting SSH server\nCan take a while on first run..."), QString(), 0, 0, this);
+    qpd.show();
+    QApplication::processEvents();
+
+    QFile::link("/boot", "/etc/dropbear");
+    ::mkdir("/dev/pts", 0755);
+    QProcess::execute("mount -t devpts devpts /dev/pts");
+    QProcess::execute("/etc/init.d/S50dropbear start");
+
+    umountSystemPartition();
+}
+
+void BootMenuDialog::stopSSHserver()
+{
+    if (!_i->bootParam("ssh_authorized_key").isEmpty())
+    {
+        QProcess::execute("/etc/init.d/S50dropbear stop");
+        QProcess::execute("umount /dev/pts");
+    }
 }

@@ -4,7 +4,8 @@
 #
 #############################################################
 
-DROPBEAR_VERSION = 2012.55
+DROPBEAR_VERSION = 2014.65
+DROPBEAR_SOURCE = dropbear-$(DROPBEAR_VERSION).tar.bz2
 DROPBEAR_SITE = http://matt.ucc.asn.au/dropbear/releases
 DROPBEAR_TARGET_BINS = dbclient dropbearkey dropbearconvert scp ssh
 DROPBEAR_MAKE =	$(MAKE) MULTI=1 SCPPROGRESS=1 \
@@ -24,6 +25,10 @@ define DROPBEAR_DISABLE_REVERSE_DNS
 	$(SED) 's,^#define DO_HOST_LOOKUP.*,/* #define DO_HOST_LOOKUP */,' $(@D)/options.h
 endef
 
+define DROPBEAR_DISABLE_PASSWORD_AUTH
+	$(SED) 's,^#define ENABLE_SVR_PASSWORD_AUTH.*,/* #define ENABLE_SVR_PASSWORD_AUTH */,' $(@D)/options.h
+endef
+
 define DROPBEAR_BUILD_SMALL
 	echo "#define DROPBEAR_SMALL_CODE" >>$(@D)/options.h
 	echo "#define NO_FAST_EXPTMOD" >>$(@D)/options.h
@@ -35,6 +40,10 @@ endef
 
 ifeq ($(BR2_PACKAGE_DROPBEAR_DISABLE_REVERSEDNS),y)
 DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_DISABLE_REVERSE_DNS
+endif
+
+ifeq ($(BR2_PACKAGE_DROPBEAR_DISABLE_PASSWORD_AUTH),y)
+DROPBEAR_POST_EXTRACT_HOOKS += DROPBEAR_DISABLE_PASSWORD_AUTH
 endif
 
 ifeq ($(BR2_PACKAGE_DROPBEAR_SMALL),y)

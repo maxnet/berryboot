@@ -111,7 +111,18 @@ QByteArray Installer::bootParam(const QByteArray &name)
     }
     else
     {
-        int end = line.indexOf(' ', pos+searchForLen);
+        int end;
+
+        if (line.length() > pos+searchForLen && line.at(pos+searchForLen) == '"')
+        {
+            /* Value between quotes */
+            searchForLen++;
+            end = line.indexOf('"', pos+searchForLen);
+        }
+        else
+        {
+            end = line.indexOf(' ', pos+searchForLen);
+        }
         if (end != -1)
             end = end-pos-searchForLen;
         return line.mid(pos+searchForLen, end);

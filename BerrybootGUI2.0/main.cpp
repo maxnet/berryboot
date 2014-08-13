@@ -118,7 +118,7 @@ int main(int argc, char *argv[])
     }
 
 #ifdef Q_WS_QWS
-    if (!ipv4.isEmpty() || QScreen::instance()->classId() == QScreen::VNCClass)
+    if (!ipv4.isEmpty() || QScreen::instance()->classId() == QScreen::VNCClass || !i.bootParam("ssh_authorized_key").isEmpty())
     {
         if (ipv4.endsWith("/wlan0"))
             staticWifi = true;

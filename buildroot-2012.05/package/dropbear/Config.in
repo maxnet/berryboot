@@ -14,6 +14,13 @@ config BR2_PACKAGE_DROPBEAR_DISABLE_REVERSEDNS
 	  on systems without working DNS, as connections otherwise
 	  stall until DNS times out.
 
+config BR2_PACKAGE_DROPBEAR_DISABLE_PASSWORD_AUTH
+	bool "disable password authentication"
+	depends on BR2_PACKAGE_DROPBEAR
+	help
+	  Disable password authentication. For deployments in which
+	  only public key authentication is acceptable.
+
 config BR2_PACKAGE_DROPBEAR_SMALL
 	bool "optimize for size"
 	default y

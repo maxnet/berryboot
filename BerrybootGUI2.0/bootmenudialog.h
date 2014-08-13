@@ -142,6 +142,14 @@ protected:
      * Ask for password in text console
      */
     void askLuksPassword(const QString &datadev);
+    /*
+     * Start SSH daemon (if ssh_authorized_key boot parameter is present)
+     */
+    void startSSHserverIfEnabled();
+    /*
+     * Stop SSH daemon
+     */
+    void stopSSHserver();
 
     Ui::BootMenuDialog *ui;
     Installer *_i;
