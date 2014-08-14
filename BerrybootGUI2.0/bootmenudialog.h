@@ -30,6 +30,7 @@
 #include <QDialog>
 #include <QTimer>
 #include <QModelIndex>
+#include <QProcess>
 
 namespace Ui {
 class BootMenuDialog;
@@ -150,11 +151,16 @@ protected:
      * Stop SSH daemon
      */
     void stopSSHserver();
+    /*
+     * Wait for remount RW
+     */
+    void waitForRemountRW();
 
     Ui::BootMenuDialog *ui;
     Installer *_i;
     int _countdown;
     QTimer _countdownTimer;
+    QProcess _remountproc;
 
 protected slots:
     void on_bootButton_clicked();

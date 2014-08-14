@@ -180,6 +180,7 @@ void BootMenuDialog::initialize()
 
     if (QFile::exists(runonce_file))
     {
+        waitForRemountRW();
         qpd.setLabelText(tr("Removing runonce file"));
         QApplication::processEvents();
         QByteArray runonce = file_get_contents(runonce_file);
@@ -298,6 +299,7 @@ void BootMenuDialog::bootImage(const QString &name)
 {
     int currentmemsplit = currentMemsplit();
     int needsmemsplit   = imageNeedsMemsplit(name);
+    waitForRemountRW();
 
     if (_i->isMemsplitHandlingEnabled() && needsmemsplit && needsmemsplit != currentmemsplit)
     {
@@ -347,6 +349,7 @@ void BootMenuDialog::startInstaller()
 {
     startNetworking();
     mountSystemPartition();
+    waitForRemountRW();
     accept();
 }
 
@@ -460,7 +463,7 @@ QByteArray BootMenuDialog::getBootOptions()
 
 bool BootMenuDialog::mountDataPartition(const QString &dev)
 {
-    QString mountoptions = "-o noatime";
+    QString mountoptions = "-o noatime,ro";
 
     if (!QFile::exists("/mnt"))
         mkdir("/mnt", 0755);
@@ -475,8 +478,13 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
         mountoptions += " -t ext4";
     }
 
-    if (QProcess::execute("mount "+mountoptions+" /dev/"+dev+" /mnt") != 0)
+    /* Try mounting read-only first.
+     * If that fails try mounting read-write straight away as it might recover from journal */
+    if (QProcess::execute("mount "+mountoptions+" /dev/"+dev+" /mnt") != 0
+        && QProcess::execute("mount "+mountoptions.replace(",ro","")+" /dev/"+dev+" /mnt") != 0)
+    {
         return false;
+    }
 
     if (!QFile::exists("/mnt/images"))
     {
@@ -487,7 +495,25 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
         return false;
     }
 
+    /* Remount read-write in the background */
+    _remountproc.start("mount -o remount,rw /mnt");
+
     return true;
+}
+
+void BootMenuDialog::waitForRemountRW()
+{
+    if (_remountproc.state() != _remountproc.NotRunning)
+    {
+        QProgressDialog qpd(tr("Remounting data partition read-write"), QString(), 0, 0, this);
+        qpd.show();
+        QApplication::processEvents();
+
+        if (!_remountproc.waitForFinished())
+        {
+            QMessageBox::critical(this, tr("Error remounting data partition"), tr("Timed out waiting for remounting data partition read-write to complete"), QMessageBox::Ok);
+        }
+    }
 }
 
 bool BootMenuDialog::waitForDevice(const QString &dev)
