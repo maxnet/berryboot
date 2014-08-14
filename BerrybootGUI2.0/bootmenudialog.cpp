@@ -315,7 +315,7 @@ void BootMenuDialog::bootImage(const QString &name)
         /* Copy all lines except the old gpu_mem= parameter to the new config.txt */
         foreach (QByteArray line, lines)
         {
-            if (!line.startsWith("gpu_mem="))
+            if (!line.startsWith("gpu_mem"))
                 newconfig += line + "\n";
         }
         newconfig = newconfig.trimmed()+"\n";
@@ -509,7 +509,7 @@ void BootMenuDialog::waitForRemountRW()
         qpd.show();
         QApplication::processEvents();
 
-        if (!_remountproc.waitForFinished())
+        if (_remountproc.state() != _remountproc.NotRunning && !_remountproc.waitForFinished())
         {
             QMessageBox::critical(this, tr("Error remounting data partition"), tr("Timed out waiting for remounting data partition read-write to complete"), QMessageBox::Ok);
         }
@@ -616,6 +616,8 @@ int BootMenuDialog::currentMemsplit()
         return 192;
     else if (memtotal > 256000)
         return 128;
+    else if (memtotal > 250000)
+        return 256;
     else if (memtotal > 230000) /* Original 256 MB model */
         return 240;
     else if (memtotal > 200000)
@@ -655,6 +657,9 @@ QByteArray BootMenuDialog::memsplitParameter(int memsplit)
             break;
         case 128:
             r = "gpu_mem=128\n";
+            break;
+        case 256:
+            r = "gpu_mem=128\ngpu_mem_512=256\n";
             break;
         default:
             r = "gpu_mem=64\n";

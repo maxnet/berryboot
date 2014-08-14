@@ -117,7 +117,7 @@ void MainWindow::copyOSfromUSB()
     if (partlist.count() == 1)
         defaultdir += "/"+partlist.first();
 
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Select image file"), defaultdir, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240)"));
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Select image file"), defaultdir, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240 *.img256)"));
     if (!fileName.isEmpty())
     {
         QFile f(fileName);
@@ -418,7 +418,7 @@ void MainWindow::on_actionExport_triggered()
 
             defaultpath += imagename;
 
-            QString fileName = QFileDialog::getSaveFileName(this, tr("Select image file"), defaultpath, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240)"));
+            QString fileName = QFileDialog::getSaveFileName(this, tr("Select image file"), defaultpath, tr("SquashFS images (*.img *.img128 *.img192 *.img224 *.img240 *.img256)"));
             if (!fileName.isEmpty() && fileName.startsWith("/media/")) /* TODO: for possibility of symlinks? */
             {
                 if (ed.exportData() && QFile::exists("/mnt/data/"+imagename))

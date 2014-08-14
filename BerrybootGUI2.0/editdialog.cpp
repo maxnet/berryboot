@@ -47,6 +47,8 @@ EditDialog::EditDialog(const QString &filename, bool usingMemsplits, QWidget *pa
             ui->memsplitCombo->setCurrentIndex(3);
         else if (f.endsWith("240"))
             ui->memsplitCombo->setCurrentIndex(4);
+        else if (f.endsWith("256"))
+            ui->memsplitCombo->setCurrentIndex(5);
 
         f = f.mid(0, pos);
     }
@@ -87,6 +89,10 @@ QString EditDialog::filename() const
 
         case 4:
             f += ".img240";
+            break;
+
+        case 5:
+            f += ".img256";
             break;
 
         default: /* No preference */
