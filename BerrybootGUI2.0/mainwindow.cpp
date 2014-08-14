@@ -344,7 +344,6 @@ void MainWindow::setButtonsEnabled(bool enable)
     ui->actionClone->setEnabled(enable);
     ui->actionDelete->setEnabled(enable);
     ui->actionSet_default->setEnabled(enable);
-    ui->actionExport->setEnabled(enable);
     ui->actionRecover->setEnabled(enable);
 }
 
