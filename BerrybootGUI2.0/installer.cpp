@@ -54,7 +54,7 @@
 #define SQUASHFS_MAGIC_SWAP		0x68737173
 
 Installer::Installer(QObject *parent) :
-    QObject(parent), _settings(NULL)
+    QObject(parent), _ethup(false), _settings(NULL)
 {
 }
 
@@ -213,9 +213,27 @@ bool Installer::mountSystemPartition()
 
 void Installer::startNetworking()
 {
-    if (!QFile::exists("/sys/class/net/eth0"))
+    QFile f("/sys/class/net/eth0/carrier");
+    QByteArray carrier;
+
+    if (!f.exists())
     {
         /* eth0 not available yet, check back in a tenth of a second */
+        QTimer::singleShot(100, this, SLOT(startNetworking()));
+        return;
+    }
+
+    f.open(f.ReadOnly);
+    carrier = f.readAll().trimmed();
+    f.close();
+    if (carrier.isEmpty() && !_ethup)
+    {
+        QProcess::execute("/sbin/ifconfig eth0 up");
+        _ethup = true;
+    }
+    if (carrier != "1")
+    {
+        /* check back in a tenth of a second */
         QTimer::singleShot(100, this, SLOT(startNetworking()));
         return;
     }
@@ -227,7 +245,7 @@ void Installer::startNetworking()
 
 bool Installer::networkReady()
 {
-    /* Once we have a DHCP release /tmp/resolv.conf is created */
+    /* Once we have a DHCP lease /tmp/resolv.conf is created */
     return QFile::exists("/tmp/resolv.conf");
 }
 

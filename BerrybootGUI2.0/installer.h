@@ -101,7 +101,7 @@ public slots:
 
 protected:
     QString _keyboardlayout, _timezone;
-    bool _disableOverscan, _fixMAC;
+    bool _disableOverscan, _fixMAC, _ethup;
     QSettings *_settings;
     QByteArray _bootoptions, _sound;
 

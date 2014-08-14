@@ -136,7 +136,8 @@ AddDialog::~AddDialog()
 
 void AddDialog::networkUp()
 {
-    _qpd->hide();
+    if (_qpd)
+        _qpd->hide();
 
  /*   if (!_i->networkReady())
     {
