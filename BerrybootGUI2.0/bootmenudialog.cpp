@@ -727,7 +727,7 @@ void BootMenuDialog::askLuksPassword(const QString &datadev)
 
 void BootMenuDialog::startSSHserverIfEnabled()
 {
-    QByteArray sshkey = _i->bootParam("ssh_authorized_key");
+    QByteArray sshkey = _i->bootParam("ssh_authorized_key").replace("\\n", "\n");
     if (sshkey.isEmpty())
         return;
 
