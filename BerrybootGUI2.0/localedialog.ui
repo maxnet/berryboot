@@ -357,6 +357,20 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>buttonBox</tabstop>
+  <tabstop>disableOverscanRadio</tabstop>
+  <tabstop>enableOverscanRadio</tabstop>
+  <tabstop>ethRadio</tabstop>
+  <tabstop>fixMACbox</tabstop>
+  <tabstop>wifiRadio</tabstop>
+  <tabstop>audioAutoRadio</tabstop>
+  <tabstop>audioHDMIradio</tabstop>
+  <tabstop>audioHeadphonesRadio</tabstop>
+  <tabstop>timezoneCombo</tabstop>
+  <tabstop>keybCombo</tabstop>
+  <tabstop>keybtestEdit</tabstop>
+ </tabstops>
  <resources>
   <include location="icons.qrc"/>
  </resources>

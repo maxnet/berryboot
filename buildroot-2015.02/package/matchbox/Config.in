@@ -1,0 +1,44 @@
+config BR2_PACKAGE_MATCHBOX
+	bool "MatchBox Window Manager"
+	depends on BR2_PACKAGE_XORG7
+	depends on BR2_USE_MMU # fork()
+	select BR2_PACKAGE_FONTCONFIG
+	select BR2_PACKAGE_EXPAT
+	select BR2_PACKAGE_XLIB_LIBXEXT
+	select BR2_PACKAGE_XLIB_LIBXDAMAGE
+	select BR2_PACKAGE_XLIB_LIBXCURSOR
+	help
+	  http://projects.o-hand.com/matchbox
+
+if BR2_PACKAGE_MATCHBOX
+
+config BR2_PACKAGE_MATCHBOX_PANEL
+	bool "Matchbox Panel"
+	help
+	  A flexible always present 'window bar' for holding
+	  application launchers.
+
+config BR2_PACKAGE_MATCHBOX_DESKTOP
+	bool "Matchbox Desktop"
+	select BR2_PACKAGE_ZLIB
+	help
+	  A PDA style application launcher or 'item browser'.
+
+config BR2_PACKAGE_MATCHBOX_COMMON
+	bool "Matchbox session common files"
+	depends on BR2_PACKAGE_MATCHBOX_PANEL && BR2_PACKAGE_MATCHBOX_DESKTOP
+	help
+	  Common desktop folders and matchbox-session script.
+
+config BR2_PACKAGE_MATCHBOX_COMMON_PDA
+	bool "PDA style desktop folders"
+	depends on BR2_PACKAGE_MATCHBOX_COMMON
+
+config BR2_PACKAGE_MATCHBOX_KEYBOARD
+	bool "Matchbox Virtual Keyboard"
+	select BR2_PACKAGE_XLIB_LIBXTST
+	select BR2_PACKAGE_XLIB_LIBXFT if !BR2_PACKAGE_CAIRO
+	help
+	  Virtual Keyboard
+
+endif

@@ -235,7 +235,7 @@ bool AddDialog::verifyData()
     if (!_openSSLinitialized)
     {
         OpenSSL_add_all_algorithms();
-        _openSSLinitialized = true;
+        // _openSSLinitialized = true;
     }
     QByteArray data_uncompressed;
     if (_reposerver.endsWith(".smime"))

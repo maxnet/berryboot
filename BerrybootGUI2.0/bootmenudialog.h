@@ -102,10 +102,6 @@ protected:
      */
     void umountSystemPartition();
     /*
-     * Enable network interface
-     */
-    void startNetworking();
-    /*
      * Return current memory split in MB
      * In the case of a 512 MB model, return 256 MB equivalent with same gpu_mem
      */

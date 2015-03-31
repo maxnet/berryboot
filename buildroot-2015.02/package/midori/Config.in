@@ -1,0 +1,20 @@
+config BR2_PACKAGE_MIDORI
+	bool "midori"
+	select BR2_PACKAGE_WEBKIT
+	select BR2_PACKAGE_LIBSEXY
+	select BR2_PACKAGE_GETTEXT if BR2_NEEDS_GETTEXT_IF_LOCALE
+	select BR2_PACKAGE_LIBICONV if !BR2_ENABLE_LOCALE
+	depends on BR2_PACKAGE_LIBGTK2
+	depends on BR2_INSTALL_LIBSTDCPP # webkit
+	depends on BR2_TOOLCHAIN_HAS_THREADS # webkit -> enchant -> libglib2
+	depends on BR2_USE_WCHAR	 # webkit
+	depends on BR2_PACKAGE_WEBKIT_ARCH_SUPPORTS
+	help
+	  Midori is a lightweight web browser based on WebKit
+
+	  http://software.twotoasts.de/?page=midori
+
+comment "midori needs libgtk2 and a toolchain w/ C++, wchar, threads"
+	depends on BR2_PACKAGE_WEBKIT_ARCH_SUPPORTS
+	depends on !BR2_INSTALL_LIBSTDCPP || !BR2_USE_WCHAR || \
+		!BR2_TOOLCHAIN_HAS_THREADS || !BR2_PACKAGE_LIBGTK2

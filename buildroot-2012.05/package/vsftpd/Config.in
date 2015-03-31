@@ -1,6 +1,0 @@
-config BR2_PACKAGE_VSFTPD
-	bool "vsftpd"
-	help
-	  vsftpd is an ftp daemon written with security in mind.
-	  http://vsftpd.beasts.org/
-

@@ -1,0 +1,6 @@
+# Simple framebuffer for sunxi devices
+
+CONFIG_FB=y
+CONFIG_FB_SIMPLE=y
+CONFIG_FRAMEBUFFER_CONSOLE=y
+

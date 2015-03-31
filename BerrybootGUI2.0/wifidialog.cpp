@@ -61,6 +61,14 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     QApplication::processEvents();
     i->loadDrivers();
 
+    /* Wait up to 2 seconds for wifi device to appear */
+    QTime t;
+    t.start();
+    while (t.elapsed() < 2000 && !QFile::exists("/sys/class/net/wlan0") )
+    {
+        QApplication::processEvents(QEventLoop::WaitForMoreEvents, 250);
+    }
+
     if ( QFile::exists("/sys/class/net/wlan0") )
     {
         qpd.setLabelText(tr("Starting wpa_supplicant..."));

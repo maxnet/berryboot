@@ -1,0 +1,24 @@
+//
+// Automatically generated list for Buildroot manual.
+//
+
+[width="100%",cols="^1,4",options="header"]
+|===================================================
+| Features                                 <| Location
+
+| AVR32                                    <| Target options -> Target Architecture
+| sstrip                                   <| Build options -> strip command for binaries on target
+| Linux 3.0.x kernel headers               <| Toolchain -> Kernel Headers
+| Linux 3.11.x kernel headers              <| Toolchain -> Kernel Headers
+| Linux 3.13.x kernel headers              <| Toolchain -> Kernel Headers
+| Linux 3.15.x kernel headers              <| Toolchain -> Kernel Headers
+| Linux 3.16.x kernel headers              <| Toolchain -> Kernel Headers
+| Xilinx Little Endian Microblaze GNU Tools 14.3 <| Toolchain -> Toolchain
+| Xilinx Little Endian Microblaze GNU Tools v2 <| Toolchain -> Toolchain
+| Xilinx Big Endian Microblaze GNU Tools   <| Toolchain -> Toolchain
+| Xilinx Big Endian Microblaze GNU Tools   <| Toolchain -> Toolchain
+| blackbox                                 <| Target packages -> Graphic libraries and applications (graphic/text)
+| Custom Network Settings                  <| Bootloaders
+
+|===================================================
+

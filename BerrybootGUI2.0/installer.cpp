@@ -592,7 +592,7 @@ void Installer::loadCryptoModules()
 
 void Installer::loadSoundModule(const QByteArray &channel)
 {
-    if (cpuinfo().contains("BCM2708"))
+    if (cpuinfo().contains("BCM2708") || cpuinfo().contains("BCM2709"))
     {
         /* Raspberry Pi */
         prepareDrivers();
@@ -627,6 +627,13 @@ void Installer::loadFilesystemModule(const QByteArray &fs)
 void Installer::startWifi()
 {
     loadDrivers();
+    /* Wait up to 2 seconds for wifi device to appear */
+    QTime t;
+    t.start();
+    while (t.elapsed() < 2000 && !QFile::exists("/sys/class/net/wlan0") )
+    {
+        QApplication::processEvents(QEventLoop::WaitForMoreEvents, 250);
+    }
 
     QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/boot/wpa_supplicant.conf -B");
 
@@ -657,7 +664,7 @@ void Installer::enableCEC()
     QByteArray cpuinfo = f.readAll();
     f.close();
 
-    if (cpuinfo.contains("BCM2708")) /* Only supported on the Raspberry for now */
+    if (cpuinfo.contains("BCM2708") || cpuinfo.contains("BCM2709")) /* Only supported on the Raspberry for now */
     {
         CecListener *cec = new CecListener(this);
         connect(cec, SIGNAL(keyPress(int)), this, SLOT(onKeyPress(int)));
@@ -734,7 +741,7 @@ bool Installer::isMemsplitHandlingEnabled()
 bool Installer::hasOverscanSettings()
 {
     /* Raspberry Pi has overscan settings */
-    return cpuinfo().contains("BCM2708");
+    return cpuinfo().contains("BCM2708") || cpuinfo().contains("BCM2709");
 }
 
 bool Installer::hasDynamicMAC()

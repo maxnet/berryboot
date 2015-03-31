@@ -1,6 +1,0 @@
-config BR2_PACKAGE_SLANG
-	bool "slang"
-	help
-	  Multi-platform console display library.
-
-	  http://www.s-lang.org/

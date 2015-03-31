@@ -1,7 +1,0 @@
-config BR2_PACKAGE_XKEYBOARD_CONFIG
-	bool "xkeyboard-config"
-	select BR2_PACKAGE_XAPP_XKBCOMP
-	help
-	  keyboard configuration database for X
-
-	  http://xlibs.freedesktop.org/xkbdesc

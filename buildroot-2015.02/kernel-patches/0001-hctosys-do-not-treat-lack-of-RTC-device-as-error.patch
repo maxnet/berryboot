@@ -1,0 +1,35 @@
+From cc4a20003e51b59200d8c1eb4cab969d646ea0c4 Mon Sep 17 00:00:00 2001
+From: Floris Bos <bos@je-eigen-domein.nl>
+Date: Sat, 21 Feb 2015 14:12:55 +0100
+Subject: [PATCH] hctosys: do not treat lack of RTC device as error
+
+When using device trees on the ARM platform, it is not certain
+at compile time whether or not the system will have a RTC.
+Many enable CONFIG_HCTOSYS just in case the system has a RTC.
+But if it turns out not to be the case, this will result in an
+"unable to open rtc device" error being printed to console, even
+when "quiet" is set in the kernel cmdline, which is undesirable.
+
+Output the "unable to open rtc device" message as info instead.
+
+Signed-off-by: Floris Bos <bos@je-eigen-domein.nl>
+---
+ drivers/rtc/hctosys.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/hctosys.c b/drivers/rtc/hctosys.c
+index 6c719f2..fb4251d 100644
+--- a/drivers/rtc/hctosys.c
++++ b/drivers/rtc/hctosys.c
+@@ -32,7 +32,7 @@ static int __init rtc_hctosys(void)
+ 	struct rtc_device *rtc = rtc_class_open(CONFIG_RTC_HCTOSYS_DEVICE);
+ 
+ 	if (rtc == NULL) {
+-		pr_err("%s: unable to open rtc device (%s)\n",
++		pr_info("%s: unable to open rtc device (%s)\n",
+ 			__FILE__, CONFIG_RTC_HCTOSYS_DEVICE);
+ 		goto err_open;
+ 	}
+-- 
+1.9.1
+

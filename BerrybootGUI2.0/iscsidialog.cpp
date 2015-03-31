@@ -64,7 +64,7 @@ void iSCSIDialog::accept()
     qpd.show();
     QApplication::processEvents();
 
-    if ( !QFile::exists("/sbin/iscsistart") )
+    if ( !QFile::exists("/lib/modules") )
     {
         /* TODO: error handling */
         if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }

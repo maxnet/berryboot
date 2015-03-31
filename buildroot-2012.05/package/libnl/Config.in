@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBNL
-	bool "libnl"
-	help
-	  A library for applications dealing with netlink socket.
-
-	  http://people.suug.ch/~tgr/libnl/

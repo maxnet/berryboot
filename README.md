@@ -17,11 +17,9 @@ Website: http://www.berryterminal.com/doku.php/berryboot
 Folders
 ===
 
-```
 BerrybootGUI2.0 - source of the graphical boot menu and installer interface (uses Qt)
-buildroot-2012.05 - build system to create a minimal Linux operating system to run the boot menu under
-buildroot-2012.05/package/berrybootgui2/init - script that gets executed on boot, starts BerrybootGUI  
-```
+buildroot - build system to create a minimal Linux operating system to run the boot menu under
+buildroot/package/berrybootgui2/init - script that gets executed on boot, starts BerrybootGUI
 
 ==
 Build requirements
@@ -31,31 +29,43 @@ Berryboot uses Buildroot to build a minimal Linux operating system to run under.
 Buildroot requires that the following packages are installed: http://www.buildroot.org/downloads/manual/manual.html#requirement
 
 ===
-To build for Raspberry Pi
+To build for the Raspberry Pi 2
 ===
 
 ```
-Simply run ./rebuild-berryboot.sh
-The files in the output folder must be copied to an empty FAT formatted SD card, 
-together with the Raspberry Pi firmware files from https://github.com/raspberrypi/firmware/tree/master/boot
+./build-berryboot.sh device_pi2
 ```
+
+The files in the output folder must be copied to an empty FAT formatted SD card. 
 
 ===
-To build for Allwinner A10 devices
-===
+To add support for a new ARM device
+==
+
+Create a file buildroot/berryboot-configs/device-mydevice with the buildroot configuration options to build a kernel and supporting files for your device. 
+E.g.:
 
 ```
-Run ./rebuild-berryboot-a10.sh
-The files in the output folder must be copied to an empty FAT formatted SD card,
-together the script.bin file with the hardware information of your specific device.
-
-In addition you need to build the u-boot bootloader manually, and dd it to the SD card.
-See for more information: https://github.com/hno/uboot-allwinner/wiki
-
-Alternatively you can also use the Android SD card writer tool, which takes care of
-script.bin and u-boot SPL memory settings automatically.
-Available in binary form at: http://get.berryboot.com/
-Source available at: https://github.com/maxnet/android-sdcard-writer/
+BR2_LINUX_KERNEL=y
+BR2_LINUX_KERNEL_CUSTOM_GIT=y
+BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/mydevice/linux.git"
+BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="branch3.18"
+BR2_LINUX_KERNEL_DEFCONFIG="mydevice"
+# Kernel options needed by Berryboot (enables AUFS support and such)
+BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="../configs/kernel_config_fragment_berryboot"
+# Install AUFS kernel patch
+BR2_LINUX_KERNEL_EXT_AUFS=y
+BR2_LINUX_KERNEL_EXT_AUFS_VERSION="aufs3.18"
+BR2_LINUX_KERNEL_ZIMAGE=y
+BR2_LINUX_KERNEL_IMAGE_INSTALL_NAME="kernel_mydevice_aufs.img"
 ```
 
-  
+AUFS kernel extension version must match kernel version.
+Build with:
+
+```
+./build-berryboot.sh device_mydevice
+```
+
+Berryboot expects that the kernel cmdline parameters are stored in a text file called cmdline.txt on the SD card or are stored at the end of the file uEnv.txt, and that the parameters can be edited (so may not be stored in a binary format with checksum).
+You must configure your bootloader to read the cmdline parameters, and boot Linux kernel kernel_mydevice_aufs.img with initramfs berryboot.img.

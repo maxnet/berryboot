@@ -1,8 +1,0 @@
-config BR2_PACKAGE_AUTOCONF
-	bool "autoconf"
-	select BR2_PACKAGE_MICROPERL
-	help
-	  Extensible program for developing configure scripts.  These
-	  scripts handle all the mundane system/feature detection.
-
-	  http://www.gnu.org/software/autoconf/

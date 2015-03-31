@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- Komodo Project File - DO NOT EDIT -->
-<project id="8a6db1cf-ca29-4dd3-b491-2212dd15388b" kpf_version="4" name="netbook-launcher-efl-no-glib.kpf">
-<preference-set idref="8a6db1cf-ca29-4dd3-b491-2212dd15388b">
-  <boolean id="import_live">1</boolean>
-</preference-set>
-</project>

@@ -1,6 +1,0 @@
-config BR2_PACKAGE_METACITY
-	bool "metacity"
-	depends on BR2_PACKAGE_LIBGTK2
-	depends on BR2_PACKAGE_XORG7
-	help
-	  Metacity is a window manager for the X Window System.

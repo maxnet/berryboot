@@ -347,7 +347,7 @@ bool BootMenuDialog::memsplitsEnabled()
 
 void BootMenuDialog::startInstaller()
 {
-    startNetworking();
+    _i->startNetworking();
     mountSystemPartition();
     waitForRemountRW();
     accept();
@@ -356,24 +356,28 @@ void BootMenuDialog::startInstaller()
 void BootMenuDialog::startISCSI()
 {
     loadModule("iscsi_tcp");
-    startNetworking();
 
     QProgressDialog qpd(tr("Waiting for network to be ready"), QString(), 0, 0, this);
-    qpd.show();
-    QApplication::processEvents();
-
-    for (unsigned int i=0; i<10 && !_i->networkReady(); i++)
+    connect(_i, SIGNAL(networkInterfaceUp()), &qpd, SLOT(close()));
+    while (!_i->networkReady())
     {
-            processEventSleep(500);
+        _i->startNetworking();
+        qpd.exec();
     }
 
     qpd.setLabelText(tr("Connecting to iSCSI SAN"));
+    qpd.show();
     QApplication::processEvents();
 
     mountSystemPartition();
     if (system("sh /boot/iscsi.sh 2>/dev/null") != 0)
     {
-        QMessageBox::critical(this, tr("iSCSI error"), tr("Error connecting to server"), QMessageBox::Ok);
+        /* Wait a sec and try a second time */
+        processEventSleep(1000);
+        if (system("sh /boot/iscsi.sh 2>/dev/null") != 0)
+        {
+            QMessageBox::critical(this, tr("iSCSI error"), tr("Error connecting to server"), QMessageBox::Ok);
+        }
     }
     if (symlink("/dev/sda1", "/dev/iscsi"))
     {
@@ -571,29 +575,6 @@ void BootMenuDialog::mountSystemPartition()
     QMessageBox::critical(this, tr("Error mounting system partition"), tr("Unable to mount system partition"), QMessageBox::Ok);
 }
 
-void BootMenuDialog::startNetworking()
-{
-    bool eth0available = false;
-
-    QProgressDialog qpd(tr("Waiting for network device (eth0)"), QString(), 0, 0, this);
-    qpd.show();
-    QApplication::processEvents();
-
-    for (unsigned int i=0; i<10 && !eth0available; i++)
-    {
-        if (i != 0)
-            processEventSleep(500);
-
-        eth0available = QFile::exists("/sys/class/net/eth0");
-    }
-    if (!eth0available)
-        return;
-
-    QProcess *proc = new QProcess();
-    connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-    proc->start("sh -c \"/sbin/ifup eth0 || /sbin/ifup eth0\"");
-}
-
 void BootMenuDialog::umountSystemPartition()
 {
     QProcess::execute("umount /boot");
@@ -710,13 +691,13 @@ void BootMenuDialog::askLuksPassword(const QString &datadev)
     ::mkdir("/etc/profile.d", 0755);
     QFile f("/etc/profile.d/ssh-luks-prompt.sh");
     f.open(f.WriteOnly);
-    f.write("/sbin/cryptsetup.static luksOpen /dev/"+datadev.toAscii()+" luks && killall openvt");
+    f.write("/usr/sbin/cryptsetup luksOpen /dev/"+datadev.toAscii()+" luks && killall openvt");
     f.close();
 
     _i->switchConsole(5);
     while (!QFile::exists("/dev/mapper/luks"))
     {
-        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksOpen /dev/")+datadev+" luks");
+        proc.start(QByteArray("openvt -c 5 -w /usr/sbin/cryptsetup luksOpen /dev/")+datadev+" luks");
         QApplication::processEvents();
         proc.waitForFinished();
     }

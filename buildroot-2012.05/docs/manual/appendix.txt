@@ -1,4 +1,0 @@
-Appendix
-========
-
-include::makedev-syntax.txt[]

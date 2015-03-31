@@ -1,0 +1,1436 @@
+//
+// Automatically generated list for Buildroot manual.
+//
+
+[width="100%",cols="^1,4",options="header"]
+|===================================================
+| Packages                                 <| Target packages -> ...
+
+| a10disp                                  <|  -> Hardware handling
+| acl                                      <|  -> System tools
+| acpid                                    <|  -> Hardware handling
+| adwaita icon theme                       <|  -> Libraries -> Graphics
+| aespipe                                  <|  -> Miscellaneous
+| agent++                                  <|  -> Libraries -> Networking
+| aiccu                                    <|  -> Networking applications
+| aircrack-ng                              <|  -> Networking applications
+| alsa-lib                                 <|  -> Libraries -> Audio/Sound
+| alsa-utils                               <|  -> Audio and video applications
+| alsamixergui                             <|  -> Graphic libraries and applications (graphic/text)
+| am335x-pru-package                       <|  -> Hardware handling
+| am33x-cm3                                <|  -> Hardware handling -> Firmware
+| apitrace                                 <|  -> Graphic libraries and applications (graphic/text)
+| applewmproto                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| appres                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| apr                                      <|  -> Libraries -> Other
+| apr-util                                 <|  -> Libraries -> Other
+| argp-standalone                          <|  -> Libraries -> Other
+| argus                                    <|  -> Networking applications
+| armadillo                                <|  -> Libraries -> Other
+| arptables                                <|  -> Networking applications
+| at                                       <|  -> Shell and utilities
+| atftp                                    <|  -> Networking applications
+| atk                                      <|  -> Libraries -> Graphics
+| attr                                     <|  -> System tools
+| audiofile                                <|  -> Libraries -> Audio/Sound
+| aumix                                    <|  -> Audio and video applications
+| autossh                                  <|  -> Networking applications
+| avahi                                    <|  -> Networking applications
+| avrdude                                  <|  -> Hardware handling
+| axel                                     <|  -> Networking applications
+| b43-firmware                             <|  -> Hardware handling -> Firmware
+| bandwidthd                               <|  -> Networking applications
+| bash                                     <|  -> Shell and utilities
+| bc                                       <|  -> Miscellaneous
+| bcache tools                             <|  -> Hardware handling
+| bcusdk                                   <|  -> Networking applications
+| bdftopcf                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| bdwgc                                    <|  -> Libraries -> Other
+| beecrypt                                 <|  -> Libraries -> Crypto
+| beforelight                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| bellagio                                 <|  -> Audio and video applications
+| benejson                                 <|  -> Libraries -> JSON/XML
+| berkeleydb                               <|  -> Libraries -> Database
+| bigreqsproto                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| bind                                     <|  -> Networking applications
+| binutils                                 <|  -> Development tools
+| biosdevname                              <|  -> Hardware handling
+| bitmap                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| blackbox *(deprecated)*                  <|  -> Graphic libraries and applications (graphic/text)
+| blktrace                                 <|  -> Debugging, profiling and benchmark
+| bluez-utils                              <|  -> Networking applications
+| bluez-utils 5.x                          <|  -> Networking applications
+| bmon                                     <|  -> Networking applications
+| boa                                      <|  -> Networking applications
+| bonnie++                                 <|  -> Debugging, profiling and benchmark
+| boost                                    <|  -> Libraries -> Other
+| bootstrap                                <|  -> Libraries -> Javascript
+| bootutils                                <|  -> System tools
+| botan                                    <|  -> Libraries -> Crypto
+| bridge-utils                             <|  -> Networking applications
+| bsdiff                                   <|  -> Development tools
+| btrfs-progs                              <|  -> Filesystem and flash utilities
+| bustle                                   <|  -> Development tools
+| BusyBox                                  <| 
+| bwm-ng                                   <|  -> Networking applications
+| bzip2                                    <|  -> Compressors and decompressors
+| c-ares                                   <|  -> Libraries -> Networking
+| CA Certificates                          <|  -> Libraries -> Crypto
+| cache-calibrator                         <|  -> Debugging, profiling and benchmark
+| cairo                                    <|  -> Libraries -> Graphics
+| can-utils                                <|  -> Networking applications
+| canfestival                              <|  -> Libraries -> Networking
+| cblas/clapack                            <|  -> Libraries -> Other
+| ccid                                     <|  -> Libraries -> Hardware handling
+| ccrypt                                   <|  -> Shell and utilities
+| cdrkit                                   <|  -> Hardware handling
+| cegui06                                  <|  -> Graphic libraries and applications (graphic/text)
+| celt051                                  <|  -> Libraries -> Audio/Sound
+| cgic                                     <|  -> Libraries -> Networking
+| cgilua                                   <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| chrony                                   <|  -> Networking applications
+| cifs-utils                               <|  -> Filesystem and flash utilities
+| civetweb                                 <|  -> Networking applications
+| cJSON                                    <|  -> Libraries -> JSON/XML
+| clamav                                   <|  -> Miscellaneous
+| classpath                                <|  -> Libraries -> Other
+| collectd                                 <|  -> Miscellaneous
+| compositeproto                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| connman                                  <|  -> Networking applications
+| conntrack-tools                          <|  -> Networking applications
+| copas                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| coreutils                                <|  -> System tools
+| cosmo                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| coxpcall                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| cppcms                                   <|  -> Libraries -> Other
+| cppdb                                    <|  -> Libraries -> Database
+| cppunit                                  <|  -> Development tools
+| cppzmq                                   <|  -> Libraries -> Networking
+| cpuload                                  <|  -> System tools
+| cramfs                                   <|  -> Filesystem and flash utilities
+| crda                                     <|  -> Networking applications
+| cryptodev-linux                          <|  -> Libraries -> Crypto -> cryptodev variant
+| cryptsetup                               <|  -> Hardware handling
+| ctorrent                                 <|  -> Networking applications
+| cups                                     <|  -> Networking applications
+| curlftpfs (FUSE)                         <|  -> Filesystem and flash utilities
+| cvs                                      <|  -> Development tools
+| cwiid                                    <|  -> Hardware handling
+| czmq                                     <|  -> Libraries -> Networking
+| dado                                     <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| damageproto                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| dash                                     <|  -> Shell and utilities
+| dbus                                     <|  -> Hardware handling
+| dbus-c++                                 <|  -> Hardware handling
+| dbus-glib                                <|  -> Hardware handling
+| dbus-python                              <|  -> Hardware handling
+| dbus-triggerd                            <|  -> Hardware handling
+| dcron                                    <|  -> System tools
+| debianutils                              <|  -> System tools
+| Declarative module                       <|  -> Graphic libraries and applications (graphic/text)
+| DejaVu fonts                             <|  -> Graphic libraries and applications (graphic/text)
+| devmem2                                  <|  -> Hardware handling
+| dhcp (ISC)                               <|  -> Networking applications
+| dhcpcd                                   <|  -> Networking applications
+| dhcpdump                                 <|  -> Networking applications
+| dhrystone                                <|  -> Debugging, profiling and benchmark
+| dialog                                   <|  -> Shell and utilities
+| diffutils                                <|  -> Development tools
+| dillo                                    <|  -> Graphic libraries and applications (graphic/text)
+| ding-libs                                <|  -> Libraries -> Other
+| directfb                                 <|  -> Graphic libraries and applications (graphic/text)
+| directfb examples                        <|  -> Graphic libraries and applications (graphic/text)
+| directfb virtual input extension         <|  -> Graphic libraries and applications (graphic/text)
+| dmalloc                                  <|  -> Debugging, profiling and benchmark
+| dmidecode                                <|  -> Hardware handling
+| dmraid                                   <|  -> Hardware handling
+| dmxproto                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| dnsmasq                                  <|  -> Networking applications
+| docker                                   <|  -> Graphic libraries and applications (graphic/text)
+| dosfstools                               <|  -> Filesystem and flash utilities
+| dovecot                                  <|  -> Mail
+| dovecot-pigeonhole                       <|  -> Mail
+| dri2proto                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| dri3proto                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| dropbear                                 <|  -> Networking applications
+| dropwatch                                <|  -> Debugging, profiling and benchmark
+| dsp-tools                                <|  -> System tools
+| dstat                                    <|  -> Debugging, profiling and benchmark
+| dtach                                    <|  -> Shell and utilities
+| dtc (libfdt)                             <|  -> Libraries -> Hardware handling
+| dtv-scan-tables                          <|  -> Hardware handling
+| duma                                     <|  -> Debugging, profiling and benchmark
+| dvb-apps                                 <|  -> Hardware handling
+| dvbsnoop                                 <|  -> Hardware handling
+| dvdauthor                                <|  -> Audio and video applications
+| e2fsprogs                                <|  -> Filesystem and flash utilities
+| e2tools                                  <|  -> Filesystem and flash utilities
+| ebtables                                 <|  -> Networking applications
+| ecryptfs-utils                           <|  -> Filesystem and flash utilities
+| ed                                       <|  -> Text editors and viewers
+| editres                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| eeprog                                   <|  -> Hardware handling
+| eigen                                    <|  -> Libraries -> Other
+| ejabberd                                 <|  -> Networking applications
+| elfutils                                 <|  -> Libraries -> Other
+| empty                                    <|  -> Miscellaneous
+| enchant                                  <|  -> Libraries -> Text and terminal handling
+| encodings                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| enlightenment                            <|  -> Graphic libraries and applications (graphic/text)
+| Enlightenment Foundation Libraries       <|  -> Graphic libraries and applications (graphic/text)
+| enscript                                 <|  -> Interpreter languages and scripting
+| erlang                                   <|  -> Interpreter languages and scripting
+| erlang-goldrush                          <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-lager                             <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-cache-tab                      <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-iconv                          <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-sip                            <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-stringprep                     <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-stun                           <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-tls                            <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-utils                          <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-xml                            <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-yaml                           <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| erlang-p1-zlib                           <|  -> Interpreter languages and scripting -> Erlang libraries/modules
+| espeak                                   <|  -> Audio and video applications
+| ethtool                                  <|  -> Networking applications
+| eudev                                    <|  -> Hardware handling
+| evemu                                    <|  -> Hardware handling
+| evtest                                   <|  -> Hardware handling
+| exFAT (FUSE)                             <|  -> Filesystem and flash utilities
+| exfat-utils                              <|  -> Filesystem and flash utilities
+| exim                                     <|  -> Mail
+| exiv2                                    <|  -> Libraries -> Graphics
+| expat                                    <|  -> Libraries -> JSON/XML
+| expect                                   <|  -> Interpreter languages and scripting -> tcl libraries/modules
+| expedite                                 <|  -> Graphic libraries and applications (graphic/text)
+| explorercanvas                           <|  -> Libraries -> Javascript
+| ezxml                                    <|  -> Libraries -> JSON/XML
+| f2fs-tools                               <|  -> Filesystem and flash utilities
+| faad2                                    <|  -> Audio and video applications
+| faifa                                    <|  -> Networking applications
+| fan-ctrl                                 <|  -> Hardware handling
+| fb-test-app                              <|  -> Graphic libraries and applications (graphic/text)
+| fbdump (Framebuffer Capture Tool)        <|  -> Graphic libraries and applications (graphic/text)
+| fbgrab                                   <|  -> Graphic libraries and applications (graphic/text)
+| fbset                                    <|  -> Graphic libraries and applications (graphic/text)
+| fbterm                                   <|  -> Graphic libraries and applications (graphic/text)
+| fbv                                      <|  -> Graphic libraries and applications (graphic/text)
+| fconfig                                  <|  -> Hardware handling
+| fdk-aac                                  <|  -> Libraries -> Audio/Sound
+| feh                                      <|  -> Graphic libraries and applications (graphic/text)
+| fetchmail                                <|  -> Mail
+| ffmpeg                                   <|  -> Audio and video applications
+| fftw                                     <|  -> Libraries -> Other
+| file                                     <|  -> Shell and utilities
+| filemq                                   <|  -> Libraries -> Networking
+| findutils                                <|  -> Development tools
+| fio                                      <|  -> Debugging, profiling and benchmark
+| firmware-imx                             <|  -> Hardware handling
+| fis                                      <|  -> Hardware handling
+| fixesproto                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| flac                                     <|  -> Audio and video applications
+| flann                                    <|  -> Libraries -> Other
+| flashbench                               <|  -> Filesystem and flash utilities
+| flashrom                                 <|  -> Hardware handling
+| flex                                     <|  -> Development tools
+| flickcurl                                <|  -> Libraries -> Networking
+| flite                                    <|  -> Audio and video applications
+| flot                                     <|  -> Libraries -> Javascript
+| fltk                                     <|  -> Libraries -> Graphics
+| fluxbox                                  <|  -> Graphic libraries and applications (graphic/text)
+| fmc                                      <|  -> Networking applications
+| fmlib                                    <|  -> Libraries -> Networking
+| fmtools                                  <|  -> Hardware handling
+| font-adobe-100dpi                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-adobe-75dpi                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-adobe-utopia-100dpi                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-adobe-utopia-75dpi                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-adobe-utopia-type1                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-alias                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-arabic-misc                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-100dpi                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-75dpi                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-lucidatypewriter-100dpi          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-lucidatypewriter-75dpi           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-ttf                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bh-type1                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bitstream-100dpi                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bitstream-75dpi                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-bitstream-type1                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-cronyx-cyrillic                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-cursor-misc                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-daewoo-misc                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-dec-misc                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-ibm-type1                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-isas-misc                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-jis-misc                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-micro-misc                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-misc-cyrillic                       <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-misc-ethiopic                       <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-misc-meltho                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-misc-misc                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-mutt-misc                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-schumacher-misc                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-screen-cyrillic                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-sony-misc                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-sun-misc                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-util                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-winitzki-cyrillic                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| font-xfree86-type1                       <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Fonts
+| fontcacheproto                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| fontconfig                               <|  -> Libraries -> Graphics
+| fontsproto                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| fonttosfnt                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| foomatic_filters                         <|  -> Networking applications
+| fping                                    <|  -> Networking applications
+| freeradius-client                        <|  -> Libraries -> Networking
+| freerdp                                  <|  -> Graphic libraries and applications (graphic/text)
+| Freescale i.MX libraries                 <|  -> Hardware handling
+| freetype                                 <|  -> Libraries -> Graphics
+| fslsfonts                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| fstobdf                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| fswebcam                                 <|  -> Graphic libraries and applications (graphic/text)
+| ftop                                     <|  -> System tools
+| fxload                                   <|  -> Hardware handling
+| gadgetfs-test                            <|  -> Hardware handling
+| gamin                                    <|  -> Libraries -> Filesystem
+| gawk                                     <|  -> Development tools
+| gd                                       <|  -> Libraries -> Graphics
+| gdb                                      <|  -> Debugging, profiling and benchmark
+| gdbm                                     <|  -> Libraries -> Database
+| gdk-pixbuf                               <|  -> Libraries -> Graphics
+| genext2fs                                <|  -> Filesystem and flash utilities
+| genpart                                  <|  -> Filesystem and flash utilities
+| genromfs                                 <|  -> Filesystem and flash utilities
+| geoip                                    <|  -> Libraries -> Networking
+| gesftpserver                             <|  -> Networking applications
+| getent                                   <|  -> System tools
+| gettext                                  <|  -> Development tools
+| ghostscript-fonts                        <|  -> Graphic libraries and applications (graphic/text)
+| giblib                                   <|  -> Libraries -> Graphics
+| giflib                                   <|  -> Libraries -> Graphics
+| git                                      <|  -> Development tools
+| glib-networking                          <|  -> Libraries -> Networking
+| glibmm                                   <|  -> Libraries -> Other
+| glm                                      <|  -> Libraries -> Other
+| glmark2                                  <|  -> Graphic libraries and applications (graphic/text)
+| glproto                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| gmp                                      <|  -> Libraries -> Other
+| gmpc                                     <|  -> Graphic libraries and applications (graphic/text)
+| gnu-efi                                  <|  -> Libraries -> Hardware handling
+| gnuchess                                 <|  -> Games
+| gnupg                                    <|  -> Shell and utilities
+| gnupg2                                   <|  -> Shell and utilities
+| gnuplot                                  <|  -> Graphic libraries and applications (graphic/text)
+| gnutls                                   <|  -> Libraries -> Crypto
+| Google font directory                    <|  -> Miscellaneous
+| google-breakpad                          <|  -> Debugging, profiling and benchmark
+| gperf                                    <|  -> Development tools
+| gpm                                      <|  -> Hardware handling
+| gpsd                                     <|  -> Hardware handling
+| gptfdisk                                 <|  -> Hardware handling
+| gpu-amd-bin-mx51 (also imx53)            <|  -> Hardware handling
+| gpu-viv-bin-mx6q                         <|  -> Hardware handling
+| gqview                                   <|  -> Graphic libraries and applications (graphic/text)
+| grantlee                                 <|  -> Graphic libraries and applications (graphic/text)
+| grep                                     <|  -> Development tools
+| gsl                                      <|  -> Libraries -> Other
+| gst-dsp                                  <|  -> Audio and video applications
+| gst-ffmpeg                               <|  -> Audio and video applications
+| gst-fsl-plugins                          <|  -> Audio and video applications
+| gst-omapfb                               <|  -> Audio and video applications
+| gst-omx                                  <|  -> Audio and video applications
+| gst-plugin-x170                          <|  -> Audio and video applications
+| gst-plugins-bad                          <|  -> Audio and video applications
+| gst-plugins-base                         <|  -> Audio and video applications
+| gst-plugins-good                         <|  -> Audio and video applications
+| gst-plugins-ugly                         <|  -> Audio and video applications
+| gst1-libav                               <|  -> Audio and video applications
+| gst1-plugins-bad                         <|  -> Audio and video applications
+| gst1-plugins-base                        <|  -> Audio and video applications
+| gst1-plugins-good                        <|  -> Audio and video applications
+| gst1-plugins-ugly                        <|  -> Audio and video applications
+| gst1-validate                            <|  -> Audio and video applications
+| gstreamer 0.10                           <|  -> Audio and video applications
+| gstreamer 1.x                            <|  -> Audio and video applications
+| gtest                                    <|  -> Libraries -> Other
+| gtk engines                              <|  -> Libraries -> Graphics
+| gtkperf (performance test for GTK2)      <|  -> Graphic libraries and applications (graphic/text)
+| guile                                    <|  -> Interpreter languages and scripting
+| gutenprint                               <|  -> Networking applications
+| gvfs                                     <|  -> Hardware handling
+| gzip                                     <|  -> Compressors and decompressors
+| harfbuzz                                 <|  -> Libraries -> Graphics
+| haserl                                   <|  -> Interpreter languages and scripting
+| haveged                                  <|  -> Miscellaneous
+| hdparm                                   <|  -> Hardware handling
+| heirloom-mailx                           <|  -> Mail
+| hiawatha                                 <|  -> Networking applications
+| hicolor (default theme)                  <|  -> Libraries -> Graphics -> GTK Themes
+| hicolor icon theme                       <|  -> Libraries -> Graphics
+| hostapd                                  <|  -> Networking applications
+| hplip                                    <|  -> Networking applications
+| htop                                     <|  -> System tools
+| httping                                  <|  -> Networking applications
+| hwdata                                   <|  -> Hardware handling
+| i2c-tools                                <|  -> Hardware handling
+| iceauth                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| ico                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| icu                                      <|  -> Libraries -> Text and terminal handling
+| ifplugd                                  <|  -> Networking applications
+| iftop                                    <|  -> Networking applications
+| ifupdown                                 <|  -> Networking applications
+| igh-ethercat                             <|  -> Networking applications
+| igmpproxy                                <|  -> Networking applications
+| imagemagick                              <|  -> Graphic libraries and applications (graphic/text)
+| imlib2                                   <|  -> Libraries -> Graphics
+| imx-lib                                  <|  -> Hardware handling
+| imx-vpu                                  <|  -> Hardware handling
+| inadyn                                   <|  -> Networking applications
+| infozip                                  <|  -> Compressors and decompressors
+| inotify-tools                            <|  -> Shell and utilities
+| input-event-daemon                       <|  -> Hardware handling
+| input-tools                              <|  -> Hardware handling
+| inputproto                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| intel-microcode                          <|  -> Hardware handling
+| intltool                                 <|  -> Development tools
+| iostat                                   <|  -> Hardware handling
+| iozone                                   <|  -> Debugging, profiling and benchmark
+| iperf                                    <|  -> Networking applications
+| iperf3                                   <|  -> Networking applications
+| ipkg                                     <|  -> Package managers
+| ipmitool                                 <|  -> Hardware handling
+| iproute2                                 <|  -> Networking applications
+| iprutils                                 <|  -> System tools
+| ipsec-tools                              <|  -> Networking applications
+| ipset                                    <|  -> Networking applications
+| iptables                                 <|  -> Networking applications
+| iptraf-ng                                <|  -> Networking applications
+| iputils                                  <|  -> Networking applications
+| irda-utils                               <|  -> Hardware handling
+| irqbalance                               <|  -> System tools
+| iucode-tool                              <|  -> Hardware handling
+| iw                                       <|  -> Networking applications
+| jack2                                    <|  -> Audio and video applications
+| jamvm                                    <|  -> Interpreter languages and scripting
+| jansson                                  <|  -> Libraries -> JSON/XML
+| janus-gateway                            <|  -> Networking applications
+| jasper                                   <|  -> Libraries -> Graphics
+| jhead                                    <|  -> Graphic libraries and applications (graphic/text)
+| jimtcl                                   <|  -> Interpreter languages and scripting
+| joe                                      <|  -> Text editors and viewers
+| jpeg                                     <|  -> Libraries -> Graphics -> jpeg variant
+| jpeg-turbo                               <|  -> Libraries -> Graphics -> jpeg variant
+| jq                                       <|  -> Development tools
+| jQuery                                   <|  -> Libraries -> Javascript
+| jQuery keyboard                          <|  -> Libraries -> Javascript
+| jQuery UI                                <|  -> Libraries -> Javascript
+| jQuery UI themes                         <|  -> Libraries -> Javascript
+| jquery-mobile                            <|  -> Libraries -> Javascript
+| jQuery-Sparkline                         <|  -> Libraries -> Javascript
+| jQuery-Validation                        <|  -> Libraries -> Javascript
+| jsmin                                    <|  -> Libraries -> Javascript
+| json-c                                   <|  -> Libraries -> JSON/XML
+| json-glib                                <|  -> Libraries -> JSON/XML
+| json-javascript                          <|  -> Libraries -> Javascript
+| kbd                                      <|  -> Hardware handling
+| kbproto                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| kexec                                    <|  -> Debugging, profiling and benchmark
+| kexec-lite                               <|  -> Debugging, profiling and benchmark
+| keyutils                                 <|  -> System tools
+| kismet                                   <|  -> Networking applications
+| kmod                                     <|  -> System tools
+| knock                                    <|  -> Networking applications
+| kobs-ng                                  <|  -> Filesystem and flash utilities
+| kodi                                     <|  -> Audio and video applications
+| kodi-addon-xvdr                          <|  -> Audio and video applications
+| kodi-audioencoder-flac                   <|  -> Audio and video applications
+| kodi-audioencoder-lame                   <|  -> Audio and video applications
+| kodi-audioencoder-vorbis                 <|  -> Audio and video applications
+| kodi-audioencoder-wav                    <|  -> Audio and video applications
+| kodi-pvr-addons                          <|  -> Audio and video applications
+| ktap                                     <|  -> Debugging, profiling and benchmark
+| lame                                     <|  -> Audio and video applications
+| latencytop                               <|  -> Debugging, profiling and benchmark
+| lbase64                                  <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| LBreakout2                               <|  -> Games
+| lcdapi                                   <|  -> Libraries -> Hardware handling
+| lcdproc                                  <|  -> Hardware handling
+| lcms2                                    <|  -> Libraries -> Graphics
+| leafnode2                                <|  -> Networking applications
+| leafpad                                  <|  -> Graphic libraries and applications (graphic/text)
+| less                                     <|  -> Text editors and viewers
+| lesstif                                  <|  -> Libraries -> Graphics
+| lftp                                     <|  -> Networking applications
+| libaio                                   <|  -> Libraries -> Hardware handling
+| libao                                    <|  -> Libraries -> Audio/Sound
+| libarchive                               <|  -> Libraries -> Compression and decompression
+| libargtable2                             <|  -> Libraries -> Other
+| libart                                   <|  -> Libraries -> Graphics
+| libass                                   <|  -> Libraries -> Multimedia
+| libassuan                                <|  -> Libraries -> Crypto
+| libatasmart                              <|  -> Libraries -> Hardware handling
+| libatomic_ops                            <|  -> Libraries -> Other
+| libbluray                                <|  -> Libraries -> Multimedia
+| libbsd                                   <|  -> Libraries -> Other
+| libcap                                   <|  -> Libraries -> Other
+| libcap-ng                                <|  -> Libraries -> Other
+| libcdaudio                               <|  -> Libraries -> Audio/Sound
+| libcdio                                  <|  -> Libraries -> Audio/Sound
+| libcec                                   <|  -> Libraries -> Hardware handling
+| libcgi                                   <|  -> Libraries -> Networking
+| libcgicc                                 <|  -> Libraries -> Networking
+| libcgroup                                <|  -> Libraries -> Other
+| libcli                                   <|  -> Libraries -> Text and terminal handling
+| libcofi                                  <|  -> Libraries -> Other
+| libconfig                                <|  -> Libraries -> Filesystem
+| libconfuse                               <|  -> Libraries -> Filesystem
+| libcue                                   <|  -> Libraries -> Audio/Sound
+| libcuefile                               <|  -> Libraries -> Audio/Sound
+| libcurl                                  <|  -> Libraries -> Networking
+| libdaemon                                <|  -> Libraries -> Other
+| libdmtx                                  <|  -> Libraries -> Graphics
+| libdmx                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libdnet                                  <|  -> Libraries -> Networking
+| libdrm                                   <|  -> Libraries -> Graphics
+| libdvbcsa                                <|  -> Libraries -> Multimedia
+| libdvbsi                                 <|  -> Libraries -> Multimedia
+| libdvdnav                                <|  -> Libraries -> Multimedia
+| libdvdread                               <|  -> Libraries -> Multimedia
+| libebml                                  <|  -> Libraries -> Multimedia
+| libecore                                 <|  -> Graphic libraries and applications (graphic/text)
+| libedbus                                 <|  -> Graphic libraries and applications (graphic/text)
+| libedit                                  <|  -> Libraries -> Text and terminal handling
+| libedje                                  <|  -> Graphic libraries and applications (graphic/text)
+| libee                                    <|  -> Libraries -> Other
+| libeet                                   <|  -> Graphic libraries and applications (graphic/text)
+| libefreet                                <|  -> Graphic libraries and applications (graphic/text)
+| libeina                                  <|  -> Graphic libraries and applications (graphic/text)
+| libeio                                   <|  -> Graphic libraries and applications (graphic/text)
+| libelementary                            <|  -> Graphic libraries and applications (graphic/text)
+| libembryo                                <|  -> Graphic libraries and applications (graphic/text)
+| libenca                                  <|  -> Libraries -> Text and terminal handling
+| Liberation (Free fonts)                  <|  -> Graphic libraries and applications (graphic/text)
+| libesmtp                                 <|  -> Mail
+| libestr                                  <|  -> Libraries -> Text and terminal handling
+| libethumb                                <|  -> Graphic libraries and applications (graphic/text)
+| libev                                    <|  -> Libraries -> Other
+| libevas                                  <|  -> Graphic libraries and applications (graphic/text)
+| libevas generic loaders                  <|  -> Graphic libraries and applications (graphic/text)
+| libevdev                                 <|  -> Libraries -> Other
+| libevent                                 <|  -> Libraries -> Other
+| libexif                                  <|  -> Libraries -> Graphics
+| libeXosip2                               <|  -> Libraries -> Networking
+| libfcgi                                  <|  -> Libraries -> Networking
+| libffi                                   <|  -> Libraries -> Other
+| libfontenc                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libfreefare                              <|  -> Libraries -> Hardware handling
+| libfribidi                               <|  -> Libraries -> Text and terminal handling
+| libFS                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libfslcodec                              <|  -> Libraries -> Multimedia
+| libfslparser                             <|  -> Libraries -> Multimedia
+| libfslvpuwrap                            <|  -> Libraries -> Multimedia
+| libftdi                                  <|  -> Libraries -> Hardware handling
+| libfuse                                  <|  -> Libraries -> Filesystem
+| libgail                                  <|  -> Libraries -> Graphics
+| libgcrypt                                <|  -> Libraries -> Crypto
+| libgeotiff                               <|  -> Libraries -> Graphics
+| libglade                                 <|  -> Libraries -> Graphics
+| libglew                                  <|  -> Libraries -> Graphics
+| libglib2                                 <|  -> Libraries -> Other
+| libglu                                   <|  -> Libraries -> Graphics
+| libgpg-error                             <|  -> Libraries -> Crypto
+| libgpgme                                 <|  -> Libraries -> Crypto
+| libgsasl                                 <|  -> Libraries -> Networking
+| libgtk2                                  <|  -> Libraries -> Graphics
+| libgtk3                                  <|  -> Libraries -> Graphics
+| libhid                                   <|  -> Libraries -> Hardware handling
+| libical                                  <|  -> Libraries -> Other
+| libICE                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libiconv                                 <|  -> Libraries -> Text and terminal handling
+| libid3tag                                <|  -> Libraries -> Audio/Sound
+| libidn                                   <|  -> Libraries -> Networking
+| libiio                                   <|  -> Libraries -> Hardware handling
+| libinput                                 <|  -> Libraries -> Hardware handling
+| libiqrf                                  <|  -> Libraries -> Hardware handling
+| libiscsi                                 <|  -> Libraries -> Networking
+| libjson                                  <|  -> Libraries -> JSON/XML
+| libksba                                  <|  -> Libraries -> Crypto
+| liblinear                                <|  -> Libraries -> Other
+| libllcp                                  <|  -> Libraries -> Hardware handling
+| liblo                                    <|  -> Libraries -> Audio/Sound
+| liblockfile                              <|  -> Libraries -> Filesystem
+| liblog4c-localtime                       <|  -> Libraries -> Logging
+| liblogging                               <|  -> Libraries -> Logging
+| libmad                                   <|  -> Libraries -> Audio/Sound
+| libmatroska                              <|  -> Libraries -> Multimedia
+| libmbim                                  <|  -> Libraries -> Hardware handling
+| libmbus                                  <|  -> Libraries -> Networking
+| libmcrypt                                <|  -> Libraries -> Crypto
+| libmemcached                             <|  -> Libraries -> Networking
+| libmhash                                 <|  -> Libraries -> Crypto
+| libmicrohttpd                            <|  -> Libraries -> Networking
+| libmms                                   <|  -> Libraries -> Multimedia
+| libmnl                                   <|  -> Libraries -> Networking
+| libmodbus                                <|  -> Libraries -> Networking
+| libmodplug                               <|  -> Libraries -> Audio/Sound
+| libmpd                                   <|  -> Libraries -> Audio/Sound
+| libmpdclient                             <|  -> Libraries -> Audio/Sound
+| libmpeg2                                 <|  -> Libraries -> Multimedia
+| libndp                                   <|  -> Libraries -> Networking
+| libneon                                  <|  -> Libraries -> Networking
+| libnetfilter_acct                        <|  -> Libraries -> Networking
+| libnetfilter_conntrack                   <|  -> Libraries -> Networking
+| libnetfilter_cthelper                    <|  -> Libraries -> Networking
+| libnetfilter_cttimeout                   <|  -> Libraries -> Networking
+| libnetfilter_log                         <|  -> Libraries -> Networking
+| libnetfilter_queue                       <|  -> Libraries -> Networking
+| libnfc                                   <|  -> Libraries -> Hardware handling
+| libnfnetlink                             <|  -> Libraries -> Networking
+| libnfs                                   <|  -> Libraries -> Filesystem
+| libnftnl                                 <|  -> Libraries -> Networking
+| libnice                                  <|  -> Libraries -> Networking
+| libnl                                    <|  -> Libraries -> Networking
+| libnspr                                  <|  -> Libraries -> Other
+| libnss                                   <|  -> Libraries -> Crypto
+| liboauth                                 <|  -> Libraries -> Networking
+| libogg                                   <|  -> Libraries -> Multimedia
+| liboping                                 <|  -> Libraries -> Networking
+| libosip2                                 <|  -> Libraries -> Networking
+| libpcap                                  <|  -> Libraries -> Networking
+| libpciaccess                             <|  -> Libraries -> Hardware handling
+| libpfm4                                  <|  -> Libraries -> Other
+| libphidget                               <|  -> Libraries -> Hardware handling
+| libplayer                                <|  -> Libraries -> Multimedia
+| libplist                                 <|  -> Libraries -> Other
+| libpng                                   <|  -> Libraries -> Graphics
+| libpthread-stubs                         <|  -> Libraries -> Other
+| libpthsem                                <|  -> Libraries -> Other
+| libqmi                                   <|  -> Libraries -> Hardware handling
+| libqrencode                              <|  -> Libraries -> Graphics
+| libraw                                   <|  -> Libraries -> Graphics
+| libraw1394                               <|  -> Libraries -> Hardware handling
+| libreplaygain                            <|  -> Libraries -> Audio/Sound
+| librsvg                                  <|  -> Libraries -> Graphics
+| librsync                                 <|  -> Libraries -> Networking
+| librtlsdr                                <|  -> Libraries -> Hardware handling
+| librtmp                                  <|  -> Libraries -> Networking
+| libsamplerate                            <|  -> Libraries -> Audio/Sound
+| libseccomp                               <|  -> Libraries -> Other
+| libsecret                                <|  -> Libraries -> Crypto
+| libselinux                               <|  -> Libraries -> Security
+| libsemanage                              <|  -> Libraries -> Security
+| libsepol                                 <|  -> Libraries -> Security
+| libserial                                <|  -> Libraries -> Hardware handling
+| libserialport                            <|  -> Libraries -> Hardware handling
+| libsexy                                  <|  -> Graphic libraries and applications (graphic/text)
+| libsha1                                  <|  -> Libraries -> Crypto
+| libshairplay                             <|  -> Libraries -> Networking
+| libshout                                 <|  -> Libraries -> Networking
+| libsigc++                                <|  -> Libraries -> Other
+| libsigrok                                <|  -> Libraries -> Hardware handling
+| libsigrokdecode                          <|  -> Libraries -> Hardware handling
+| libsigsegv                               <|  -> Libraries -> Other
+| libSM                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libsndfile                               <|  -> Libraries -> Audio/Sound
+| libsoc                                   <|  -> Libraries -> Hardware handling
+| libsocketcan                             <|  -> Libraries -> Networking
+| libsoup                                  <|  -> Libraries -> Networking
+| libsoxr                                  <|  -> Libraries -> Audio/Sound
+| libsrtp                                  <|  -> Libraries -> Networking
+| libssh2                                  <|  -> Libraries -> Crypto
+| libstrophe                               <|  -> Libraries -> Networking
+| libsvg                                   <|  -> Libraries -> Graphics
+| libsvg-cairo                             <|  -> Libraries -> Graphics
+| libsvgtiny                               <|  -> Libraries -> Graphics
+| libsysfs                                 <|  -> Libraries -> Filesystem
+| libtasn1                                 <|  -> Libraries -> Other
+| libtheora                                <|  -> Libraries -> Multimedia
+| libtirpc                                 <|  -> Libraries -> Networking
+| libtool                                  <|  -> Development tools
+| libtorrent                               <|  -> Libraries -> Networking
+| libtpl                                   <|  -> Libraries -> Other
+| libubox                                  <|  -> Libraries -> Other
+| libuci                                   <|  -> Libraries -> Other
+| libungif                                 <|  -> Libraries -> Graphics
+| libunistring                             <|  -> Libraries -> Text and terminal handling
+| libunwind                                <|  -> Libraries -> Other
+| libupnp                                  <|  -> Libraries -> Networking
+| libupnpp                                 <|  -> Libraries -> Networking
+| liburcu                                  <|  -> Libraries -> Other
+| liburiparser                             <|  -> Libraries -> Networking
+| libusb                                   <|  -> Libraries -> Hardware handling
+| libusb-compat                            <|  -> Libraries -> Hardware handling
+| libuv                                    <|  -> Libraries -> Other
+| libv4l                                   <|  -> Libraries -> Hardware handling
+| libva                                    <|  -> Libraries -> Graphics
+| libva-intel-driver                       <|  -> Libraries -> Graphics
+| libvips                                  <|  -> Libraries -> Graphics
+| libvncserver                             <|  -> Libraries -> Networking
+| libvorbis                                <|  -> Libraries -> Audio/Sound
+| libvpx                                   <|  -> Audio and video applications
+| libwebsock                               <|  -> Libraries -> Networking
+| libwebsockets                            <|  -> Libraries -> Networking
+| libX11                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXau                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXaw                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libxcb                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXcomposite                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXcursor                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXdamage                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXdmcp                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXext                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXfixes                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXfont                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXft                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXi                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXinerama                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libxkbcommon                             <|  -> Libraries -> Hardware handling
+| libxkbfile                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libxml++                                 <|  -> Libraries -> JSON/XML
+| libxml2                                  <|  -> Libraries -> JSON/XML
+| libxmlrpc                                <|  -> Libraries -> JSON/XML
+| libXmu                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXpm                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXrandr                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXrender                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXres                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXScrnSaver                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libxshmfence                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libxslt                                  <|  -> Libraries -> JSON/XML
+| libXt                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXtst                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXv                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXvMC                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXxf86dga                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libXxf86vm                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| libyaml                                  <|  -> Libraries -> JSON/XML
+| libz160                                  <|  -> Hardware handling
+| libzip                                   <|  -> Libraries -> Compression and decompression
+| lightning                                <|  -> Libraries -> Other
+| lighttpd                                 <|  -> Networking applications
+| linenoise                                <|  -> Libraries -> Text and terminal handling
+| linknx                                   <|  -> Networking applications
+| links                                    <|  -> Networking applications
+| linphone                                 <|  -> Networking applications
+| linux-firmware                           <|  -> Hardware handling -> Firmware
+| linux-fusion communication layer for DirectFB multi <|  -> Graphic libraries and applications (graphic/text)
+| linux-pam                                <|  -> Libraries -> Other
+| linux-zigbee                             <|  -> Networking applications
+| listres                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| LiTE (toolbox engine)                    <|  -> Graphic libraries and applications (graphic/text)
+| live555                                  <|  -> Libraries -> Multimedia
+| ljlinenoise                              <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| ljsyscall                                <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lm-sensors                               <|  -> Hardware handling
+| lmbench                                  <|  -> Debugging, profiling and benchmark
+| lockdev                                  <|  -> Libraries -> Filesystem
+| lockfile programs                        <|  -> Shell and utilities
+| log4cplus                                <|  -> Libraries -> Logging
+| log4cxx                                  <|  -> Libraries -> Logging
+| logrotate                                <|  -> Shell and utilities
+| logsurfer                                <|  -> Shell and utilities
+| lpeg                                     <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lpty                                     <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lrandom                                  <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lrzsz                                    <|  -> Networking applications
+| lshw                                     <|  -> Hardware handling
+| lsof                                     <|  -> Debugging, profiling and benchmark
+| lsqlite3                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lsuio                                    <|  -> Hardware handling
+| ltp-testsuite                            <|  -> Debugging, profiling and benchmark
+| ltrace                                   <|  -> Debugging, profiling and benchmark
+| LTris                                    <|  -> Games
+| lttng-babeltrace                         <|  -> Debugging, profiling and benchmark
+| lttng-libust                             <|  -> Libraries -> Other
+| lttng-modules                            <|  -> Debugging, profiling and benchmark
+| lttng-tools                              <|  -> Debugging, profiling and benchmark
+| lua                                      <|  -> Interpreter languages and scripting
+| lua-cjson                                <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-coat                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-coatpersistent                       <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-csnappy                              <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-ev                                   <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-messagepack                          <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-msgpack-native                       <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lua-testmore                             <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luabitop                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luacrypto                                <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luaexpat                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luaexpatutils                            <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luafilesystem                            <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luajit                                   <|  -> Interpreter languages and scripting
+| luajson                                  <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lualogging                               <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luaposix                                 <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luasec                                   <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luasocket                                <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luasql-sqlite3                           <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| luit                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| lunit                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lvm2 & device mapper                     <|  -> Hardware handling
+| lxc                                      <|  -> System tools
+| lz4                                      <|  -> Compressors and decompressors
+| lzip                                     <|  -> Compressors and decompressors
+| lzlib                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| lzo                                      <|  -> Libraries -> Compression and decompression
+| lzop                                     <|  -> Compressors and decompressors
+| macchanger                               <|  -> Networking applications
+| madplay                                  <|  -> Audio and video applications
+| make                                     <|  -> Development tools
+| makedepend                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Utilities
+| makedevs                                 <|  -> Filesystem and flash utilities
+| Matchbox Desktop                         <|  -> Graphic libraries and applications (graphic/text)
+| Matchbox Panel                           <|  -> Graphic libraries and applications (graphic/text)
+| Matchbox session common files            <|  -> Graphic libraries and applications (graphic/text)
+| Matchbox Virtual Keyboard                <|  -> Graphic libraries and applications (graphic/text)
+| MatchBox Window Manager                  <|  -> Graphic libraries and applications (graphic/text)
+| mcelog                                   <|  -> Debugging, profiling and benchmark
+| mcookie                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Utilities
+| mcrypt                                   <|  -> Miscellaneous
+| mdadm                                    <|  -> Hardware handling
+| media-ctl                                <|  -> Hardware handling
+| mediastreamer                            <|  -> Libraries -> Multimedia
+| memcached                                <|  -> Networking applications
+| memstat                                  <|  -> Debugging, profiling and benchmark
+| memtest86                                <|  -> Hardware handling
+| memtester                                <|  -> Hardware handling
+| mesa3d                                   <|  -> Graphic libraries and applications (graphic/text)
+| mesa3d-demos                             <|  -> Graphic libraries and applications (graphic/text)
+| metacity                                 <|  -> Graphic libraries and applications (graphic/text)
+| midori                                   <|  -> Graphic libraries and applications (graphic/text)
+| mii-diag                                 <|  -> Networking applications
+| Mini-XML                                 <|  -> Libraries -> JSON/XML
+| minicom                                  <|  -> Hardware handling
+| minidlna                                 <|  -> Networking applications
+| mjpegtools                               <|  -> Audio and video applications
+| mjpg-streamer                            <|  -> Networking applications
+| mkfontdir                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| mkfontscale                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| mmc-utils                                <|  -> Filesystem and flash utilities
+| mobile-broadband-provider-info           <|  -> Miscellaneous
+| modemmanager                             <|  -> Networking applications
+| modplugtools                             <|  -> Audio and video applications
+| mongoose                                 <|  -> Networking applications
+| mongrel2                                 <|  -> Networking applications
+| monit                                    <|  -> System tools
+| mono                                     <|  -> Interpreter languages and scripting
+| mp4v2                                    <|  -> Libraries -> Audio/Sound
+| mpc                                      <|  -> Libraries -> Other
+| mpd                                      <|  -> Audio and video applications
+| mpd-mpc                                  <|  -> Audio and video applications
+| mpdecimal                                <|  -> Libraries -> Other
+| mpfr                                     <|  -> Libraries -> Other
+| mpg123                                   <|  -> Audio and video applications
+| mplayer                                  <|  -> Audio and video applications
+| mrouted                                  <|  -> Networking applications
+| msgpack                                  <|  -> Libraries -> Other
+| msmtp                                    <|  -> Mail
+| mtd, jffs2 and ubi/ubifs tools           <|  -> Filesystem and flash utilities
+| mtdev                                    <|  -> Libraries -> Hardware handling
+| mtdev2tuio                               <|  -> Libraries -> Other
+| mtools                                   <|  -> Filesystem and flash utilities
+| mtr                                      <|  -> Networking applications
+| Multimedia Module                        <|  -> Graphic libraries and applications (graphic/text)
+| musepack                                 <|  -> Audio and video applications
+| mutt                                     <|  -> Mail
+| MySQL                                    <|  -> Libraries -> Database
+| nano                                     <|  -> Text editors and viewers
+| nanocom                                  <|  -> Hardware handling
+| nbd                                      <|  -> Networking applications
+| ncdu                                     <|  -> System tools
+| ncftp                                    <|  -> Networking applications
+| ncmpc                                    <|  -> Audio and video applications
+| ncurses                                  <|  -> Libraries -> Text and terminal handling
+| ndisc6 tools                             <|  -> Networking applications
+| ne10                                     <|  -> Libraries -> Hardware handling
+| neard                                    <|  -> Hardware handling
+| neardal                                  <|  -> Libraries -> Hardware handling
+| net-tools                                <|  -> Networking applications
+| netatalk                                 <|  -> Networking applications
+| netcat                                   <|  -> Networking applications
+| netcat-openbsd                           <|  -> Networking applications
+| netperf                                  <|  -> Debugging, profiling and benchmark
+| netplug                                  <|  -> Networking applications
+| netsnmp                                  <|  -> Networking applications
+| netstat-nat                              <|  -> Networking applications
+| nettle                                   <|  -> Libraries -> Crypto
+| networkmanager                           <|  -> Networking applications
+| newt                                     <|  -> Libraries -> Text and terminal handling
+| nfacct                                   <|  -> Networking applications
+| nfs-utils                                <|  -> Filesystem and flash utilities
+| nftables                                 <|  -> Networking applications
+| nginx                                    <|  -> Networking applications
+| ngircd                                   <|  -> Networking applications
+| ngrep                                    <|  -> Networking applications
+| nmap                                     <|  -> Networking applications
+| nodejs                                   <|  -> Interpreter languages and scripting
+| noip                                     <|  -> Networking applications
+| nss-mdns                                 <|  -> Libraries -> Networking
+| ntfs-3g                                  <|  -> Filesystem and flash utilities
+| ntp                                      <|  -> Networking applications
+| numactl                                  <|  -> System tools
+| nut                                      <|  -> System tools
+| nuttcp                                   <|  -> Networking applications
+| ocf-linux                                <|  -> Libraries -> Crypto -> cryptodev variant
+| oclock                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| ocrad                                    <|  -> Graphic libraries and applications (graphic/text)
+| odhcp6c                                  <|  -> Networking applications
+| odhcploc                                 <|  -> Networking applications
+| ofono                                    <|  -> Hardware handling
+| ola (open lighting architecture)         <|  -> Hardware handling
+| olsrd                                    <|  -> Networking applications
+| omniorb                                  <|  -> Libraries -> Networking
+| on2-8170-libs                            <|  -> Audio and video applications
+| on2-8170-modules                         <|  -> Hardware handling
+| open2300                                 <|  -> Hardware handling
+| opencore-amr                             <|  -> Libraries -> Audio/Sound
+| opencv                                   <|  -> Libraries -> Graphics
+| openldap                                 <|  -> Libraries -> Networking
+| openntpd                                 <|  -> Networking applications
+| openobex                                 <|  -> Networking applications
+| openocd                                  <|  -> Hardware handling
+| openpgm                                  <|  -> Libraries -> Networking
+| openpowerlink                            <|  -> Hardware handling
+| openssh                                  <|  -> Networking applications
+| openssl                                  <|  -> Libraries -> Crypto
+| openswan                                 <|  -> Networking applications
+| OpenTyrian                               <|  -> Games
+| OpenTyrian data                          <|  -> Games
+| openvmtools                              <|  -> System tools
+| openvpn                                  <|  -> Networking applications
+| opkg                                     <|  -> Package managers
+| oprofile                                 <|  -> Debugging, profiling and benchmark
+| opus                                     <|  -> Libraries -> Audio/Sound
+| opus-tools                               <|  -> Audio and video applications
+| orbit                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| orc                                      <|  -> Libraries -> Other
+| oRTP                                     <|  -> Libraries -> Networking
+| owl-linux                                <|  -> Hardware handling
+| p11-kit                                  <|  -> Libraries -> Other
+| p910nd                                   <|  -> Networking applications
+| pango                                    <|  -> Libraries -> Graphics
+| parted                                   <|  -> Hardware handling
+| patch                                    <|  -> Development tools
+| pax-utils                                <|  -> Debugging, profiling and benchmark
+| pciutils                                 <|  -> Hardware handling
+| pcmanfm                                  <|  -> Graphic libraries and applications (graphic/text)
+| pcre                                     <|  -> Libraries -> Text and terminal handling
+| pcsc-lite                                <|  -> Libraries -> Hardware handling
+| perf                                     <|  -> Debugging, profiling and benchmark
+| perl                                     <|  -> Interpreter languages and scripting
+| perl-datetime-tiny                       <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-gd                                  <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-gdgraph                             <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-gdtextutil                          <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-io-socket-ssl                       <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-json-tiny                           <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-mojolicious                         <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-net-ssleay                          <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-path-tiny                           <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-try-tiny                            <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-xml-libxml                          <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-xml-namespacesupport                <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-xml-sax                             <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| perl-xml-sax-base                        <|  -> Interpreter languages and scripting -> Perl libraries/modules
+| phidgetwebservice                        <|  -> Networking applications
+| php                                      <|  -> Interpreter languages and scripting
+| php-geoip                                <|  -> Interpreter languages and scripting -> External php extensions
+| php-gnupg                                <|  -> Interpreter languages and scripting -> External php extensions
+| php-imagick                              <|  -> Interpreter languages and scripting -> External php extensions
+| php-memcached                            <|  -> Interpreter languages and scripting -> External php extensions
+| php-ssh2                                 <|  -> Interpreter languages and scripting -> External php extensions
+| php-yaml                                 <|  -> Interpreter languages and scripting -> External php extensions
+| php-zmq                                  <|  -> Interpreter languages and scripting -> External php extensions
+| picocom                                  <|  -> Hardware handling
+| pifmrds                                  <|  -> Hardware handling
+| pinentry                                 <|  -> Shell and utilities
+| pixman                                   <|  -> Libraries -> Graphics
+| pkgconf                                  <|  -> Development tools
+| poco                                     <|  -> Libraries -> Other
+| polarssl                                 <|  -> Libraries -> Crypto
+| polkit                                   <|  -> System tools
+| poppler                                  <|  -> Libraries -> Graphics
+| popt                                     <|  -> Libraries -> Text and terminal handling
+| portaudio                                <|  -> Libraries -> Audio/Sound
+| portmap                                  <|  -> Networking applications
+| postgresql                               <|  -> Libraries -> Database
+| powerpc-utils                            <|  -> System tools
+| pppd                                     <|  -> Networking applications
+| pps-tools                                <|  -> Hardware handling
+| pptp-linux                               <|  -> Networking applications
+| prboom                                   <|  -> Games
+| presentproto                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| procps-ng                                <|  -> System tools
+| proftpd                                  <|  -> Networking applications
+| protobuf                                 <|  -> Libraries -> Other
+| protobuf-c                               <|  -> Libraries -> Other
+| proxychains-ng                           <|  -> Networking applications
+| psmisc                                   <|  -> System tools
+| psplash                                  <|  -> Graphic libraries and applications (graphic/text)
+| ptpd                                     <|  -> Networking applications
+| ptpd2                                    <|  -> Networking applications
+| pulseaudio                               <|  -> Audio and video applications
+| pure-ftpd                                <|  -> Networking applications
+| pv                                       <|  -> Debugging, profiling and benchmark
+| pwgen                                    <|  -> System tools
+| python                                   <|  -> Interpreter languages and scripting
+| python-alsaaudio                         <|  -> Interpreter languages and scripting -> external python modules
+| python-bottle                            <|  -> Interpreter languages and scripting -> external python modules
+| python-certifi                           <|  -> Interpreter languages and scripting -> external python modules
+| python-cffi                              <|  -> Interpreter languages and scripting -> external python modules
+| python-cheetah                           <|  -> Interpreter languages and scripting -> external python modules
+| python-coherence                         <|  -> Interpreter languages and scripting -> external python modules
+| python-configobj                         <|  -> Interpreter languages and scripting -> external python modules
+| python-configshell-fb                    <|  -> Interpreter languages and scripting -> external python modules
+| python-crc16                             <|  -> Interpreter languages and scripting -> external python modules
+| python-daemon                            <|  -> Interpreter languages and scripting -> external python modules
+| python-dialog                            <|  -> Interpreter languages and scripting -> external python modules
+| python-django                            <|  -> Interpreter languages and scripting -> external python modules
+| python-docopt                            <|  -> Interpreter languages and scripting -> external python modules
+| python-dpkt                              <|  -> Interpreter languages and scripting -> external python modules
+| python-enum                              <|  -> Interpreter languages and scripting -> external python modules
+| python-enum34                            <|  -> Interpreter languages and scripting -> external python modules
+| python-flask                             <|  -> Interpreter languages and scripting -> external python modules
+| python-flup                              <|  -> Interpreter languages and scripting -> external python modules
+| python-gobject                           <|  -> Interpreter languages and scripting -> external python modules
+| python-httplib2                          <|  -> Interpreter languages and scripting -> external python modules
+| python-id3                               <|  -> Interpreter languages and scripting -> external python modules
+| python-ipaddr                            <|  -> Interpreter languages and scripting -> external python modules
+| python-ipy                               <|  -> Interpreter languages and scripting -> external python modules
+| python-ipython                           <|  -> Interpreter languages and scripting -> external python modules
+| python-itsdangerous                      <|  -> Interpreter languages and scripting -> external python modules
+| python-jinja2                            <|  -> Interpreter languages and scripting -> external python modules
+| python-json-schema-validator             <|  -> Interpreter languages and scripting -> external python modules
+| python-keyring                           <|  -> Interpreter languages and scripting -> external python modules
+| python-libconfig                         <|  -> Interpreter languages and scripting -> external python modules
+| python-mad                               <|  -> Interpreter languages and scripting -> external python modules
+| python-markdown                          <|  -> Interpreter languages and scripting -> external python modules
+| python-markupsafe                        <|  -> Interpreter languages and scripting -> external python modules
+| python-meld3                             <|  -> Interpreter languages and scripting -> external python modules
+| python-msgpack                           <|  -> Interpreter languages and scripting -> external python modules
+| python-netifaces                         <|  -> Interpreter languages and scripting -> external python modules
+| python-networkmanager                    <|  -> Interpreter languages and scripting -> external python modules
+| python-nfc                               <|  -> Interpreter languages and scripting -> external python modules
+| python-numpy                             <|  -> Interpreter languages and scripting -> external python modules
+| python-pam                               <|  -> Interpreter languages and scripting -> external python modules
+| python-posix-ipc                         <|  -> Interpreter languages and scripting -> external python modules
+| python-protobuf                          <|  -> Interpreter languages and scripting -> external python modules
+| python-psutil                            <|  -> Interpreter languages and scripting -> external python modules
+| python-pyasn                             <|  -> Interpreter languages and scripting -> external python modules
+| python-pycrypto                          <|  -> Interpreter languages and scripting -> external python modules
+| python-pyftpdlib                         <|  -> Interpreter languages and scripting -> external python modules
+| python-pygame                            <|  -> Interpreter languages and scripting -> external python modules
+| python-pyinotify                         <|  -> Interpreter languages and scripting -> external python modules
+| python-pyparsing                         <|  -> Interpreter languages and scripting -> external python modules
+| python-pypcap                            <|  -> Interpreter languages and scripting -> external python modules
+| python-pyro                              <|  -> Interpreter languages and scripting -> external python modules
+| python-pysendfile                        <|  -> Interpreter languages and scripting -> external python modules
+| python-pysnmp                            <|  -> Interpreter languages and scripting -> external python modules
+| python-pysnmp-apps                       <|  -> Interpreter languages and scripting -> external python modules
+| python-pysnmp-mibs                       <|  -> Interpreter languages and scripting -> external python modules
+| python-pyusb                             <|  -> Interpreter languages and scripting -> external python modules
+| python-pyxb                              <|  -> Interpreter languages and scripting -> external python modules
+| python-pyzmq                             <|  -> Interpreter languages and scripting -> external python modules
+| python-requests                          <|  -> Interpreter languages and scripting -> external python modules
+| python-rtslib-fb                         <|  -> Interpreter languages and scripting -> external python modules
+| python-serial                            <|  -> Interpreter languages and scripting -> external python modules
+| python-setuptools                        <|  -> Interpreter languages and scripting -> external python modules
+| python-simplejson                        <|  -> Interpreter languages and scripting -> external python modules
+| python-six                               <|  -> Interpreter languages and scripting -> external python modules
+| python-thrift                            <|  -> Interpreter languages and scripting -> external python modules
+| python-tornado                           <|  -> Interpreter languages and scripting -> external python modules
+| python-twisted                           <|  -> Interpreter languages and scripting -> external python modules
+| python-urwid                             <|  -> Interpreter languages and scripting -> external python modules
+| python-versiontools                      <|  -> Interpreter languages and scripting -> external python modules
+| python-webpy                             <|  -> Interpreter languages and scripting -> external python modules
+| python-werkzeug                          <|  -> Interpreter languages and scripting -> external python modules
+| python-zope-interface                    <|  -> Interpreter languages and scripting -> external python modules
+| python3                                  <|  -> Interpreter languages and scripting
+| qdecoder                                 <|  -> Libraries -> Networking
+| QEMU                                     <|  -> Miscellaneous
+| qextserialport                           <|  -> Graphic libraries and applications (graphic/text)
+| qhull                                    <|  -> Libraries -> Other
+| qjson                                    <|  -> Graphic libraries and applications (graphic/text)
+| qlibc                                    <|  -> Libraries -> Other
+| Qt                                       <|  -> Graphic libraries and applications (graphic/text)
+| Qt5                                      <|  -> Graphic libraries and applications (graphic/text)
+| qt5base                                  <|  -> Graphic libraries and applications (graphic/text)
+| qt5cinex                                 <|  -> Graphic libraries and applications (graphic/text)
+| qt5connectivity                          <|  -> Graphic libraries and applications (graphic/text)
+| qt5declarative                           <|  -> Graphic libraries and applications (graphic/text)
+| qt5enginio                               <|  -> Graphic libraries and applications (graphic/text)
+| qt5graphicaleffects                      <|  -> Graphic libraries and applications (graphic/text)
+| qt5imageformats                          <|  -> Graphic libraries and applications (graphic/text)
+| qt5multimedia                            <|  -> Graphic libraries and applications (graphic/text)
+| qt5quick1                                <|  -> Graphic libraries and applications (graphic/text)
+| qt5quickcontrols                         <|  -> Graphic libraries and applications (graphic/text)
+| qt5script                                <|  -> Graphic libraries and applications (graphic/text)
+| qt5sensors                               <|  -> Graphic libraries and applications (graphic/text)
+| qt5serialport                            <|  -> Graphic libraries and applications (graphic/text)
+| qt5svg                                   <|  -> Graphic libraries and applications (graphic/text)
+| qt5webkit                                <|  -> Graphic libraries and applications (graphic/text)
+| qt5webkit examples                       <|  -> Graphic libraries and applications (graphic/text)
+| qt5websockets                            <|  -> Graphic libraries and applications (graphic/text)
+| qt5x11extras                             <|  -> Graphic libraries and applications (graphic/text)
+| qt5xmlpatterns                           <|  -> Graphic libraries and applications (graphic/text)
+| qtuio                                    <|  -> Graphic libraries and applications (graphic/text)
+| quagga                                   <|  -> Networking applications
+| quota                                    <|  -> System tools
+| qwt                                      <|  -> Graphic libraries and applications (graphic/text)
+| radvd                                    <|  -> Networking applications
+| ramspeed                                 <|  -> Debugging, profiling and benchmark
+| ramspeed/smp                             <|  -> Debugging, profiling and benchmark
+| randrproto                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| rapidjson                                <|  -> Libraries -> JSON/XML
+| rdesktop                                 <|  -> Graphic libraries and applications (graphic/text)
+| read-edid                                <|  -> Hardware handling
+| readline                                 <|  -> Libraries -> Text and terminal handling
+| recordproto                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| redis                                    <|  -> Libraries -> Database
+| renderproto                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| resourceproto                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| rgb                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| rings                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| rng-tools                                <|  -> Hardware handling
+| roxml                                    <|  -> Libraries -> JSON/XML
+| rp-pppoe                                 <|  -> Networking applications
+| rpcbind                                  <|  -> Networking applications
+| rpi-firmware                             <|  -> Hardware handling -> Firmware
+| rpi-userland                             <|  -> Hardware handling
+| rpm                                      <|  -> Package managers
+| rrdtool                                  <|  -> Graphic libraries and applications (graphic/text)
+| rsh-redone                               <|  -> Networking applications
+| rstart                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| rsync                                    <|  -> Networking applications
+| rsyslog                                  <|  -> System tools
+| rt-tests                                 <|  -> Debugging, profiling and benchmark
+| rtai                                     <|  -> Real-Time
+| rtorrent                                 <|  -> Networking applications
+| rtptools                                 <|  -> Networking applications
+| rubix                                    <|  -> Games
+| ruby                                     <|  -> Interpreter languages and scripting
+| samba                                    <|  -> Networking applications
+| samba4                                   <|  -> Networking applications
+| sane-backends                            <|  -> Hardware handling
+| SawMan (Window Manager)                  <|  -> Graphic libraries and applications (graphic/text)
+| schifra                                  <|  -> Libraries -> Other
+| sconeserver                              <|  -> Networking applications
+| screen                                   <|  -> Shell and utilities
+| Script Module                            <|  -> Graphic libraries and applications (graphic/text)
+| scripts                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| scrnsaverproto                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| SDL                                      <|  -> Graphic libraries and applications (graphic/text)
+| SDL_gfx                                  <|  -> Graphic libraries and applications (graphic/text)
+| SDL_image                                <|  -> Graphic libraries and applications (graphic/text)
+| SDL_mixer                                <|  -> Graphic libraries and applications (graphic/text)
+| SDL_net                                  <|  -> Graphic libraries and applications (graphic/text)
+| SDL_sound                                <|  -> Graphic libraries and applications (graphic/text)
+| SDL_TTF                                  <|  -> Graphic libraries and applications (graphic/text)
+| sdparm                                   <|  -> Hardware handling
+| sed                                      <|  -> Development tools
+| ser2net                                  <|  -> Networking applications
+| sessreg                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| setserial                                <|  -> Hardware handling
+| setxkbmap                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| sg3-utils                                <|  -> Hardware handling
+| shairport-sync                           <|  -> Networking applications
+| shared-mime-info                         <|  -> Miscellaneous
+| shareware Doom WAD file                  <|  -> Games
+| showfont                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| sigrok-cli                               <|  -> Hardware handling
+| simicsfs                                 <|  -> Filesystem and flash utilities
+| sispmctl                                 <|  -> Hardware handling
+| slang                                    <|  -> Libraries -> Text and terminal handling
+| slirp                                    <|  -> Libraries -> Networking
+| smack                                    <|  -> System tools
+| smartmontools                            <|  -> Hardware handling
+| smcroute                                 <|  -> Networking applications
+| smproxy                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| smstools3                                <|  -> Hardware handling
+| snappy                                   <|  -> Libraries -> Compression and decompression
+| snmp++                                   <|  -> Libraries -> Networking
+| snowball-hdmiservice                     <|  -> Hardware handling
+| snowball-init                            <|  -> Miscellaneous
+| socat                                    <|  -> Networking applications
+| socketcand                               <|  -> Networking applications
+| sofia-sip                                <|  -> Libraries -> Networking
+| sound-theme-borealis                     <|  -> Miscellaneous
+| sound-theme-freedesktop                  <|  -> Miscellaneous
+| sox                                      <|  -> Audio and video applications
+| spawn-fcgi                               <|  -> Networking applications
+| speex                                    <|  -> Libraries -> Audio/Sound
+| spice protocol                           <|  -> Networking applications
+| spice server                             <|  -> Networking applications
+| spidev_test                              <|  -> Debugging, profiling and benchmark
+| sqlcipher                                <|  -> Libraries -> Database
+| sqlite                                   <|  -> Libraries -> Database
+| squashfs                                 <|  -> Filesystem and flash utilities
+| squid                                    <|  -> Networking applications
+| sredird                                  <|  -> Hardware handling
+| sshfs (FUSE)                             <|  -> Filesystem and flash utilities
+| sshpass                                  <|  -> Networking applications
+| sstrip                                   <|  -> Development tools
+| start-stop-daemon                        <|  -> System tools
+| startup-notification                     <|  -> Libraries -> Other
+| statserial                               <|  -> Hardware handling
+| strace                                   <|  -> Debugging, profiling and benchmark
+| stress                                   <|  -> Debugging, profiling and benchmark
+| strongswan                               <|  -> Networking applications
+| stunnel                                  <|  -> Networking applications
+| subversion                               <|  -> Development tools
+| sudo                                     <|  -> Shell and utilities
+| sunxi nand-part                          <|  -> Filesystem and flash utilities
+| sunxi script.bin board file              <|  -> Hardware handling -> Firmware
+| sunxi-cedarx                             <|  -> Hardware handling
+| sunxi-mali                               <|  -> Hardware handling
+| supervisor                               <|  -> System tools
+| SVG Module                               <|  -> Graphic libraries and applications (graphic/text)
+| sylpheed                                 <|  -> Mail
+| synergy                                  <|  -> Graphic libraries and applications (graphic/text)
+| syslogd & klogd                          <|  -> System tools
+| sysprof                                  <|  -> Debugging, profiling and benchmark
+| sysstat                                  <|  -> Hardware handling
+| systemd                                  <|  -> System tools
+| sysvinit                                 <|  -> System tools
+| szip                                     <|  -> Libraries -> Compression and decompression
+| taglib                                   <|  -> Libraries -> Audio/Sound
+| tar                                      <|  -> Development tools
+| targetcli-fb                             <|  -> Hardware handling
+| tcl                                      <|  -> Interpreter languages and scripting
+| tclap                                    <|  -> Libraries -> Text and terminal handling
+| tcllib                                   <|  -> Interpreter languages and scripting -> tcl libraries/modules
+| tcpdump                                  <|  -> Networking applications
+| tcping                                   <|  -> Networking applications
+| tcpreplay                                <|  -> Networking applications
+| tftpd                                    <|  -> Networking applications
+| thrift                                   <|  -> Libraries -> Networking
+| thttpd                                   <|  -> Networking applications
+| ti-gfx                                   <|  -> Hardware handling
+| ti-uim                                   <|  -> Hardware handling
+| ti-utils                                 <|  -> Hardware handling
+| tidsp-binaries                           <|  -> Audio and video applications
+| tiff                                     <|  -> Libraries -> Graphics
+| time                                     <|  -> Shell and utilities
+| tinc                                     <|  -> Networking applications
+| tinyalsa                                 <|  -> Libraries -> Audio/Sound
+| tinyhttpd                                <|  -> Networking applications
+| tinymembench                             <|  -> Debugging, profiling and benchmark
+| tinyxml                                  <|  -> Libraries -> JSON/XML
+| tmux                                     <|  -> Shell and utilities
+| tn5250                                   <|  -> Networking applications
+| torsmo                                   <|  -> Graphic libraries and applications (graphic/text)
+| trace-cmd                                <|  -> Debugging, profiling and benchmark
+| transmission                             <|  -> Networking applications
+| tree                                     <|  -> Development tools
+| tremor (fixed point vorbis decoder)      <|  -> Libraries -> Audio/Sound
+| triggerhappy                             <|  -> Hardware handling
+| trinity                                  <|  -> Debugging, profiling and benchmark
+| tslib                                    <|  -> Libraries -> Hardware handling
+| tstools                                  <|  -> Audio and video applications
+| tvheadend                                <|  -> Networking applications
+| twm                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| twolame                                  <|  -> Audio and video applications
+| u-boot tools                             <|  -> Hardware handling
+| udisks                                   <|  -> Hardware handling
+| udpcast                                  <|  -> Networking applications
+| uemacs                                   <|  -> Text editors and viewers
+| ulogd                                    <|  -> Networking applications
+| unionfs (FUSE)                           <|  -> Filesystem and flash utilities
+| upmpdcli                                 <|  -> Audio and video applications
+| urg                                      <|  -> Libraries -> Hardware handling
+| usb_modeswitch                           <|  -> Hardware handling
+| usb_modeswitch_data                      <|  -> Hardware handling
+| usbmount                                 <|  -> Hardware handling
+| usbredir                                 <|  -> Libraries -> Networking
+| usbutils                                 <|  -> Hardware handling
+| ushare                                   <|  -> Networking applications
+| ussp-push                                <|  -> Networking applications
+| ustr                                     <|  -> Libraries -> Text and terminal handling
+| util-linux                               <|  -> System tools
+| util-macros                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Utilities
+| ux500-firmware                           <|  -> Hardware handling -> Firmware
+| valgrind                                 <|  -> Debugging, profiling and benchmark
+| vde2                                     <|  -> Networking applications
+| videoproto                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| viewres                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| vim                                      <|  -> Text editors and viewers
+| vlc                                      <|  -> Audio and video applications
+| vnstat                                   <|  -> Networking applications
+| vo-aacenc                                <|  -> Libraries -> Audio/Sound
+| vorbis-tools                             <|  -> Audio and video applications
+| vpnc                                     <|  -> Networking applications
+| vsftpd                                   <|  -> Networking applications
+| vtun                                     <|  -> Networking applications
+| w_scan                                   <|  -> Hardware handling
+| wavpack                                  <|  -> Audio and video applications
+| wayland                                  <|  -> Libraries -> Graphics
+| webkit                                   <|  -> Libraries -> Graphics
+| WebKit Module                            <|  -> Graphic libraries and applications (graphic/text)
+| webp                                     <|  -> Libraries -> Graphics
+| webrtc-audio-processing                  <|  -> Libraries -> Audio/Sound
+| weston                                   <|  -> Graphic libraries and applications (graphic/text)
+| wget                                     <|  -> Networking applications
+| whetstone                                <|  -> Debugging, profiling and benchmark
+| which                                    <|  -> Shell and utilities
+| whois                                    <|  -> Networking applications
+| windowswmproto                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| wipe                                     <|  -> Hardware handling
+| wireless tools                           <|  -> Networking applications
+| wireless-regdb                           <|  -> Networking applications
+| wireshark                                <|  -> Networking applications
+| wmctrl                                   <|  -> Graphic libraries and applications (graphic/text)
+| wpa_supplicant                           <|  -> Networking applications
+| wsapi                                    <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| wvdial                                   <|  -> Networking applications
+| wvstreams                                <|  -> Libraries -> Networking
+| x11perf                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| x11vnc                                   <|  -> Graphic libraries and applications (graphic/text)
+| x264                                     <|  -> Libraries -> Multimedia
+| xauth                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xavante                                  <|  -> Interpreter languages and scripting -> Lua libraries/modules
+| xbacklight                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xbiff                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xbitmaps                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Other data
+| xcalc                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xcb-proto                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xcb-util                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| xcb-util-image                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| xcb-util-keysyms                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| xcb-util-wm                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| xclipboard                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xclock                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xcmiscproto                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xcmsdb                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xconsole                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xcursor-transparent-theme                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Other data
+| xcursorgen                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xdata_xcursor-themes                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Other data
+| xdbedizzy                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xditview                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xdm                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xdpyinfo                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xdriinfo                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xedit                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| Xenomai Userspace                        <|  -> Real-Time
+| xerces-c++                               <|  -> Libraries -> JSON/XML
+| xev                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xextproto                                <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xeyes                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xf86-input-evdev                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-joystick                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-keyboard                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-mouse                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-synaptics                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-tslib                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-vmmouse                       <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-input-void                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-ark                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-ast                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-ati                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-cirrus                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-dummy                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-fbdev                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-geode                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-glide                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-glint                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-i128                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-intel                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-mach64                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-mga                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-neomagic                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-nv                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-openchrome                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-r128                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-savage                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-siliconmotion                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-sis                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-tdfx                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-tga                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-trident                       <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-v4l                           <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-vesa                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-vmware                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-voodoo                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86-video-wsfb                          <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Drivers
+| xf86bigfontproto                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xf86dga                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xf86dgaproto                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xf86driproto                             <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xf86vidmodeproto                         <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xfd                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xfontsel                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xfs                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xfsinfo                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xfsprogs                                 <|  -> Filesystem and flash utilities
+| xgamma                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xgc                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xhost                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xineramaproto                            <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xinetd                                   <|  -> Networking applications
+| xinit                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xinput                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xinput-calibrator                        <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xkbcomp                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xkbevd                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xkbprint                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xkbutils                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xkeyboard-config                         <|  -> Graphic libraries and applications (graphic/text)
+| xkill                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xl2tp                                    <|  -> Networking applications
+| xload                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xlogo                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xlsatoms                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xlsclients                               <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xlsfonts                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xmag                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xman                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xmessage                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xmh                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| XML Patterns Module                      <|  -> Graphic libraries and applications (graphic/text)
+| xmlstarlet                               <|  -> Shell and utilities
+| xmodmap                                  <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xmore                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xorg-server                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Servers
+| xorriso                                  <|  -> Hardware handling
+| xpr                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xprop                                    <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xproto                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 X protocols
+| xrandr                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xrdb                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xrefresh                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xscreensaver                             <|  -> Graphic libraries and applications (graphic/text)
+| xset                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xsetmode                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xsetpointer                              <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xsetroot                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xsm                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xstdcmap                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xtables-addons                           <|  -> Networking applications
+| xterm                                    <|  -> Graphic libraries and applications (graphic/text)
+| xtrans                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Libraries
+| xvidtune                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xvinfo                                   <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xvkbd                                    <|  -> Graphic libraries and applications (graphic/text)
+| xwd                                      <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xwininfo                                 <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xwud                                     <|  -> Graphic libraries and applications (graphic/text) -> X11R7 Applications
+| xz-utils                                 <|  -> Compressors and decompressors
+| yajl                                     <|  -> Libraries -> JSON/XML
+| yaml-cpp                                 <|  -> Libraries -> JSON/XML
+| yasm                                     <|  -> Development tools
+| yavta                                    <|  -> Audio and video applications
+| ympd                                     <|  -> Audio and video applications
+| zd1211-firmware                          <|  -> Hardware handling -> Firmware
+| zeromq                                   <|  -> Libraries -> Networking
+| zlib                                     <|  -> Libraries -> Compression and decompression
+| zlog                                     <|  -> Libraries -> Logging
+| zmqpp                                    <|  -> Libraries -> Networking
+| znc                                      <|  -> Networking applications
+| zsh                                      <|  -> Shell and utilities
+| zxing                                    <|  -> Libraries -> Graphics
+| zyre                                     <|  -> Libraries -> Networking
+
+|===================================================
+

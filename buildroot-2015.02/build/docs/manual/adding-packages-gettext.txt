@@ -1,0 +1,61 @@
+// -*- mode:doc; -*-
+// vim: set syntax=asciidoc:
+
+=== Gettext integration and interaction with packages
+
+Many packages that support internationalization use the gettext
+library. Dependencies for this library are fairly complicated and
+therefore, deserve some explanation.
+
+The 'uClibc' C library doesn't implement gettext functionality;
+therefore with this C library, a separate gettext must be compiled,
+which is provided by the additional +libintl+ library, part of the
++gettext+ package.
+
+On the other hand, the 'glibc' C library does integrate its own
+gettext library functions, so it is not necessary to build a separate
++libintl+ library.
+
+However, certain packages need some gettext utilities on the target,
+such as the +gettext+ program itself, which allows to retrieve
+translated strings, from the command line.
+
+Additionally, some packages (such as +libglib2+) do require gettext
+functions unconditionally, while other packages (in general, those who
+support +--disable-nls+) only require gettext functions when locale
+support is enabled.
+
+Therefore, Buildroot defines two configuration options:
+
+* +BR2_NEEDS_GETTEXT+, which is true as soon as the toolchain doesn't
+  provide its own gettext implementation
+
+* +BR2_NEEDS_GETTEXT_IF_LOCALE+, which is true if the toolchain
+  doesn't provide its own gettext implementation and if locale support
+  is enabled
+
+Packages that need gettext only when locale support is enabled should:
+
+* use +select BR2_PACKAGE_GETTEXT if BR2_NEEDS_GETTEXT_IF_LOCALE+ in the
+  +Config.in+ file;
+
+* use +$(if $(BR2_NEEDS_GETTEXT_IF_LOCALE),gettext)+ in the package
+  +DEPENDENCIES+ variable in the +.mk+ file.
+
+Packages that unconditionally need gettext (which should be very rare)
+should:
+
+* use +select BR2_PACKAGE_GETTEXT if BR2_NEEDS_GETTEXT+ in the +Config.in+
+  file;
+
+* use +$(if $(BR2_NEEDS_GETTEXT),gettext)+ in the package
+  +DEPENDENCIES+ variable in the +.mk+ file.
+
+Packages that need the +gettext+ utilities on the target (should be
+rare) should:
+
+* use +select BR2_PACKAGE_GETTEXT+ in their +Config.in+ file,
+  indicating in a comment above that it's a runtime dependency only.
+
+* not add any +gettext+ dependency in the +DEPENDENCIES+ variable of
+  their +.mk+ file.

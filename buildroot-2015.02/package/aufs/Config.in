@@ -1,0 +1,11 @@
+# Prompt-less option, because this package is not doing anything
+# except downloading the AUFS sources. The real work is done by a
+# Linux extension.
+config BR2_PACKAGE_AUFS
+	bool
+	depends on BR2_LINUX_KERNEL
+	help
+	  AUFS
+	  This is only the download helper for the kernel patch.
+
+	  http://aufs.sourceforge.net/

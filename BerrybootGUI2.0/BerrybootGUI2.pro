@@ -13,10 +13,10 @@ TEMPLATE = app
 
 LIBS += -lcrypto -lcurl
 
-RPI_USERLAND_DIR=../../staging/opt/vc
+RPI_USERLAND_DIR=../../staging/usr
 exists($${RPI_USERLAND_DIR}/include/interface/vmcs_host/vc_cecservice.h) {
     INCLUDEPATH += $${RPI_USERLAND_DIR}/include $${RPI_USERLAND_DIR}/include/interface/vcos/pthreads
-    LIBS += -lbcm_host -lvcos -lvchiq_arm -L$${RPI_USERLAND_DIR}/lib
+    LIBS += -lbcm_host -lvcos -lvchiq_arm -lvchostif -L$${RPI_USERLAND_DIR}/lib
     DEFINES += RASPBERRY_CEC_SUPPORT
 } else {
     message(Disabling CEC support for Raspberry Pi - rpi-userland headers not found at $${RPI_USERLAND_DIR})

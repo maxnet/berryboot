@@ -1,0 +1,36 @@
+//
+// Automatically generated list for Buildroot manual.
+//
+
+[width="30%",cols="^1",options="header"]
+|===================================================
+| Packages                                
+
+| host checkpolicy                        
+| host cramfs                             
+| host dfu-util                           
+| host dos2unix                           
+| host dosfstools                         
+| host e2fsprogs                          
+| host genext2fs                          
+| host genimage                           
+| host genpart                            
+| host lpc3250loader                      
+| host mke2img                            
+| host mtd, jffs2 and ubi/ubifs tools     
+| host mtools                             
+| host omap-u-boot-utils                  
+| host openocd                            
+| host parted                             
+| host patchelf                           
+| host pwgen                              
+| host qemu                               
+| host sam-ba                             
+| host squashfs                           
+| host sunxi-tools                        
+| host u-boot tools                       
+| host util-linux                         
+| host-e2tools                            
+
+|===================================================
+

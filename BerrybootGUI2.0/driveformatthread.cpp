@@ -60,7 +60,7 @@ void DriveFormatThread::run()
     {
         emit statusUpdate(tr("Saving boot files to memory"));
 
-        if (_i->sizeofBootFilesInKB() > 63000)
+        if (_i->sizeofBootFilesInKB() > SIZE_BOOT_PART * 1000)
         {
             emit error(tr("SD card contains extra files that do not belong to Berryboot. Please copy them to another disk and delete them from card."));
             return;
@@ -246,12 +246,14 @@ void DriveFormatThread::run()
 bool DriveFormatThread::partitionDrive()
 {
     QByteArray partitionTable;
+    int size_boot_part_in_sectors = 2048 * SIZE_BOOT_PART;
+    int start_main_part = size_boot_part_in_sectors + 2048;
 
     if (_reformatBoot)
-        partitionTable = "2048,129024,0E\n"; /* 63 MB FAT partition LBA */
+        partitionTable = "2048,"+QByteArray::number(size_boot_part_in_sectors)+",0E\n"; /* FAT partition LBA */
 //        partitionTable = "0,128,6\n"; /* 64 MB FAT partition */
 
-    partitionTable += "131072,,L\n"; /* Linux partition with all remaining space */
+    partitionTable += QByteArray::number(start_main_part)+",,L\n"; /* Linux partition with all remaining space */
     partitionTable += "0,0\n";
     partitionTable += "0,0\n";
     if (!_reformatBoot)
@@ -273,7 +275,7 @@ bool DriveFormatThread::partitionDrive()
 
 bool DriveFormatThread::formatBootPartition()
 {
-    return QProcess::execute(QString("/sbin/mkdosfs /dev/")+_bootdev) == 0;
+    return QProcess::execute(QString("/sbin/mkfs.fat /dev/")+_bootdev) == 0;
 }
 
 bool DriveFormatThread::formatDataPartition()
@@ -292,7 +294,7 @@ bool DriveFormatThread::formatDataPartition()
 
         /* For added security, let the cryptsetup program ask for the password in a text console */
         QProcess proc;
-        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksFormat /dev/")+_datadev);
+        proc.start(QByteArray("openvt -c 5 -w /usr/sbin/cryptsetup luksFormat /dev/")+_datadev);
         _i->switchConsole(5);
         proc.waitForFinished();
 
@@ -302,7 +304,7 @@ bool DriveFormatThread::formatDataPartition()
             return false;
         }
 
-        proc.start(QByteArray("openvt -c 5 -w /sbin/cryptsetup.static luksOpen /dev/")+_datadev+" luks");
+        proc.start(QByteArray("openvt -c 5 -w /usr/sbin/cryptsetup luksOpen /dev/")+_datadev+" luks");
         proc.waitForFinished();
         _i->switchConsole(1);
 

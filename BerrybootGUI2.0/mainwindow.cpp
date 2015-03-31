@@ -621,7 +621,7 @@ void MainWindow::on_actionRepair_file_system_triggered()
     else */
 
     cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
-    cmd2 = "/sbin/dosfsck -a /dev/mmcblk0p1";
+    cmd2 = "/sbin/fsck.fat -a /dev/mmcblk0p1";
 
     if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1'\n'%2'\n on tty5?").arg(cmd, cmd2), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
     {

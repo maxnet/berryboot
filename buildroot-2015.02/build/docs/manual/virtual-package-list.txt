@@ -1,0 +1,21 @@
+//
+// Automatically generated list for Buildroot manual.
+//
+
+[width="100%",cols="^1,4,4",options="header"]
+|===================================================
+| Virtual packages     <| Symbols                          <| Providers
+
+| cryptodev            <| +BR2_PACKAGE_HAS_CRYPTODEV+      <| cryptodev-linux, ocf-linux
+| jpeg                 <| +BR2_PACKAGE_HAS_JPEG+           <| jpeg, jpeg-turbo
+| libegl               <| +BR2_PACKAGE_HAS_LIBEGL+         <| mesa3d (w/ OpenGL EGL), gpu-amd-bin-mx51 (also imx53), gpu-viv-bin-mx6q, rpi-userland, sunxi-mali, ti-gfx
+| libgl                <| +BR2_PACKAGE_HAS_LIBGL+          <| mesa3d (w/ DRI swrast driver), mesa3d (w/ DRI i915 driver), mesa3d (w/ DRI i965 driver), mesa3d (w/ DRI radeon driver)
+| libgles              <| +BR2_PACKAGE_HAS_LIBGLES+        <| mesa3d (w/ OpenGL ES), gpu-amd-bin-mx51 (also imx53), gpu-viv-bin-mx6q, rpi-userland, sunxi-mali, ti-gfx
+| libopenmax           <| +BR2_PACKAGE_HAS_LIBOPENMAX+     <| bellagio, rpi-userland
+| libopenvg            <| +BR2_PACKAGE_HAS_LIBOPENVG+      <| gpu-amd-bin-mx51 (also imx53), gpu-viv-bin-mx6q, rpi-userland
+| luainterpreter       <| +BR2_PACKAGE_HAS_LUAINTERPRETER+ <| lua, luajit
+| powervr              <| +BR2_PACKAGE_HAS_POWERVR+        <| ti-gfx
+| udev                 <| +BR2_PACKAGE_HAS_UDEV+           <| eudev, systemd
+
+|===================================================
+

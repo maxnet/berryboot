@@ -1,6 +1,0 @@
-config BR2_PACKAGE_SOCAT
-	bool "socat"
-	help
-	  Multipurpose socket relay program.
-
-	  http://www.dest-unreach.org/socat/

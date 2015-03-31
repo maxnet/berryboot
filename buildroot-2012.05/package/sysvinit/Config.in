@@ -1,6 +1,0 @@
-config BR2_PACKAGE_SYSVINIT
-	bool "sysvinit"
-	help
-	  /sbin/init - parent of all processes
-
-	  http://freshmeat.net/projects/sysvinit/

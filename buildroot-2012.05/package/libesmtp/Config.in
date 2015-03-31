@@ -1,6 +1,0 @@
-config BR2_PACKAGE_LIBESMTP
-	bool "libesmtp"
-	help
-	  Library for sending emails through SMTP.
-
-	  http://www.stafford.uklinux.net/libesmtp

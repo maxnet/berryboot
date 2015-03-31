@@ -1,8 +1,0 @@
-config BR2_PACKAGE_BMON
-	bool "bmon"
-	depends on BR2_INET_IPV6
-	help
-	  Linux bandwidth monitor
-
-comment "bmon requires a toolchain with IPv6 support"
-	depends on !BR2_INET_IPV6

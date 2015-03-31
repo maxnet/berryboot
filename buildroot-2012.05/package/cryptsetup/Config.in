@@ -1,6 +1,0 @@
-config BR2_PACKAGE_CRYPTSETUP
-        bool "cryptsetup"
-    select BR2_PACKAGE_LVM2
-    select BR2_PACKAGE_POPT
-        help
-          Cryptsetup 

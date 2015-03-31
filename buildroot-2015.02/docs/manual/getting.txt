@@ -1,0 +1,16 @@
+// -*- mode:doc; -*-
+// vim: set syntax=asciidoc:
+
+[[getting-buildroot]]
+== Getting Buildroot
+
+Buildroot releases are made every 3 months, in February, May, August and
+November. Release numbers are in the format YYYY.MM, so for example
+2013.02, 2014.08.
+
+Release tarballs are available at http://buildroot.org/downloads/[].
+
+If you want to follow development, you can use the daily snapshots or
+make a clone of the Git repository. Refer to the
+http://buildroot.org/download[Download page] of the Buildroot website
+for more details.
