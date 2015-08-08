@@ -1,12 +1,12 @@
 BR2_LINUX_KERNEL=y
 BR2_LINUX_KERNEL_CUSTOM_GIT=y
 BR2_LINUX_KERNEL_CUSTOM_REPO_URL="https://github.com/raspberrypi/linux.git"
-BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="rpi-3.18.y"
-BR2_LINUX_KERNEL_PATCH="kernel-patches/uinitrd.patch kernel-patches/0001-hctosys-do-not-treat-lack-of-RTC-device-as-error.patch"
+BR2_LINUX_KERNEL_CUSTOM_REPO_VERSION="rpi-4.1.y"
+BR2_LINUX_KERNEL_PATCH="kernel-patches/uinitrd.patch"
 BR2_LINUX_KERNEL_DEFCONFIG="bcm2709"
 BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="../configs/kernel_config_fragment_berryboot ../configs/kernel_config_fragment_pi2"
 BR2_LINUX_KERNEL_EXT_AUFS=y
-BR2_LINUX_KERNEL_EXT_AUFS_VERSION="aufs3.18.1+"
+BR2_LINUX_KERNEL_EXT_AUFS_VERSION="aufs4.1"
 BR2_LINUX_KERNEL_ZIMAGE=y
 BR2_LINUX_KERNEL_IMAGE_INSTALL_NAME="kernel_rpi2_aufs.img"
 BR2_PACKAGE_RPI_FIRMWARE=y

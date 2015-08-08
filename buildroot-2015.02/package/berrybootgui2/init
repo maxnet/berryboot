@@ -38,13 +38,15 @@ clear
 
 IMAGE=`cat /tmp/answer`
 DATADIR="/mnt/data/$IMAGE"
+SHAREDDIR="/mnt/shared"
+IMAGEPATH="/mnt/images/$IMAGE"
 rm /tmp/answer
 
 #
 # Set CPU governor to "ondemand" when booting an OS on the Pi
 # Set it to "performance" for other devices
 #
-if grep -q "BCM2708" /proc/cpuinfo; then
+if grep -q "BCM" /proc/cpuinfo; then
 	GOVERNOR=ondemand
 else
 	GOVERNOR=performance
@@ -53,8 +55,15 @@ fi
 if [ "$IMAGE" != "" ]; then
 	mkdir -p /squashfs /aufs $DATADIR
 	clear
+
+	if [ -s ${DATADIR}/storage/.update/SYSTEM ]; then
+            echo "Updating OpenELEC"
+            mv -f ${DATADIR}/storage/.update/SYSTEM ${IMAGEPATH}
+            rm -rf ${DATADIR}/storage/.update/*
+	fi
+
 	echo Mounting image ${IMAGE}...
-	mount -o loop "/mnt/images/$IMAGE" /squashfs
+	mount -o loop ${IMAGEPATH} /squashfs
 	cd /squashfs
 
 	if [ -e berryboot-init ]; then
@@ -67,14 +76,14 @@ if [ "$IMAGE" != "" ]; then
 		echo Error: having a symlink for /lib and/or /sbin inside your image is not allowed!
 		echo This conflicts with the shared AUFS folders
 		echo
-		sleep 5
+                sleep 5
 	fi
 
-	for initfile in sbin/init usr/lib/systemd/systemd init
+	for initfile in sbin/init usr/lib/systemd/systemd lib/systemd/systemd init
 	do
 		if [ -e $initfile ]; then
 			echo Mounting RW data directory on top
-			mount -t aufs -o br:${DATADIR}:/mnt/shared:/squashfs none /aufs
+			mount -t aufs -o br:${DATADIR}:${SHAREDDIR}:/squashfs none /aufs
 			cd /aufs
 			mount -o move /dev dev
 			mount -o move /sys sys

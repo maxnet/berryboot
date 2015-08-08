@@ -5,7 +5,7 @@
 ################################################################################
 
 AUFS_VERSION = $(call qstrip,$(BR2_LINUX_KERNEL_EXT_AUFS_VERSION))
-AUFS_SITE = git://git.code.sf.net/p/aufs/aufs3-standalone
+AUFS_SITE = git://github.com/sfjro/aufs4-standalone.git
 AUFS_LICENSE = GPLv2
 
 ifeq ($(BR2_LINUX_KERNEL_EXT_AUFS),y)

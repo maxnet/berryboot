@@ -61,7 +61,7 @@ DownloadDialog::DownloadDialog(const QString &url, const QString &alternateUrl, 
         return;
     }
 
-    _download = new DownloadThread(url.toAscii(), "/mnt/tmp/"+localfilename, this);
+    _download = new DownloadThread(url.toLatin1(), "/mnt/tmp/"+localfilename, this);
     connect(_download, SIGNAL(downloadSuccessful()), this, SLOT(onDownloadSuccessful()));
     connect(_download, SIGNAL(downloadError(QString)), this, SLOT(onDownloadError(QString)));
     connect(_download, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));
@@ -83,7 +83,7 @@ void DownloadDialog::onDownloadError(const QString &message)
     {
         if (QMessageBox::question(this, tr("Try other mirror?"), tr("Would you like to retry downloading from a different site?"), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
         {
-            _download = new DownloadThread(_alternateUrl.toAscii(), "/mnt/tmp/"+_localfilename, this);
+            _download = new DownloadThread(_alternateUrl.toLatin1(), "/mnt/tmp/"+_localfilename, this);
             connect(_download, SIGNAL(downloadSuccessful()), this, SLOT(onDownloadSuccessful()));
             connect(_download, SIGNAL(downloadError(QString)), this, SLOT(onDownloadError(QString)));
             connect(_download, SIGNAL(downloadProgress(qint64,qint64)), this, SLOT(onDownloadProgress(qint64,qint64)));

@@ -27,7 +27,7 @@
 #include "confeditdialog.h"
 #include "ui_confeditdialog.h"
 #include <QFile>
-#include <QtGui/QPlainTextEdit>
+#include <QPlainTextEdit>
 #include <unistd.h>
 
 /* Private class - For each configuration file there is a tab class */
@@ -56,7 +56,7 @@ public:
 
     void save()
     {
-        QByteArray txt = _textEdit->toPlainText().toAscii();
+        QByteArray txt = _textEdit->toPlainText().toLatin1();
 
         if (!_ro && txt != _origData)
         {

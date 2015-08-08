@@ -34,6 +34,8 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QTimer>
+#include <QTime>
+#include <QApplication>
 
 #define HAVE_SYS_STATVFS_H 1
 #define HAVE_STATVFS 1
@@ -158,14 +160,14 @@ void Installer::initializeDataPartition(const QString &dev)
         //symlink(_timezone, "/shared/")
         QFile f("/mnt/shared/etc/timezone");
         f.open(f.WriteOnly);
-        f.write(_timezone.toAscii()+"\n");
+        f.write(_timezone.toLatin1()+"\n");
         f.close();
     }
     if (!_keyboardlayout.isEmpty())
     {
         QByteArray keybconfig =
             "XKBMODEL=\"pc105\"\n"
-            "XKBLAYOUT=\""+_keyboardlayout.toAscii()+"\"\n"
+            "XKBLAYOUT=\""+_keyboardlayout.toLatin1()+"\"\n"
             "XKBVARIANT=\"\"\n"
             "XKBOPTIONS=\"\"\n";
 
@@ -246,7 +248,8 @@ void Installer::startNetworking()
 bool Installer::networkReady()
 {
     /* Once we have a DHCP lease /tmp/resolv.conf is created */
-    return QFile::exists("/tmp/resolv.conf");
+    QFile f("/tmp/resolv.conf");
+    return f.exists() && f.size() > 0;
 }
 
 bool Installer::umountSystemPartition()
@@ -280,7 +283,7 @@ double Installer::availableDiskSpace(const QString &path)
         double bytesfree = 0;
         struct statvfs buf;
 
-        QByteArray pathba = path.toAscii();
+        QByteArray pathba = path.toLatin1();
         if (statvfs(pathba.constData(), &buf)) {
                 return -1;
         }
@@ -298,14 +301,14 @@ double Installer::diskSpaceInUse(const QString &path)
         double bytes = 0;
         struct statvfs buf;
 
-        QByteArray pathba = path.toAscii();
+        QByteArray pathba = path.toLatin1();
         if (statvfs(pathba.constData(), &buf)) {
                 return -1;
         }
         if (buf.f_frsize) {
-                bytes = (((double)buf.f_blocks) * ((double)buf.f_frsize));
+                bytes = (((double)(buf.f_blocks-buf.f_ffree)) * ((double)buf.f_frsize));
         } else {
-                bytes = (((double)buf.f_blocks) * ((double)buf.f_bsize));
+                bytes = (((double)(buf.f_blocks-buf.f_ffree)) * ((double)buf.f_bsize));
         }
 
         return bytes;
@@ -380,7 +383,7 @@ void Installer::setDefaultImage(const QString &name)
     else
     {
         f.open(f.WriteOnly);
-        f.write(name.toAscii());
+        f.write(name.toLatin1());
         f.close();
     }
 }
@@ -427,8 +430,8 @@ void Installer::deleteUserChanges(const QString &name)
 
 void Installer::cloneImage(const QString &oldname, const QString &newname, bool clonedata)
 {
-    QByteArray oldnamepath = QByteArray("/mnt/images/")+oldname.toAscii();
-    QByteArray newnamepath = QByteArray("/mnt/images/")+newname.toAscii();
+    QByteArray oldnamepath = QByteArray("/mnt/images/")+oldname.toLatin1();
+    QByteArray newnamepath = QByteArray("/mnt/images/")+newname.toLatin1();
 
     if (link(oldnamepath.constData(), newnamepath.constData()) == 0 && clonedata)
     {
@@ -437,7 +440,7 @@ void Installer::cloneImage(const QString &oldname, const QString &newname, bool 
             QDir dir;
             dir.mkdir("/mnt/data/"+newname);
 
-            QByteArray cmd = QByteArray("cp -a /mnt/data/")+oldname.toAscii()+"/* /mnt/data/"+newname.toAscii();
+            QByteArray cmd = QByteArray("cp -a /mnt/data/")+oldname.toLatin1()+"/* /mnt/data/"+newname.toLatin1();
             if (system(cmd.constData()) != 0)
                 log_error("Error copying modified data");
             // TODO: BTRFS reflink?
@@ -635,7 +638,7 @@ void Installer::startWifi()
         QApplication::processEvents(QEventLoop::WaitForMoreEvents, 250);
     }
 
-    QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/boot/wpa_supplicant.conf -B");
+    QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/boot/wpa_supplicant.conf -B");
 
     QProcess *p = new QProcess(this);
     connect(p, SIGNAL(finished(int)), this, SLOT(wifiStarted(int)));

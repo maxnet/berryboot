@@ -36,8 +36,8 @@
 #include <QSettings>
 #include <QFile>
 #include <QDir>
-#include <QtGui/QListWidgetItem>
-#include <QtGui/QPushButton>
+#include <QListWidgetItem>
+#include <QPushButton>
 #include <QCryptographicHash>
 #include <QDebug>
 #include <unistd.h>

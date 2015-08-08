@@ -614,7 +614,7 @@ void MainWindow::on_actionRepair_file_system_triggered()
     if (_i->bootoptions().contains("luks"))
         datadev = "/dev/mapper/luks";
     else
-        datadev = "/dev/"+_i->datadev().toAscii();
+        datadev = "/dev/"+_i->datadev().toLatin1();
 
     /*if (_i->bootoptions().contains("btrfs"))
         cmd = "fsck.btrfs -y "+datadev;

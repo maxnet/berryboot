@@ -30,8 +30,6 @@
 #include <QFile>
 #include <QDir>
 
-#include <QWSServer>
-
 DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesystem, Installer *i, QObject *parent, const QString &bootdev, bool initializedata, bool password) :
     QThread(parent), _dev(drive), _bootdev(bootdev), _fs(filesystem), _iscsi(false), _initializedata(initializedata), _password(password), _i(i)
 {
@@ -166,7 +164,7 @@ void DriveFormatThread::run()
             param += " sound="+_i->sound();
         }
 
-        QByteArray qmap = _i->keyboardlayout().toAscii();
+        QByteArray qmap = _i->keyboardlayout().toLatin1();
         if (!qmap.isEmpty() && qmap != "us")
             param += " qmap="+qmap;
 

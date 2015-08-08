@@ -327,14 +327,14 @@ void BootMenuDialog::bootImage(const QString &name)
         /* rename() it. This is an atomic operation according to man page */
         rename("/boot/config.new", "/boot/config.txt");
         umountSystemPartition();
-        file_put_contents(runonce_file, name.toAscii());
+        file_put_contents(runonce_file, name.toLatin1());
         QProcess::execute("umount /mnt");
         sync(); //sleep(1);
         reboot();
     }
     else
     {
-        file_put_contents("/tmp/answer", name.toAscii() );
+        file_put_contents("/tmp/answer", name.toLatin1() );
         reject();
     }
 }
@@ -589,15 +589,15 @@ int BootMenuDialog::currentMemsplit()
     memtotalstr = memtotalstr.mid(memtotalstr.lastIndexOf(" ")+1);
     int memtotal = memtotalstr.toInt();
 
-    if (memtotal > 496000) /* 512 MB model. Return corespondening 256 MB model values for compatibility */
+    if (memtotal > 495000) /* 512 MB model. Return corespondening 256 MB model values for compatibility */
         return 240;
-    else if (memtotal > 480000)
+    else if (memtotal > 479000)
         return 224;
-    else if (memtotal > 448000)
+    else if (memtotal > 447000)
         return 192;
-    else if (memtotal > 256000)
+    else if (memtotal > 255000)
         return 128;
-    else if (memtotal > 250000)
+    else if (memtotal > 249000)
         return 256;
     else if (memtotal > 230000) /* Original 256 MB model */
         return 240;
@@ -691,7 +691,7 @@ void BootMenuDialog::askLuksPassword(const QString &datadev)
     ::mkdir("/etc/profile.d", 0755);
     QFile f("/etc/profile.d/ssh-luks-prompt.sh");
     f.open(f.WriteOnly);
-    f.write("/usr/sbin/cryptsetup luksOpen /dev/"+datadev.toAscii()+" luks && killall openvt");
+    f.write("/usr/sbin/cryptsetup luksOpen /dev/"+datadev.toLatin1()+" luks && killall openvt");
     f.close();
 
     _i->switchConsole(5);

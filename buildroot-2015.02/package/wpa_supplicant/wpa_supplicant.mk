@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-WPA_SUPPLICANT_VERSION = 2.3
+WPA_SUPPLICANT_VERSION = 2.4
 WPA_SUPPLICANT_SITE = http://hostap.epitest.fi/releases
 WPA_SUPPLICANT_LICENSE = GPLv2/BSD-3c
 WPA_SUPPLICANT_LICENSE_FILES = README
@@ -26,7 +26,8 @@ WPA_SUPPLICANT_CONFIG_ENABLE = \
 	CONFIG_INTERNAL_LIBTOMMATH
 
 WPA_SUPPLICANT_CONFIG_DISABLE = \
-	CONFIG_SMARTCARD
+	CONFIG_SMARTCARD        \
+	CONFIG_P2P
 
 # libnl-3 needs -lm (for rint) and -lpthread if linking statically
 # And library order matters hence stick -lnl-3 first since it's appended
@@ -112,6 +113,16 @@ ifeq ($(BR2_PACKAGE_READLINE),y)
 	WPA_SUPPLICANT_CONFIG_ENABLE += CONFIG_READLINE
 endif
 
+ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_GUI),y)
+	WPA_SUPPLICANT_DEPENDENCIES += qt
+	WPA_SUPPLICANT_MAKE_OPTS = all wpa_gui-qt4
+define WPA_SUPPLICANT_INSTALL_GUI
+	$(INSTALL) -m 0755 -D \
+		$(@D)/wpa_supplicant/wpa_gui-qt4/wpa_gui \
+		$(TARGET_DIR)/usr/sbin/wpa_gui
+endef
+endif
+
 define WPA_SUPPLICANT_CONFIGURE_CMDS
 	cp $(@D)/wpa_supplicant/defconfig $(WPA_SUPPLICANT_CONFIG)
 	sed -i $(patsubst %,-e 's/^#\(%\)/\1/',$(WPA_SUPPLICANT_CONFIG_ENABLE)) \
@@ -127,7 +138,7 @@ define WPA_SUPPLICANT_BUILD_CMDS
 		LDFLAGS="$(TARGET_LDFLAGS)" BINDIR=/usr/sbin \
 		LIBS="$(WPA_SUPPLICANT_LIBS)" LIBS_c="$(WPA_SUPPLICANT_LIBS)" \
 		LIBS_p="$(WPA_SUPPLICANT_LIBS)" \
-		$(MAKE) CC="$(TARGET_CC)" -C $(@D)/$(WPA_SUPPLICANT_SUBDIR)
+		$(MAKE) CC="$(TARGET_CC)" -C $(@D)/$(WPA_SUPPLICANT_SUBDIR) $(WPA_SUPPLICANT_MAKE_OPTS)
 endef
 
 ifeq ($(BR2_PACKAGE_WPA_SUPPLICANT_CLI),y)
@@ -160,6 +171,7 @@ define WPA_SUPPLICANT_INSTALL_TARGET_CMDS
 	$(INSTALL) -m 644 -D package/wpa_supplicant/wpa_supplicant.conf \
 		$(TARGET_DIR)/etc/wpa_supplicant.conf
 	$(WPA_SUPPLICANT_INSTALL_CLI)
+	$(WPA_SUPPLICANT_INSTALL_GUI)
 	$(WPA_SUPPLICANT_INSTALL_PASSPHRASE)
 	$(WPA_SUPPLICANT_INSTALL_DBUS)
 endef

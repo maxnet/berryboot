@@ -43,6 +43,16 @@ config BR2_PACKAGE_WPA_SUPPLICANT_CLI
 	help
 	  Install wpa_cli command line utility
 
+config BR2_PACKAGE_WPA_SUPPLICANT_GUI
+	bool "Install wpa_gui binary"
+	depends on BR2_PACKAGE_QT
+	select BR2_PACKAGE_QT_GUI_MODULE
+	help
+	  Install wpa_gui utility
+
+comment "wpa_gui depends on QT"
+        depends on !BR2_PACKAGE_QT
+
 config BR2_PACKAGE_WPA_SUPPLICANT_PASSPHRASE
 	bool "Install wpa_passphrase binary"
 	help

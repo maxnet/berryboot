@@ -81,10 +81,10 @@ void NetworkSettingsDialog::accept()
 {
     /* Save network configuration settings */
     QByteArray newParam, oldParam = currentIPparam();
-    QByteArray ip      = ui->ipEdit->text().toAscii();
-    QByteArray netmask = ui->netmaskCombo->currentText().toAscii();
-    QByteArray gateway = ui->gwEdit->text().toAscii();
-    QByteArray iface   = ui->interfaceCombo->currentText().toAscii();
+    QByteArray ip      = ui->ipEdit->text().toLatin1();
+    QByteArray netmask = ui->netmaskCombo->currentText().toLatin1();
+    QByteArray gateway = ui->gwEdit->text().toLatin1();
+    QByteArray iface   = ui->interfaceCombo->currentText().toLatin1();
     QByteArray dns     = "8.8.8.8";
     bool staticConfig  = ui->staticRadio->isChecked();
 
@@ -200,7 +200,7 @@ void NetworkSettingsDialog::accept()
         s->setValue("hostname", host);
         s->setValue("port", ui->proxyportEdit->text().toInt());
         s->setValue("user", ui->proxyuserEdit->text());
-        s->setValue("password", ui->proxypassEdit->text().toAscii().toBase64());
+        s->setValue("password", ui->proxypassEdit->text().toLatin1().toBase64());
     }
 
     s->endGroup();
@@ -217,7 +217,7 @@ void NetworkSettingsDialog::accept()
     if (ui->repoPassEdit->text().isEmpty())
         s->remove("password");
     else
-        s->setValue("password", ui->repoPassEdit->text().toAscii().toBase64());
+        s->setValue("password", ui->repoPassEdit->text().toLatin1().toBase64());
 
     s->endGroup();
     s->sync();

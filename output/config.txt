@@ -10,7 +10,9 @@ kernel=kernel_rpi2_aufs.img
 
 [pi1]
 kernel=kernel_rpi_aufs.img
-cma_lwm=16
-cma_hwm=32
-cma_offline_start=16
 
+# Warning: CMA does not work properly in newer firmware versions
+#
+#cma_lwm=16
+#cma_hwm=32
+#cma_offline_start=16

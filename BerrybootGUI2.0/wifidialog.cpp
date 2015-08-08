@@ -73,7 +73,7 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     {
         qpd.setLabelText(tr("Starting wpa_supplicant..."));
         QApplication::processEvents();
-        QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant.conf -B");
+        QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/etc/wpa_supplicant.conf -B");
         QProcess::execute("/usr/sbin/wpa_cli scan");
         _timer.start(1500);
         ui->passEdit->setFocus();
@@ -172,12 +172,12 @@ void WifiDialog::accept()
         "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n"
         "ap_scan=1\n\n"
         "network={\n"
-        "\tssid=\""+ui->networkList->currentItem()->text().toAscii()+"\"\n"
-        "\tpsk=\""+ui->passEdit->text().toAscii()+"\"\n"
+        "\tssid=\""+ui->networkList->currentItem()->text().toLatin1()+"\"\n"
+        "\tpsk=\""+ui->passEdit->text().toLatin1()+"\"\n"
         "}\n"
     );
     f.close();
-    QProcess::execute("/usr/sbin/wpa_supplicant -Dwext -iwlan0 -c/etc/wpa_supplicant.conf -B");
+    QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/etc/wpa_supplicant.conf -B");
 
     /* Ugly workaround: sleep a second to give slow wifi devices some time. */
     QTime sleepUntil = QTime::currentTime().addSecs(1);

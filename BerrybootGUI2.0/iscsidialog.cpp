@@ -87,7 +87,7 @@ void iSCSIDialog::accept()
 
     QFile f("/boot/iscsi.sh");
     f.open(f.WriteOnly);
-    f.write(cmd.toAscii());
+    f.write(cmd.toLatin1());
     f.close();
 
     QDialog::accept();
