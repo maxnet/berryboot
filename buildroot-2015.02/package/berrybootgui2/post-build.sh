@@ -18,3 +18,12 @@ if [ -e output/target/usr/lib/fonts/VeraBd.ttf ]; then
 	cp output/staging/usr/lib/fonts/DejaVuSans-Bold.ttf output/target/usr/lib/fonts
 fi
 
+if [ -e output/target/etc/udev/hwdb.d ]; then
+	rm -rf output/target/etc/udev/hwdb.d
+fi
+
+# Remove libvncclient, only using server libs
+if [ -e output/target/usr/lib/libvncclient.so ]; then
+	rm output/target/usr/lib/libvncclient*
+fi
+

@@ -16,10 +16,27 @@ if grep -q debugconsole /proc/cmdline; then
 	/sbin/getty -L tty2 0 vt100 &
 fi
 
+# Sunxi
 if grep -q "mmc0_led" /proc/cmdline; then
 	if [ -e /sys/class/leds/ph20:green:led1 ]; then
 		echo mmc0 > /sys/class/leds/ph20:green:led1/trigger
 	fi
+fi
+
+# iMX.6
+if [ -e /sys/class/graphics/fb0/free_scale ]; then
+	sleep 2
+	echo -n 1080p > /sys/class/display/mode
+	echo 0 > /sys/class/ppmgr/ppscaler
+	echo 0 > /sys/class/graphics/fb0/free_scale
+	echo 1 > /sys/class/graphics/fb0/freescale_mode
+
+	M="0 0 1919 1079"
+	echo $M > /sys/class/graphics/fb0/free_scale_axis
+	echo $M > /sys/class/graphics/fb0/window_axis
+	echo 0x10001 > /sys/class/graphics/fb0/free_scale
+
+	echo 0 > /sys/class/graphics/fb0/blank
 fi
 
 if grep -q vncinstall /proc/cmdline; then
@@ -30,8 +47,14 @@ if grep -q vncinstall /proc/cmdline; then
 	echo
 fi
 
+# Pi touch screen
+if [ -e /sys/devices/platform/rpi_ft5406 ]; then
+	export QWS_MOUSE_PROTO="linuxinput:/dev/input/event0:grab=1 intellimouse:/dev/input/mice"
+fi
+
 # Show GUI, it will write the OS choosen to /tmp/answer
 /usr/bin/BerrybootGUI -qws 2>/tmp/debug 
+killall udevd
 
 # Clear screen
 clear
@@ -71,12 +94,23 @@ if [ "$IMAGE" != "" ]; then
 		. berryboot-init
 	fi
 
+	#
+	# Fedora and Arch symlink /lib to /usr/lib and expect modules in /usr/lib/modules
+	# Symlinks do not work well with our shared folder structure
+	# so move folders around if necessary
+	#
 	if [ -L lib -o -L sbin ]; then
-		echo
-		echo Error: having a symlink for /lib and/or /sbin inside your image is not allowed!
-		echo This conflicts with the shared AUFS folders
-		echo
-                sleep 5
+		if [ -e ${SHAREDDIR}/lib/modules ]; then
+			mkdir -p ${SHAREDDIR}/usr
+			mv ${SHAREDDIR}/lib ${SHAREDDIR}/usr/lib
+			mv ${SHAREDDIR}/sbin ${SHAREDDIR}/usr/sbin 2>/dev/null
+                fi
+	else
+		if [ -e ${SHAREDDIR}/usr/lib/modules ]; then
+			mv ${SHAREDDIR}/usr/lib ${SHAREDDIR}/lib
+			mv ${SHAREDDIR}/usr/sbin ${SHAREDDIR}/sbin 2>/dev/null
+			rmdir ${SHAREDDIR}/usr
+		fi
 	fi
 
 	for initfile in sbin/init usr/lib/systemd/systemd lib/systemd/systemd init

@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.5"
+#define BERRYBOOT_VERSION  "v2.6"
 #define SIZE_BOOT_PART  /* 63 */ 127
 
 class QSettings;
@@ -60,7 +60,6 @@ public:
     void loadCryptoModules();
     void loadSoundModule(const QByteArray &channel);
     void loadFilesystemModule(const QByteArray &fs);
-    void startWifi();
 
     void setKeyboardLayout(const QString &layout);
     void setTimezone(const QString &tz);
@@ -99,6 +98,7 @@ public:
 
 public slots:
     void startNetworking();
+    void startWifi();
 
 protected:
     QString _keyboardlayout, _timezone;

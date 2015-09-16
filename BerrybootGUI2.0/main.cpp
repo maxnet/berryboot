@@ -171,6 +171,9 @@ int main(int argc, char *argv[])
             else
                 f.write("on display.\nIf you want a headless installation instead, append the option 'vncinstall' to cmdline.txt + uEnv.txt\n");
             f.close();
+
+            QByteArray sconsolecmd = "/sbin/getty -L "+serialdev.replace("/dev/", "").toLatin1()+" 0 vt100 &";
+            if (system(sconsolecmd.data()) != 0) { qDebug() << "Error starting emergency holographic shell on serial"; }
         }
 #endif
         LocaleDialog ld(&i);

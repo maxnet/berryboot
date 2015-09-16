@@ -61,10 +61,10 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     QApplication::processEvents();
     i->loadDrivers();
 
-    /* Wait up to 2 seconds for wifi device to appear */
+    /* Wait up to 4 seconds for wifi device to appear */
     QTime t;
     t.start();
-    while (t.elapsed() < 2000 && !QFile::exists("/sys/class/net/wlan0") )
+    while (t.elapsed() < 4000 && !QFile::exists("/sys/class/net/wlan0") )
     {
         QApplication::processEvents(QEventLoop::WaitForMoreEvents, 250);
     }
@@ -73,7 +73,7 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     {
         qpd.setLabelText(tr("Starting wpa_supplicant..."));
         QApplication::processEvents();
-        QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/etc/wpa_supplicant.conf -B");
+        QProcess::execute("/usr/sbin/wpa_supplicant -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
         QProcess::execute("/usr/sbin/wpa_cli scan");
         _timer.start(1500);
         ui->passEdit->setFocus();
@@ -177,7 +177,7 @@ void WifiDialog::accept()
         "}\n"
     );
     f.close();
-    QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/etc/wpa_supplicant.conf -B");
+    QProcess::execute("/usr/sbin/wpa_supplicant -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
 
     /* Ugly workaround: sleep a second to give slow wifi devices some time. */
     QTime sleepUntil = QTime::currentTime().addSecs(1);

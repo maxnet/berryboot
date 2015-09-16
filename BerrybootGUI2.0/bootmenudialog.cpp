@@ -45,6 +45,7 @@
 #include <QTime>
 #include <QDebug>
 #include <QCloseEvent>
+#include <QScreen>
 
 #define runonce_file  "/mnt/data/runonce"
 #define default_file  "/mnt/data/default"
@@ -57,6 +58,19 @@ BootMenuDialog::BootMenuDialog(Installer *i, QWidget *parent) :
     _countdown(11)
 {
     ui->setupUi(this);
+
+#ifdef Q_WS_QWS
+    /* Make items twice as large if using the touch screen */
+    QScreen *scr = QScreen::instance();
+    if (scr->height() == 480)
+    {
+        QFont font = ui->list->font();
+        font.setPointSize(24);
+        ui->list->setFont(font);
+        resize(600, height());
+    }
+#endif
+
     setEnabled(false);
     QTimer::singleShot(1, this, SLOT(initialize()));
 }
@@ -176,6 +190,8 @@ void BootMenuDialog::initialize()
             return;
         }
     }
+    if (QFile::exists("/sbin/udevd"))
+        _i->loadDrivers();
     initializeA10();
 
     if (QFile::exists(runonce_file))

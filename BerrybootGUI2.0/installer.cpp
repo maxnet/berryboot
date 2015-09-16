@@ -545,6 +545,15 @@ void Installer::prepareDrivers()
                 // show error?
             }
         }
+        else if (QFile::exists("/mnt/shared/usr/lib/modules"))
+        {
+            /* Use shared modules from disk */
+            if (symlink("/mnt/shared/usr/lib/modules", "/lib/modules")
+             || symlink("/mnt/shared/usr/lib/firmware", "/lib/firmware"))
+            {
+                // show error?
+            }
+        }
         else
         {
             /* Not yet installed, uncompress shared.tgz from boot partition into ramfs */
@@ -557,28 +566,44 @@ void Installer::loadDrivers()
 {
     prepareDrivers();
 
-    /* Tell the kernel to contact our /sbin/hotplug helper script,
-       if a module wants firmware to be loaded */
-    QFile f("/proc/sys/kernel/hotplug");
-    f.open(f.WriteOnly);
-    f.write("/sbin/hotplug\n");
-    f.close();
-
-    /* Load drivers for USB devices found */
-    QString dirname  = "/sys/bus/usb/devices";
-    QDir    dir(dirname);
-    QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-    foreach (QString dev, list)
+    if (QFile::exists("/sbin/udevd"))
     {
-        QString modalias_file = dirname+"/"+dev+"/modalias";
-        if (QFile::exists(modalias_file))
+        if (QProcess::execute("pidof udevd") != 0)
         {
-            f.setFileName(modalias_file);
-            f.open(f.ReadOnly);
-            QString module = f.readAll().trimmed();
+            QFile f("/proc/sys/kernel/hotplug");
+            f.open(f.WriteOnly);
+            f.write("\0\0\0\0");
             f.close();
-            QProcess::execute("/sbin/modprobe "+module);
+
+            QProcess::execute("/sbin/udevd --daemon");
+            QProcess::execute("/sbin/udevadm trigger");
+        }
+    }
+    else
+    {
+        /* Tell the kernel to contact our /sbin/hotplug helper script,
+           if a module wants firmware to be loaded */
+        QFile f("/proc/sys/kernel/hotplug");
+        f.open(f.WriteOnly);
+        f.write("/sbin/hotplug\n");
+        f.close();
+
+        /* Load drivers for USB devices found */
+        QString dirname  = "/sys/bus/usb/devices";
+        QDir    dir(dirname);
+        QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+        foreach (QString dev, list)
+        {
+            QString modalias_file = dirname+"/"+dev+"/modalias";
+            if (QFile::exists(modalias_file))
+            {
+                f.setFileName(modalias_file);
+                f.open(f.ReadOnly);
+                QString module = f.readAll().trimmed();
+                f.close();
+                QProcess::execute("/sbin/modprobe "+module);
+            }
         }
     }
 }
@@ -630,15 +655,15 @@ void Installer::loadFilesystemModule(const QByteArray &fs)
 void Installer::startWifi()
 {
     loadDrivers();
-    /* Wait up to 2 seconds for wifi device to appear */
+    /* Wait up to 4 seconds for wifi device to appear */
     QTime t;
     t.start();
-    while (t.elapsed() < 2000 && !QFile::exists("/sys/class/net/wlan0") )
+    while (t.elapsed() < 4000 && !QFile::exists("/sys/class/net/wlan0") )
     {
         QApplication::processEvents(QEventLoop::WaitForMoreEvents, 250);
     }
 
-    QProcess::execute("/usr/sbin/wpa_supplicant -iwlan0 -c/boot/wpa_supplicant.conf -B");
+    QProcess::execute("/usr/sbin/wpa_supplicant -Dnl80211,wext -iwlan0 -c/boot/wpa_supplicant.conf -B");
 
     QProcess *p = new QProcess(this);
     connect(p, SIGNAL(finished(int)), this, SLOT(wifiStarted(int)));
@@ -658,6 +683,7 @@ void Installer::wifiStarted(int rc)
     }
 
     sender()->deleteLater();
+    emit networkInterfaceUp();
 }
 
 void Installer::enableCEC()

@@ -445,6 +445,16 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
                 qpd.setLabelText(tr("Extracting updated shared.tgz"));
                 QApplication::processEvents();
 
+                /* Normalize shared after workarounds for Arch/Fedora */
+                if (QFile::exists("/mnt/shared/usr/lib/modules"))
+                {
+                    if (system("mv /mnt/shared/usr/lib /mnt/shared/lib") != 0 || system("mv /mnt/shared/usr/sbin /mnt/shared/sbin") != 0)
+                    {
+                    }
+                    QDir dir;
+                    dir.remove("/mnt/shared/usr");
+                }
+
                 /* Shared.tgz has changed. Extract it to /mnt */
                 if (system("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared") != 0)
                 {
