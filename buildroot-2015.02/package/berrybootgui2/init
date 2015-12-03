@@ -116,8 +116,17 @@ if [ "$IMAGE" != "" ]; then
 	for initfile in sbin/init usr/lib/systemd/systemd lib/systemd/systemd init
 	do
 		if [ -e $initfile ]; then
-			echo Mounting RW data directory on top
-			mount -t aufs -o br:${DATADIR}:${SHAREDDIR}:/squashfs none /aufs
+
+			if [ -e "root_on_tmpfs" ]; then
+				echo "Mounting RW data directory on top (with tmpfs, changes are discarded after reboot)"
+				mkdir /tmpfs
+				mount -t tmpfs none /tmpfs
+				mount -t aufs -o br:/tmpfs:${SHAREDDIR}:/squashfs none /aufs
+			else
+				echo Mounting RW data directory on top
+				mount -t aufs -o br:${DATADIR}:${SHAREDDIR}:/squashfs none /aufs
+			fi
+
 			cd /aufs
 			mount -o move /dev dev
 			mount -o move /sys sys
