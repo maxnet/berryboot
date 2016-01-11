@@ -120,7 +120,7 @@ if [ "$IMAGE" != "" ]; then
 			if [ -e "root_on_tmpfs" ]; then
 				echo "Mounting RW data directory on top (with tmpfs, changes are discarded after reboot)"
 				# remouting SD-card read-only and adding tmpfs layer...
-				mount -nfo remount,ro /mnt
+				mount -o remount,ro /mnt
 				mkdir /tmpfs
 				mount -t tmpfs none /tmpfs
 				mount -t aufs -o br:/tmpfs:${SHAREDDIR}:/squashfs none /aufs
