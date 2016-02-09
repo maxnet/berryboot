@@ -171,6 +171,7 @@ void WifiDialog::accept()
     f.write(
         "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n"
         "ap_scan=1\n\n"
+        "update_config=1\n"
         "network={\n"
         "\tssid=\""+ui->networkList->currentItem()->text().toLatin1()+"\"\n"
         "\tpsk=\""+ui->passEdit->text().toLatin1()+"\"\n"
@@ -186,12 +187,12 @@ void WifiDialog::accept()
 
     /* Connection is successful if we get a DHCP lease
      * TODO: support static network configurations. Could ARP ping gateway to check connection */
-    if ( QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
+    if ( QProcess::execute("/sbin/udhcpc -n -i wlan0 -O mtu") != 0 )
     {
         qpd.setLabelText(tr("Second try... Connecting to access point..."));
         QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
 
-        if (QProcess::execute("/sbin/udhcpc -n -i wlan0") != 0 )
+        if (QProcess::execute("/sbin/udhcpc -n -i wlan0 -O mtu") != 0 )
         {
             qpd.hide();
             QMessageBox::critical(this, tr("Error connecting"), tr("Error connecting or obtaining IP-address. Check settings."), QMessageBox::Ok);

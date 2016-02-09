@@ -1,12 +1,18 @@
 disable_overscan=1
 start_x=1
 gpu_mem=128
+max_usb_current=1
+
+# Enable on-board audio
+dtparam=audio=on
 
 # Berryboot settings, do not change
 initramfs berryboot.img
 
-[pi2]
 kernel=kernel_rpi2_aufs.img
+
+[pi0]
+kernel=kernel_rpi_aufs.img
 
 [pi1]
 kernel=kernel_rpi_aufs.img
@@ -16,3 +22,6 @@ kernel=kernel_rpi_aufs.img
 #cma_lwm=16
 #cma_hwm=32
 #cma_offline_start=16
+
+[all]
+

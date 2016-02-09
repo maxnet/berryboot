@@ -55,9 +55,6 @@
 QByteArray AddDialog::_data;
 bool AddDialog::_openSSLinitialized = false;
 
-/* parsedate.c */
-extern "C" time_t parse_date(char *p, time_t *now);
-
 #define DEFAULT_REPO_SERVER   "http://dl.berryboot.com/distro.zsmime"
 
 
@@ -124,13 +121,12 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
         if (_data.isEmpty())
             downloadList();
         else
-            processData();
+            processIni();
     }
 }
 
 AddDialog::~AddDialog()
 {
-    QFile::remove("/tmp/distro.ini");
     delete ui;
 }
 
@@ -158,32 +154,41 @@ void AddDialog::downloadList()
     _qpd = new QProgressDialog(tr("Downloading list of available distributions"), tr("Cancel"), 0,0, this);
     _qpd->show();
 
-    /*if (!QFile::exists(_cachedir))
-    {
-        QDir dir;
-        dir.mkdir(_cachedir);
-    }*/
     if (_reposerver.startsWith("cifs:") || _reposerver.startsWith("nfs:"))
     {
         generateListFromShare(_reposerver, _repouser, _repopass);
     }
     else
     {
+        _downloadCancelled = false;
         _download = new DownloadThread(_reposerver);
+        _download->setCacheDirectory(_cachedir);
         connect(_download, SIGNAL(finished()), this, SLOT(downloadComplete()));
         connect(_qpd, SIGNAL(canceled()), this, SLOT(cancelDownload()));
+
+        if (!_reposerver2.isEmpty())
+        {
+            _download2 = new DownloadThread(_reposerver2);
+            _download2->setCacheDirectory(_cachedir);
+            connect(_download2, SIGNAL(finished()), this, SLOT(download2Complete()));
+            connect(_download, SIGNAL(finished()), _download2, SLOT(start()));
+        }
+
         _download->start();
     }
 }
 
 void AddDialog::downloadComplete()
 {
-    if (!_download)
+    if (!_download || _downloadCancelled)
         return; /* Cancelled */
 
-    _qpd->hide();
-    _qpd->deleteLater();
-    _qpd = NULL;
+    if (_qpd)
+    {
+        _qpd->hide();
+        _qpd->deleteLater();
+        _qpd = NULL;
+    }
 
     if (!_download->successfull())
     {
@@ -213,8 +218,31 @@ void AddDialog::downloadComplete()
     _download = NULL;
 }
 
+void AddDialog::download2Complete()
+{
+    if (!_download2 || _downloadCancelled)
+        return; /* Cancelled */
+
+    if (_download2->successfull())
+    {
+        QFile f("/tmp/distro.ini");
+        f.open(f.Append);
+        f.write(_download2->data());
+        f.close();
+        processIni();
+    }
+    else
+    {
+        /* Do not treat it as fatal if secondary repository is unreachable */
+    }
+
+    _download2->deleteLater();
+    _download2 = NULL;
+}
+
 void AddDialog::cancelDownload()
 {
+    _downloadCancelled = true;
     if (_qpd)
     {
         _qpd->deleteLater();
@@ -290,22 +318,28 @@ bool AddDialog::verifyData()
     return verified;
 }
 
-
-
 void AddDialog::processData()
 {
     if (!verifyData())
     {
-/*        if (_cache)
-            _cache->clear();*/
+        if (!_cachedir.isEmpty())
+            QProcess::execute("rm -rf "+_cachedir);
+
+        _data.clear();
+        QFile::remove("/tmp/distro.ini");
         QMessageBox::critical(this, tr("Data corrupt"), tr("Downloaded data corrupt. Signature does not match"), QMessageBox::Close);
         return;
     }
 
+    processIni();
+}
+
+void AddDialog::processIni()
+{
     _ini = new QSettings("/tmp/distro.ini", QSettings::IniFormat, this);
     QStringList sections = _ini->childGroups();
-    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
     ui->groupTabs->clear();
+    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
 
     foreach (QString section, sections)
     {
@@ -320,6 +354,7 @@ void AddDialog::processData()
         }
 
         QString group = _ini->value("group", "Others").toString();
+        int groupOrder = _ini->value("grouporder", -1).toInt();
         QString name = _ini->value("name").toString();
         QString description = _ini->value("description").toString();
         QString sizeinmb = QString::number(_ini->value("size", 0).toLongLong()/1024/1024);
@@ -358,7 +393,16 @@ void AddDialog::processData()
             osList->setFont(f);
             connect(osList, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
 
-            ui->groupTabs->addTab(osList, group);
+            if (groupOrder != -1)
+            {
+                ui->groupTabs->insertTab(groupOrder, osList, group);
+                if (groupOrder == 0)
+                {
+                    ui->groupTabs->setCurrentIndex(0);
+                }
+            }
+            else
+                ui->groupTabs->addTab(osList, group);
         }
 
         QListWidgetItem *item = new QListWidgetItem(icon, name+" ("+sizeinmb+" MB)\n"+description, osList);
@@ -369,7 +413,7 @@ void AddDialog::processData()
     {
         _ini->beginGroup("berryboot");;
         QString newest_version = _ini->value("version").toString();
-        if (newest_version != BERRYBOOT_VERSION)
+        if (newest_version > QString(BERRYBOOT_VERSION))
         {
             QString changelog = _ini->value("description").toString();
 
@@ -383,7 +427,6 @@ void AddDialog::processData()
         }
         _ini->endGroup();
     }
-
 }
 
 QByteArray AddDialog::sha1file(const QString &filename)
@@ -607,6 +650,7 @@ void AddDialog::setProxy()
         _reposerver = DEFAULT_REPO_SERVER;
         _repouser = _repopass = "";
     }
+    _reposerver2 = s->value("url2").toByteArray();
     s->endGroup();
 }
 

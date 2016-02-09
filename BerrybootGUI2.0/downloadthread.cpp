@@ -26,8 +26,12 @@
 
 #include "downloadthread.h"
 #include <QFile>
+#include <QFileInfo>
+#include <QDateTime>
+#include <QDir>
 #include <QDebug>
 #include <curl/curl.h>
+#include <utime.h>
 
 QByteArray DownloadThread::_proxy;
 
@@ -91,6 +95,7 @@ void DownloadThread::run()
         return;
     }
 
+    QByteArray cachefile;
     char errorBuf[CURL_ERROR_SIZE] = {0};
     _c = curl_easy_init();
     curl_easy_setopt(_c, CURLOPT_NOSIGNAL, 1);
@@ -111,6 +116,24 @@ void DownloadThread::run()
         curl_easy_setopt(_c, CURLOPT_USERAGENT, _useragent.constData());
     if (!_proxy.isEmpty())
         curl_easy_setopt(_c, CURLOPT_PROXY, _proxy.constData());
+    if (!_file && !_cachedir.isEmpty())
+    {
+        if (!QFile::exists(_cachedir))
+        {
+            QDir dir;
+            dir.mkdir(_cachedir);
+        }
+        cachefile = _cachedir+"/"+QCryptographicHash::hash(_url, QCryptographicHash::Sha1).toHex();
+        if (QFile::exists(cachefile))
+        {
+            QFileInfo fi(cachefile);
+            if (fi.size())
+            {
+                curl_easy_setopt(_c, CURLOPT_TIMECONDITION, CURL_TIMECOND_IFMODSINCE);
+                curl_easy_setopt(_c, CURLOPT_TIMEVALUE, fi.lastModified().toTime_t());
+            }
+        }
+    }
 
     CURLcode ret = curl_easy_perform(_c);
 
@@ -123,6 +146,33 @@ void DownloadThread::run()
     switch (ret)
     {
         case CURLE_OK:
+            if (!cachefile.isEmpty())
+            {
+                QFile f(cachefile);
+                int code = 0;
+                curl_easy_getinfo(_c, CURLINFO_RESPONSE_CODE, &code);
+
+                if (code == 304)
+                {
+                    qDebug() << "cache hit for" << _url;
+                    f.open(f.ReadOnly);
+                    _buf = f.readAll();
+                    f.close();
+                }
+                else if (_lastModified)
+                {
+                    f.open(f.WriteOnly);
+                    f.write(_buf);
+                    f.close();
+
+                    struct timeval tvp[2];
+                    tvp[0].tv_sec = 0;
+                    tvp[0].tv_usec = 0;
+                    tvp[1].tv_sec = _lastModified;
+                    tvp[1].tv_usec = 0;
+                    utimes(cachefile.constData(), tvp);
+                }
+            }
             _successful = true;
             emit downloadSuccessful();
             break;
@@ -216,4 +266,9 @@ void DownloadThread::deleteDownloadedFile()
 {
     if (_file)
         _file->remove();
+}
+
+void DownloadThread::setCacheDirectory(const QString &dir)
+{
+    _cachedir = dir.toAscii();
 }

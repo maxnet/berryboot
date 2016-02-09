@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QIcon>
 #include <QProgressDialog>
 #include <QMessageBox>
+#include <QSettings>
 #include <unistd.h>
 
 DiskDialog::DiskDialog(Installer *i, QWidget *parent) :
@@ -70,6 +71,7 @@ void DiskDialog::populateDrivelist()
 {
     ui->driveList->clear();
 
+    QString defaultStorage = _i->settings()->value("berryboot/defaultstorage").toString();
     QString dirname  = "/sys/class/block";
     QDir    dir(dirname);
     QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -99,13 +101,15 @@ void DiskDialog::populateDrivelist()
             }
             QListWidgetItem *item = new QListWidgetItem(icon, devname+": "+model, ui->driveList);
             item->setData(Qt::UserRole, devname);
+            if (devname == defaultStorage)
+                ui->driveList->setCurrentItem(item);
         }
     }
     QListWidgetItem *item = new QListWidgetItem(QIcon(":/icons/server.png"), "Networked storage (iSCSI SAN)", ui->driveList);
     item->setData(Qt::UserRole, "iscsi");
 
-
-    ui->driveList->setCurrentRow(0);
+    if (ui->driveList->currentRow() < 1)
+        ui->driveList->setCurrentRow(0);
 
     _devlistcount = list.count();
 }

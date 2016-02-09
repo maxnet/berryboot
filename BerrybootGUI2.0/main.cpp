@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStyle>
 #include <QDesktopWidget>
 #include <QImage>
+#include <QIcon>
 #include <QSettings>
 #include <QFile>
 #include <QScreen>
@@ -61,13 +62,22 @@ int main(int argc, char *argv[])
     if (QFile::exists(":/wallpaper.jpg"))
     {
         QRect dim = a.desktop()->availableGeometry();
-        QWSServer::setBackground(QImage(":/wallpaper.jpg").scaled(dim.width(), dim.height()));
+        QImage wp(":/wallpaper.jpg");
+        if (wp.width() > dim.width() && wp.height() > dim.height())
+        {
+            /* Crop background image if we have small screen */
+            QWSServer::setBackground(wp.copy(0, wp.height()-dim.height(), dim.width(), dim.height()));
+        }
+        else
+        {
+            /* Scale image if we have bigger screen */
+            QWSServer::setBackground(wp.scaled(dim.width(), dim.height()));
+        }
     }
     else
         QWSServer::setBackground(Qt::black);
 
-    /* Uncomment to disable use of default Qt icon */
-    //a.setWindowIcon(QPixmap(1,1));
+    a.setWindowIcon(QIcon(":/icons/icon.png"));
 #endif
     Installer i;
     i.enableCEC();

@@ -33,6 +33,7 @@ cp -f buildroot-2015.02/output/images/kernel*.img buildroot-2015.02/output/image
 
 if [ -e buildroot-2015.02/output/images/rpi-firmware ]; then
 	cp -rf buildroot-2015.02/output/images/rpi-firmware/* output
+	rm output/start_db.elf output/fixup_db.dat
 fi
 
 # Pi kernel requires special treatment. Need to run mkknlimg on it, so bootloader knows it has DTB support

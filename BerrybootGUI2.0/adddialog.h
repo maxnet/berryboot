@@ -54,8 +54,9 @@ protected:
     Installer *_i;
     QString _cachedir, _device, _kernelversion;
     QSettings *_ini;
-    QByteArray _reposerver, _repouser, _repopass;
-    DownloadThread *_download;
+    QByteArray _reposerver, _repouser, _repopass, _reposerver2;
+    DownloadThread *_download, *_download2;
+    bool _downloadCancelled;
 
     static bool _openSSLinitialized;
     static QByteArray _data;
@@ -69,6 +70,7 @@ protected:
      * Parse distribution list, and fill GUI listwidget
      */
     void processData();
+    void processIni();
 
     /*
      * Generate the list from files in a CIFS or NFS network share
@@ -98,6 +100,7 @@ protected:
 protected slots:
     void networkUp();
     void downloadComplete();
+    void download2Complete();
     void cancelDownload();
 
 private slots:

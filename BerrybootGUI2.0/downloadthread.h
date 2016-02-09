@@ -111,6 +111,8 @@ public:
      */
     time_t serverTime();
 
+    void setCacheDirectory(const QString &dir);
+
     /*
      * libcurl callbacks
      */
@@ -123,7 +125,7 @@ protected:
 
     CURL *_c;
     double _lastDlTotal, _lastDlNow;
-    QByteArray _url, _useragent, _buf;
+    QByteArray _url, _useragent, _buf, _cachedir;
     static QByteArray _proxy;
     bool _cancelled, _successful;
     time_t _lastModified, _serverTime;

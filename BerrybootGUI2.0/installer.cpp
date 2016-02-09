@@ -206,6 +206,15 @@ void Installer::initializeDataPartition(const QString &dev)
         f.write("nameserver "+dns);
         f.close();
     }
+
+    QSettings *s = settings();
+    s->beginGroup("berryboot");
+    if (s->contains("fschmod"))
+    {
+        ::chown("/mnt", s->value("fsuid", 0).toInt(), s->value("fsguid", 0).toInt());
+        ::chmod("/mnt", s->value("fschmod").toString().toInt(0, 8));
+    }
+    s->endGroup();
 }
 
 bool Installer::mountSystemPartition()
@@ -672,7 +681,7 @@ void Installer::startWifi()
         /* Using static configuration for wifi */
         p->start("/sbin/ifup wlan0");
     else
-        p->start("/sbin/udhcpc -i wlan0");
+        p->start("/sbin/udhcpc -i wlan0 -O mtu");
 }
 
 void Installer::wifiStarted(int rc)
