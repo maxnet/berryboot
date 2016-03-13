@@ -79,6 +79,12 @@ if [ "$IMAGE" != "" ]; then
 	mkdir -p /squashfs /aufs $DATADIR
 	clear
 
+	if [ -s ${DATADIR}/storage/.kodi/temp/oe_update/SYSTEM ]; then
+            echo "Updating OpenELEC"
+            mv -f ${DATADIR}/storage/.kodi/temp/oe_update/SYSTEM ${IMAGEPATH}
+            rm -rf ${DATADIR}/storage/.kodi/temp/oe_update/SYSTEM
+	fi
+
 	if [ -s ${DATADIR}/storage/.update/SYSTEM ]; then
             echo "Updating OpenELEC"
             mv -f ${DATADIR}/storage/.update/SYSTEM ${IMAGEPATH}
