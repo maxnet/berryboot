@@ -491,7 +491,7 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
     if (getBootOptions().contains("fstype=btrfs"))
     {
         mountoptions += ",compress=lzo -t btrfs";
-        loadModule("btrfs");
+        //loadModule("btrfs");
     }
     else
     {

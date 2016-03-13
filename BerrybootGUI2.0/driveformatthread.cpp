@@ -311,7 +311,7 @@ bool DriveFormatThread::formatDataPartition()
     }
 
     if (_fs == "btrfs")
-        cmd = QString("/sbin/mkfs.btrfs -L berryboot /dev/")+dev;
+        cmd = QString("/usr/bin/mkfs.btrfs -f -L berryboot /dev/")+dev;
     else if (_fs == "ext4")
         cmd = QString("/usr/sbin/mkfs.ext4 -L berryboot /dev/")+dev;
     else

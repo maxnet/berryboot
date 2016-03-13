@@ -144,6 +144,11 @@ config BR2_PACKAGE_LINUX_FIRMWARE_LIBERTAS_SD8688
 	help
 	  Firmware files for the Marvell SD8688 module
 
+config BR2_PACKAGE_LINUX_FIRMWARE_MT7601U
+	bool "Mediatek mt7601u"
+	help
+	  Firmware files for Mediatek mt7601u module
+
 config BR2_PACKAGE_LINUX_FIRMWARE_MWIFIEX_SD8787
 	bool "Marvell Wifi-Ex SD 8787"
 	help

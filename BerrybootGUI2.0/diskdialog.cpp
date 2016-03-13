@@ -45,6 +45,9 @@ DiskDialog::DiskDialog(Installer *i, QWidget *parent) :
     connect(&_pollDisksTimer,SIGNAL(timeout()), this, SLOT(pollForNewDisks()));
     connect(i, SIGNAL(error(QString)), this, SLOT(onError(QString)));
 
+    QString defaultFS = _i->settings()->value("berryboot/defaultfs").toString();
+    if (defaultFS == "btrfs")
+        ui->filesystemCombo->setCurrentIndex(2);
     populateDrivelist();
     /* Check every second if the user attached a USB disk */
     _pollDisksTimer.start(1000);
@@ -141,11 +144,11 @@ void DiskDialog::on_formatButton_clicked()
 
     switch (ui->filesystemCombo->currentIndex())
     {
-/*    case 0:
-        fs = "btrfs";
-        break; */
-    case 0 /*1*/:
+    case 0:
         fs = "ext4";
+        break;
+    case 2:
+        fs = "btrfs";
         break;
     default:
         fs = "ext4 nodiscard";

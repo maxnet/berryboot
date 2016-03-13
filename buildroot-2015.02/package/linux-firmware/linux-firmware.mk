@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-LINUX_FIRMWARE_VERSION = f404336ba808cbd57547196e13367079a23b822c 
+LINUX_FIRMWARE_VERSION = master
 LINUX_FIRMWARE_SITE = http://git.kernel.org/pub/scm/linux/kernel/git/firmware/linux-firmware.git
 LINUX_FIRMWARE_SITE_METHOD = git
 
@@ -298,6 +298,12 @@ ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_BRCM_BCM43143),y)
 LINUX_FIRMWARE_FILES += \
         brcm/brcmfmac43143.bin
 LINUX_FIRMWARE_ALL_LICENSE_FILES += LICENCE.broadcom_bcm43xx
+endif
+
+# mediatek mt7601u
+ifeq ($(BR2_PACKAGE_LINUX_FIRMWARE_MT7601U),y)
+LINUX_FIRMWARE_FILES += \
+	mt7601u.bin
 endif
 
 ifneq ($(LINUX_FIRMWARE_FILES),)

@@ -616,11 +616,10 @@ void MainWindow::on_actionRepair_file_system_triggered()
     else
         datadev = "/dev/"+_i->datadev().toLatin1();
 
-    /*if (_i->bootoptions().contains("btrfs"))
+    if (_i->bootoptions().contains("btrfs"))
         cmd = "fsck.btrfs -y "+datadev;
-    else */
-
-    cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
+    else
+        cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
     cmd2 = "/sbin/fsck.fat -a /dev/mmcblk0p1";
 
     if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1'\n'%2'\n on tty5?").arg(cmd, cmd2), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
@@ -638,7 +637,7 @@ void MainWindow::on_actionRepair_file_system_triggered()
         proc.waitForFinished();
 
         _i->mountSystemPartition();
-        QProcess::execute("mount -t ext4 "+datadev+" /mnt");
+        QProcess::execute("mount "+datadev+" /mnt");
         _i->switchConsole(1);
     }
 }

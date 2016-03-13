@@ -58,6 +58,11 @@
        <string>ext4 (no trim/discard)</string>
       </property>
      </item>
+     <item>
+      <property name="text">
+       <string>btrfs</string>
+      </property>
+     </item>
     </widget>
    </item>
    <item row="8" column="0">
