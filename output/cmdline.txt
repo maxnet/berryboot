@@ -1,1 +1,1 @@
-smsc95xx.turbo_mode=N elevator=deadline quiet bootmenutimeout=10
+elevator=deadline quiet bootmenutimeout=10

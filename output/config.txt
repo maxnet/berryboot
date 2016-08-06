@@ -1,6 +1,6 @@
 disable_overscan=1
 start_x=1
-gpu_mem=128
+gpu_mem=160
 max_usb_current=1
 
 # Enable on-board audio
