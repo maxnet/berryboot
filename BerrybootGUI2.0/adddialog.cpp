@@ -30,6 +30,7 @@
 #include "downloaddialog.h"
 #include "downloadthread.h"
 #include "networksettingsdialog.h"
+#include "twoiconsdelegate.h"
 #include <QProgressDialog>
 #include <QMessageBox>
 #include <QPushButton>
@@ -43,6 +44,8 @@
 #include <unistd.h>
 #include <time.h>
 #include <sys/time.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
 #include <QScreen>
 #include <QSettings>
 
@@ -172,6 +175,11 @@ void AddDialog::downloadList()
             _download2->setCacheDirectory(_cachedir);
             connect(_download2, SIGNAL(finished()), this, SLOT(download2Complete()));
             connect(_download, SIGNAL(finished()), _download2, SLOT(start()));
+        }
+
+        if (QFile::exists("/mnt/preloaded"))
+        {
+            connect(_download, SIGNAL(finished()), this, SLOT(generatePreloadedTab()));
         }
 
         _download->start();
@@ -338,6 +346,7 @@ void AddDialog::processIni()
 {
     _ini = new QSettings("/tmp/distro.ini", QSettings::IniFormat, this);
     QStringList sections = _ini->childGroups();
+    QIcon installedIcon(":/icons/hdd.png");
     ui->groupTabs->clear();
     ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
 
@@ -358,6 +367,9 @@ void AddDialog::processIni()
         QString name = _ini->value("name").toString();
         QString description = _ini->value("description").toString();
         QString sizeinmb = QString::number(_ini->value("size", 0).toLongLong()/1024/1024);
+        QString localfilename = "/mnt/images/"+name+".img"+_ini->value("memsplit", "").toString();
+        localfilename.replace(" ", "_");
+
         QIcon   icon;
         if (_ini->contains("icon_b64"))
         {
@@ -391,6 +403,7 @@ void AddDialog::processIni()
             QFont f = osList->font();
             f.setPointSize(16);
             osList->setFont(f);
+            osList->setItemDelegate(new TwoIconsDelegate(this));
             connect(osList, SIGNAL(itemSelectionChanged()), this, SLOT(onSelectionChanged()));
 
             if (groupOrder != -1)
@@ -407,6 +420,12 @@ void AddDialog::processIni()
 
         QListWidgetItem *item = new QListWidgetItem(icon, name+" ("+sizeinmb+" MB)\n"+description, osList);
         item->setData(Qt::UserRole, section);
+
+        if (QFile::exists(localfilename))
+        {
+            item->setData(SecondIconRole, installedIcon);
+            item->setData(Qt::BackgroundColorRole, QColor(0xef,0xff,0xef));
+        }
     }
 
     if (sections.contains("berryboot"))
@@ -550,7 +569,8 @@ void AddDialog::accept()
     if (!osList->currentItem())
         return;
 
-    QString url, alternateUrl, sha1, filename;
+    QString url, alternateUrl, filename;
+    QByteArray description, icon_b64, sha1;
     double size, availablespace = _i->availableDiskSpace();
 
     if (_ini)
@@ -558,10 +578,12 @@ void AddDialog::accept()
         QString imagesection = osList->currentItem()->data(Qt::UserRole).toString();
         _ini->beginGroup(imagesection);
         url  = _ini->value("url").toString();
-        sha1 = _ini->value("sha1").toString();
+        sha1 = _ini->value("sha1").toByteArray();
         filename = _ini->value("name").toString() + ".img" + _ini->value("memsplit", "").toString();
         filename.replace(" ", "_");
         size = _ini->value("size").toDouble() + 10000000; /* Add 10 MB extra for overhead */
+        description = _ini->value("description").toByteArray();
+        icon_b64    = _ini->value("icon_b64").toByteArray();
 
         /* If mirrors are available, select a random one */
         QStringList mirrors;
@@ -600,6 +622,12 @@ void AddDialog::accept()
     }
 
     DownloadDialog dd(url, alternateUrl, filename, DownloadDialog::Image, sha1, this);
+    if (!description.isEmpty())
+    {
+        dd.setAttr("user.description", description);
+        dd.setAttr("user.sha1", sha1);
+        dd.setAttr("user.icon_b64", icon_b64);
+    }
     hide();
     dd.exec();
 
@@ -736,4 +764,66 @@ void AddDialog::generateListFromShare(const QByteArray &url, QByteArray username
         _qpd->deleteLater();
         _qpd = NULL;
     }
+}
+
+QByteArray AddDialog::getXattr(const QByteArray &filename, const QByteArray &key)
+{
+    char buf[32*1024];
+    int len;
+    QByteArray result;
+
+    len = ::getxattr(filename.constData(), key.constData(), buf, sizeof(buf));
+    if (len > 0)
+        result = QByteArray(buf, len);
+
+    return result;
+}
+
+void AddDialog::generatePreloadedTab()
+{
+    QByteArray ini;
+    int nr = 1;
+
+    QDir dir("/mnt/preloaded");
+    QStringList namefilters;
+    namefilters << "*.img*";
+
+    QFileInfoList list = dir.entryInfoList(namefilters, QDir::Files, QDir::Name);
+    foreach (QFileInfo fi, list)
+    {
+        QByteArray name = fi.fileName().replace('_',' ').toAscii();
+        QByteArray memsplit;
+        QByteArray absfilename = fi.absoluteFilePath().toAscii();
+        QByteArray description = getXattr(absfilename, "user.description");
+        QByteArray icon_b64    = getXattr(absfilename, "user.icon_b64");
+        QByteArray sha1        = getXattr(absfilename, "user.sha1");
+
+        int imgpos = name.lastIndexOf(".img");
+        if (imgpos != -1 && imgpos+5 < name.size())
+        {
+            memsplit = name.mid(imgpos+4);
+        }
+        name = name.left(imgpos);
+
+        ini += "[preloaded"+QByteArray::number(nr++)+"]\n";
+        ini += "name="+name+"\n";
+        if (!memsplit.isEmpty())
+            ini += "memsplit="+memsplit+"\n";
+        ini += "description="+description.replace("\n", "\\n")+"\n";
+        ini += "group=Preloaded\n";
+        ini += "size="+QByteArray::number(fi.size())+"\n";
+        if (!sha1.isEmpty())
+            ini += "sha1="+sha1+"\n";
+        ini += "url=file://"+absfilename+"\n";
+        if (!icon_b64.isEmpty())
+            ini += "icon_b64="+icon_b64.replace("\n", "\\n")+"\n";
+        ini += "\n";
+    }
+    qDebug() << ini;
+
+    QFile f("/tmp/distro.ini");
+    f.open(f.Append);
+    f.write(ini);
+    f.close();
+    processIni();
 }

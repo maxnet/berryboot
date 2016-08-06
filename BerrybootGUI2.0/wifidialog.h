@@ -51,6 +51,7 @@ protected:
     QTimer _timer;
     QProcess *_proc;
     QList<QByteArray> _ssids;
+    bool _firstPoll;
 
     virtual void accept();
 

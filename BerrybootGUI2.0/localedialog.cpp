@@ -40,6 +40,7 @@
 #include <QDebug>
 #include <QDir>
 #include <QTimer>
+#include <QMessageBox>
 
 #define GEOIP_SERVER "http://geoip.ubuntu.com/lookup"
 
@@ -169,7 +170,7 @@ void LocaleDialog::downloadComplete()
     reply->deleteLater();
 }
 
-void LocaleDialog::done(int r)
+void LocaleDialog::accept()
 {
     _i->setKeyboardLayout(ui->keybCombo->currentText());
     _i->setTimezone(ui->timezoneCombo->currentText());
@@ -184,11 +185,30 @@ void LocaleDialog::done(int r)
     if (_gbd)
         _gbd->hide();
 
-    QDialog::done(r);
+    QDialog::accept();
     if (wifi && !QFile::exists("/boot/wpa_supplicant.conf"))
     {
         WifiDialog wd(_i);
         wd.exec();
+    }
+    else if (!wifi && QFile::exists("/boot/wpa_supplicant.conf"))
+    {
+        QFile::remove("/boot/wpa_supplicant.conf");
+    }
+}
+
+void LocaleDialog::reject()
+{
+    if (QMessageBox::question(this, tr("Skip configuration?"),
+                              tr("Are you sure you want to skip configuration now? If you say yes, you will be prompted again on next boot."),
+                              QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+    {
+        _i->setSkipConfig(true);
+        _i->setDisableOverscan(true);
+        _i->setFixateMAC(false);
+        if (_gbd)
+            _gbd->hide();
+        QDialog::reject();
     }
 }
 

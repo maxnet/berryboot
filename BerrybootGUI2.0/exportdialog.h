@@ -54,6 +54,11 @@ public:
     bool exportData() const;
 
     /*
+     * True if import from USB stick is selected
+     */
+    bool restore() const;
+
+    /*
      * Returns list of files to exclude from export
      */
     QStringList excludeList() const;

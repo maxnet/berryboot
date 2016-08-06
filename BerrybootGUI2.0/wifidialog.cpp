@@ -43,18 +43,20 @@
 #include <QListWidgetItem>
 #include <QTime>
 #include <QDebug>
+#include <QRegExp>
 
 WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::WifiDialog),
     _i(i),
-    _proc(NULL)
+    _proc(NULL),
+    _firstPoll(true)
 {
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(pollScanResults()));
 
     /* Disable OK button until a network is selected */
-    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
+    //ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
 
     QProgressDialog qpd(tr("Loading drivers"), QString(), 0, 0, this);
     qpd.show();
@@ -73,7 +75,7 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     {
         qpd.setLabelText(tr("Starting wpa_supplicant..."));
         QApplication::processEvents();
-        QProcess::execute("/usr/sbin/wpa_supplicant -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
+        QProcess::execute("/usr/sbin/wpa_supplicant -s -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
         QProcess::execute("/usr/sbin/wpa_cli scan");
         _timer.start(1500);
         ui->passEdit->setFocus();
@@ -118,11 +120,25 @@ void WifiDialog::processScanResults(int exitCode)
                 if (parts.count() == 5)
                 {
                     QByteArray ssid = parts[4];
+                    int level = parts[2].toInt();
+                    QString icon;
 
                     if (!ssid.isEmpty() && !_ssids.contains(ssid))
                     {
                         _ssids.append(ssid);
-                        new QListWidgetItem(QIcon(":/icons/network_wireless.png"), ssid, ui->networkList);
+
+                        if (level > -50)
+                            icon = ":/icons/network-wireless-connected-100.png";
+                        else if (level > -60)
+                            icon = ":/icons/network-wireless-connected-75.png";
+                        else if (level > -70)
+                            icon = ":/icons/network-wireless-connected-50.png";
+                        else if (level > -80)
+                            icon = ":/icons/network-wireless-connected-25.png";
+                        else
+                            icon = ":/icons/network-wireless-disconnected.png";
+
+                        new QListWidgetItem(QIcon(icon), ssid, ui->networkList);
                         if (ui->networkList->count() == 1)
                             ui->networkList->setCurrentRow(0);
                     }
@@ -132,27 +148,43 @@ void WifiDialog::processScanResults(int exitCode)
     }
     _proc->deleteLater();
     _proc = NULL;
-}
 
-/*
-void WifiDialog::infoAvailable()
-{
-    ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
-    ui->networkList->clear();
-
-    QList<QNetworkConfiguration> list = _man.allConfigurations();
-    foreach (QNetworkConfiguration c, list)
+    if (_firstPoll)
     {
-        if (c.bearerType() != c.BearerEthernet && c.bearerType() != c.BearerUnknown)
+        /* Check if we are already connected to a SSID */
+        QProcess p;
+        p.start("/usr/sbin/wpa_cli status");
+        p.waitForFinished(1000);
+        QByteArray s = p.readAll();
+        if (s.contains("wpa_state=COMPLETED"))
         {
-            //qDebug() << c.name() << c.bearerTypeName() << c.type() << c.state();
-            ui->networkList->addItem( c.name() );
+            qDebug() << "has connection";
+            QRegExp r("\nssid=([^\n]+)");
+            if ( r.indexIn(s) != -1 )
+            {
+                QString currentSSID = r.cap(1);
+
+                QList<QListWidgetItem *> items = ui->networkList->findItems(currentSSID, Qt::MatchExactly);
+                if (items.count())
+                {
+                    ui->networkList->setCurrentItem(items.first());
+
+                    /* Fetch password from wpa_supplicant.conf */
+                    QFile f("/boot/wpa_supplicant.conf");
+                    f.open(f.ReadOnly);
+                    QByteArray config = f.readAll();
+                    f.close();
+                    QRegExp rp("psk=\"([^\"]+)\"");
+                    if (rp.indexIn(config) != -1)
+                    {
+                        ui->passEdit->setText(rp.cap(1));
+                    }
+                }
+            }
         }
+        _firstPoll = false;
     }
 }
-*/
-
-
 
 void WifiDialog::on_networkList_currentRowChanged(int)
 {
@@ -161,10 +193,28 @@ void WifiDialog::on_networkList_currentRowChanged(int)
 
 void WifiDialog::accept()
 {
-    QProcess::execute("/usr/bin/killall wpa_supplicant");
+    if (QProcess::execute("/usr/bin/killall wpa_supplicant") == 0)
+    {
+        QTime sleepUntil = QTime::currentTime().addMSecs(500);
+        while( QTime::currentTime() < sleepUntil )
+            QApplication::processEvents(QEventLoop::WaitForMoreEvents, 100);
+    }
+
+    if (ui->networkList->currentRow() == 0)
+    {
+        /* Wired connection */
+        if (QFile::exists("/boot/wpa_supplicant.conf"))
+            QFile::remove("/boot/wpa_supplicant.conf");
+        if (QFile::exists("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf"))
+            QFile::remove("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
+
+        QDialog::accept();
+        return;
+    }
+
     QProgressDialog qpd(tr("Connecting to access point..."), QString(),0,0, this);
     qpd.show();
-    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QApplication::processEvents();
 
     QFile f("/etc/wpa_supplicant.conf");
     f.open(f.WriteOnly);
@@ -178,29 +228,30 @@ void WifiDialog::accept()
         "}\n"
     );
     f.close();
-    QProcess::execute("/usr/sbin/wpa_supplicant -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
+    QProcess::execute("/usr/sbin/wpa_supplicant -s -Dnl80211,wext -iwlan0 -c/etc/wpa_supplicant.conf -B");
 
     /* Ugly workaround: sleep a second to give slow wifi devices some time. */
     QTime sleepUntil = QTime::currentTime().addSecs(1);
     while( QTime::currentTime() < sleepUntil )
-        QCoreApplication::processEvents(QEventLoop::ExcludeUserInputEvents | QEventLoop::WaitForMoreEvents, 100);
+        QApplication::processEvents(QEventLoop::WaitForMoreEvents, 100);
 
     /* Connection is successful if we get a DHCP lease
      * TODO: support static network configurations. Could ARP ping gateway to check connection */
-    if ( QProcess::execute("/sbin/udhcpc -n -i wlan0 -O mtu") != 0 )
-    {
-        qpd.setLabelText(tr("Second try... Connecting to access point..."));
-        QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
+    QProcess proc;
+    connect(&proc, SIGNAL(finished(int)), &qpd, SLOT(hide()));
+    proc.start("/sbin/udhcpc -n -i wlan0 -O mtu -t 5 -T 2");
+    qpd.exec();
 
-        if (QProcess::execute("/sbin/udhcpc -n -i wlan0 -O mtu") != 0 )
-        {
-            qpd.hide();
-            QMessageBox::critical(this, tr("Error connecting"), tr("Error connecting or obtaining IP-address. Check settings."), QMessageBox::Ok);
-            return;
-        }
+    if (proc.exitCode() != 0 )
+    {
+        qpd.hide();
+        QMessageBox::critical(this, tr("Error connecting"), tr("Error connecting or obtaining IP-address. Check settings."), QMessageBox::Ok);
+        return;
     }
 
     /* Everything ok. Copy wpa_supplicant.conf to boot partition */
+    if (QFile::exists("/boot/wpa_supplicant.conf"))
+        QFile::remove("/boot/wpa_supplicant.conf");
     QFile::copy("/etc/wpa_supplicant.conf", "/boot/wpa_supplicant.conf");
     QDialog::accept();
 }

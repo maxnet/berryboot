@@ -37,6 +37,7 @@
 #include <sys/stat.h>
 #include <sys/reboot.h>
 
+#include <QDir>
 #include <QFile>
 #include <QProgressDialog>
 #include <QProcess>
@@ -207,6 +208,12 @@ void BootMenuDialog::initialize()
         return;
     }
 
+    qpd.hide();
+    if (_i->bootoptions().contains("reconfigure"))
+    {
+        reconfigureLocale();
+    }
+
     QString def = _i->getDefaultImage();
     QMap<QString,QString> images = _i->listInstalledImages();
     if (images.isEmpty())
@@ -367,6 +374,90 @@ void BootMenuDialog::startInstaller()
     mountSystemPartition();
     waitForRemountRW();
     accept();
+}
+
+void BootMenuDialog::reconfigureLocale()
+{
+    _i->startNetworking();
+    mountSystemPartition();
+    waitForRemountRW();
+    LocaleDialog ld(_i);
+
+    if (ld.exec() == ld.Accepted)
+    {
+        QByteArray param;
+
+        /* Static MAC setting */
+        if (_i->fixateMAC())
+        {
+            QByteArray mac = _i->macAddress();
+            if (!mac.isEmpty())
+                param += " mac_addr="+mac;
+        }
+
+        /* Sound channel selection (hdmi audio/headphones) */
+        if (!_i->sound().isEmpty())
+        {
+            param += " sound="+_i->sound();
+        }
+
+        QByteArray qmap = _i->keyboardlayout().toLatin1();
+        if (!qmap.isEmpty() && qmap != "us")
+            param += " qmap="+qmap;
+
+        QFile f("/boot/cmdline.txt");
+        f.open(QIODevice::ReadOnly);
+        QByteArray line = f.readAll().trimmed();
+        line.replace(" reconfigure", "");
+        QByteArray cmdlinetxt = line+param;
+        f.close();
+        f.open(QIODevice::WriteOnly);
+        f.write(cmdlinetxt);
+        f.close();
+
+        /* Overscan setting */
+        bool configchanged = false;
+        f.setFileName("/boot/config.txt");
+        f.open(QIODevice::ReadOnly);
+        QByteArray configdata = f.readAll();
+        f.close();
+        bool overscanCurrentlyDisabled = configdata.contains("disable_overscan=1");
+
+        if (_i->disableOverscan() && !overscanCurrentlyDisabled)
+        {
+            configdata += "\ndisable_overscan=1";
+            configchanged = true;
+        }
+        else if (!_i->disableOverscan() && overscanCurrentlyDisabled)
+        {
+            configdata.replace("disable_overscan=1", "");
+            configchanged = true;
+        }
+
+        if (configchanged)
+        {
+            f.open(QIODevice::WriteOnly);
+            f.write(configdata.trimmed());
+            f.close();
+        }
+
+        if (QFile::exists("/boot/wpa_supplicant.conf"))
+        {
+            if (QFile::exists("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf"))
+            {
+                QFile::remove("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
+            }
+            else
+            {
+                QDir dir;
+                dir.mkdir("/mnt/shared/etc/wpa_supplicant");
+            }
+            QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
+            QFile::setPermissions("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf", QFile::ReadOwner | QFile::WriteOwner);
+        }
+    }
+
+    umountSystemPartition();
 }
 
 void BootMenuDialog::startISCSI()
@@ -576,12 +667,24 @@ void BootMenuDialog::mountSystemPartition()
     if (!QFile::exists("/boot"))
         mkdir("/boot", 0755);
 
-    waitForDevice("mmcblk0");
+    QString bootdev = _i->bootdev();
+    if (bootdev == "mmcblk0p1")
+        waitForDevice("mmcblk0");
+    else
+        waitForDevice(bootdev);
 
     for (unsigned int tries=0; tries<2; tries++)
     {
-        if (QProcess::execute("mount /dev/mmcblk0p1 /boot") == 0 || QProcess::execute("mount /dev/mmcblk0 /boot") == 0)
-            return;
+        if (bootdev == "mmcblk0p1")
+        {
+            if (QProcess::execute("mount /dev/mmcblk0p1 /boot") == 0 || QProcess::execute("mount /dev/mmcblk0 /boot") == 0)
+                return;
+        }
+        else
+        {
+            if (QProcess::execute("mount /dev/"+bootdev+" /boot") == 0)
+                return;
+        }
 
         qpd.setLabelText(tr("Error mounting system partition... Retrying..."));
         processEventSleep(1000);

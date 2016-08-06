@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "wifidialog.h"
 #include "bootmenudialog.h"
 #include "networksettingsdialog.h"
+#include "statusdialog.h"
 #include <QDebug>
 #include <QStyle>
 #include <QDesktopWidget>
@@ -44,6 +45,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QScreen>
 #include <QPixmap>
 #include <sys/stat.h>
+#include <unistd.h>
+#include <QTime>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -53,8 +56,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QMessageBox>
 
+/* KMS framebuffer devices may take some time to show up... */
+void waitForFb(QString fbdevice = "/dev/fb0", int timeout = 10000)
+{
+    QTime t1;
+    t1.start();
+
+    qDebug() << "Waiting for" << fbdevice;
+
+    while (t1.elapsed() < timeout)
+    {
+        if (QFile::exists(fbdevice))
+        {
+            qDebug() << "Framebuffer device ready after " << t1.elapsed()/1000.0 << "seconds";
+            break;
+        }
+
+        ::usleep(100000);
+    }
+}
+
 int main(int argc, char *argv[])
 {
+    if (!QFile::exists("/dev/fb0"))
+        waitForFb();
     QApplication a(argc, argv);
     bool staticWifi = false;
 
@@ -195,13 +220,35 @@ int main(int argc, char *argv[])
             NetworkSettingsDialog nd(&i);
             nd.exec();
         }
-        AddDialog a(&i);
-        a.exec();
+
+        if ( i.listInstalledImages().isEmpty() )
+        {
+            AddDialog a(&i);
+            a.exec();
+        }
+
+        if (w.usbBoot() && QFile::exists("/dev/mmcblk0"))
+        {
+            while (QFile::exists("/dev/mmcblk0"))
+            {
+                QMessageBox::information(&ld, "USB boot activated", "Please remove the SD card from your Pi, and press 'OK' to reboot", QMessageBox::Ok);
+            }
+        }
+        else
+        {
+            QMessageBox::information(&ld, "Installation finished", "Installation complete. Press 'OK' to reboot", QMessageBox::Ok);
+        }
+
+        i.reboot();
     }
 
     MainWindow mw(&i);
     mw.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mw.size(), a.desktop()->availableGeometry()));
     mw.show();
+
+    StatusDialog* sd = new StatusDialog(&i);
+    sd->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignBottom, sd->size(), a.desktop()->availableGeometry()));
+    sd->show();
 
     return a.exec();
 }

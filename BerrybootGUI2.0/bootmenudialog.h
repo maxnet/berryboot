@@ -151,6 +151,10 @@ protected:
      * Wait for remount RW
      */
     void waitForRemountRW();
+    /*
+     * Show locale settings dialog
+     */
+    void reconfigureLocale();
 
     Ui::BootMenuDialog *ui;
     Installer *_i;

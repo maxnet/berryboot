@@ -56,7 +56,7 @@
 #define SQUASHFS_MAGIC_SWAP		0x68737173
 
 Installer::Installer(QObject *parent) :
-    QObject(parent), _ethup(false), _settings(NULL)
+    QObject(parent), _ethup(false), _skipConfig(false), _settings(NULL)
 {
 }
 
@@ -136,6 +136,67 @@ QString Installer::datadev()
     return bootParam("datadev");
 }
 
+QString Installer::bootdev()
+{
+    if (_bootdev.isEmpty())
+    {
+        _bootdev = bootParam("bootdev");
+        if (_bootdev.isEmpty())
+        {
+            if (QFile::exists("/dev/mmcblk0"))
+            {
+                _bootdev = "mmcblk0p1";
+            }
+            else
+            {
+                QTime t;
+                t.start();
+
+                while (_bootdev.isEmpty() && t.elapsed() < 10000)
+                {
+                    QApplication::processEvents(QEventLoop::WaitForMoreEvents, 100);
+                    _bootdev = findBootPart();
+                }
+            }
+        }
+    }
+
+    return _bootdev;
+}
+
+QString Installer::findBootPart()
+{
+    /* Search for partition with berryboot.img */
+    QString part;
+    QString dirname  = "/sys/class/block";
+    QDir    dir(dirname);
+    QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    foreach (QString devname, list)
+    {
+        /* Only search first partition and partitionless devices. Skip virtual devices (such as ramdisk) */
+        if ((devname.right(1).at(0).isDigit() && !devname.endsWith("1"))
+                || QFile::symLinkTarget("/sys/class/block/"+devname).contains("/devices/virtual/"))
+            continue;
+
+        if (QProcess::execute("mount -t vfat -o ro /dev/"+devname+" /boot") == 0)
+        {
+            if (QFile::exists("/boot/berryboot.img"))
+            {
+                qDebug() << "Found berryboot.img at" << devname;
+                part = devname;
+            }
+
+            QProcess::execute("umount /boot");
+        }
+
+        if (!part.isEmpty())
+            break;
+    }
+
+    return part;
+}
+
 void Installer::initializeDataPartition(const QString &dev)
 {
     if (QProcess::execute("mount /dev/"+dev+" /mnt") != 0)
@@ -211,7 +272,7 @@ void Installer::initializeDataPartition(const QString &dev)
     s->beginGroup("berryboot");
     if (s->contains("fschmod"))
     {
-        ::chown("/mnt", s->value("fsuid", 0).toInt(), s->value("fsguid", 0).toInt());
+        if (::chown("/mnt", s->value("fsuid", 0).toInt(), s->value("fsguid", 0).toInt()) != 0) { }
         ::chmod("/mnt", s->value("fschmod").toString().toInt(0, 8));
     }
     s->endGroup();
@@ -219,7 +280,7 @@ void Installer::initializeDataPartition(const QString &dev)
 
 bool Installer::mountSystemPartition()
 {
-    return QProcess::execute("mount /dev/mmcblk0p1 /boot") == 0;
+    return QProcess::execute("mount /dev/"+bootdev()+" /boot") == 0;
 }
 
 void Installer::startNetworking()
@@ -328,6 +389,7 @@ void Installer::reboot()
     if (system("umount -ar") != 0) { }
     sync();
     if (system("ifdown -a") != 0) { }
+    ::usleep(200000);
     ::reboot(RB_AUTOBOOT);
 }
 
@@ -491,13 +553,24 @@ void Installer::setTimezone(const QString &tz)
     _timezone = tz;
 }
 
+void Installer::setSkipConfig(bool skip)
+{
+    _skipConfig = skip;
+}
+
 QString Installer::timezone() const
 {
     return _timezone;
 }
+
 QString Installer::keyboardlayout() const
 {
     return _keyboardlayout;
+}
+
+bool Installer::skipConfig() const
+{
+    return _skipConfig;
 }
 
 void Installer::setDisableOverscan(bool disabled)
@@ -803,7 +876,7 @@ QByteArray Installer::macAddress()
 {
     QFile f("/sys/class/net/eth0/address");
     f.open(f.ReadOnly);
-    QByteArray data = f.readAll();
+    QByteArray data = f.readAll().trimmed();
     f.close();
 
     return data;
@@ -824,3 +897,30 @@ void Installer::switchConsole(int ttynr)
     }
 }
 
+QByteArray Installer::model()
+{
+    QFile f("/proc/device-tree/model");
+
+    f.open(f.ReadOnly);
+    QByteArray data = f.readAll();
+    f.close();
+
+    return data;
+}
+
+bool Installer::supportsUSBboot()
+{
+    if (model().contains("Pi 3"))
+    {
+        QFile f("/boot/config.txt");
+        f.open(f.ReadOnly);
+        QByteArray config = f.readAll();
+        f.close();
+
+        return config.contains("program_usb_boot_mode=1");
+    }
+    else
+    {
+        return false;
+    }
+}

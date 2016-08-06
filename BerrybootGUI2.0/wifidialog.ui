@@ -41,7 +41,17 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QListWidget" name="networkList"/>
+       <widget class="QListWidget" name="networkList">
+        <item>
+         <property name="text">
+          <string>Wired connection</string>
+         </property>
+         <property name="icon">
+          <iconset resource="icons.qrc">
+           <normaloff>:/icons/network_wired.png</normaloff>:/icons/network_wired.png</iconset>
+         </property>
+        </item>
+       </widget>
       </item>
       <item row="1" column="0">
        <widget class="QLabel" name="label_3">
@@ -72,7 +82,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>buttonBox</sender>

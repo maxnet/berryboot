@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.7"
+#define BERRYBOOT_VERSION  "v2.8"
 #define SIZE_BOOT_PART  /* 63 */ 127
 
 class QSettings;
@@ -52,6 +52,8 @@ public:
     bool umountSystemPartition();
     bool networkReady();
     QString datadev();
+    QString bootdev();
+    QString findBootPart();
     double availableDiskSpace(const QString &path = "/mnt");
     double diskSpaceInUse(const QString &path = "/mnt");
     void reboot();
@@ -61,10 +63,12 @@ public:
     void loadSoundModule(const QByteArray &channel);
     void loadFilesystemModule(const QByteArray &fs);
 
+    void setSkipConfig(bool skip);
     void setKeyboardLayout(const QString &layout);
     void setTimezone(const QString &tz);
     QString timezone() const;
     QString keyboardlayout() const;
+    bool skipConfig() const;
     void setDisableOverscan(bool disabled);
     bool disableOverscan() const;
     void setFixateMAC(bool fix);
@@ -95,14 +99,16 @@ public:
     QByteArray bootoptions();
     QByteArray bootParam(const QByteArray &name);
     void setBootoptions(const QByteArray &newOptions);
+    QByteArray model();
+    bool supportsUSBboot();
 
 public slots:
     void startNetworking();
     void startWifi();
 
 protected:
-    QString _keyboardlayout, _timezone;
-    bool _disableOverscan, _fixMAC, _ethup;
+    QString _keyboardlayout, _timezone, _bootdev;
+    bool _disableOverscan, _fixMAC, _ethup, _skipConfig;
     QSettings *_settings;
     QByteArray _bootoptions, _sound;
 

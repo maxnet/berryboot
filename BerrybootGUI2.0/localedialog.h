@@ -51,7 +51,8 @@ protected:
 protected slots:
     void downloadComplete();
     void checkIfNetworkIsUp();
-    virtual void done(int r);
+    virtual void accept();
+    virtual void reject();
 private slots:
     void on_keybCombo_currentIndexChanged(const QString &arg1);
 };

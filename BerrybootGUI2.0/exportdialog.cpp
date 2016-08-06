@@ -55,6 +55,11 @@ bool ExportDialog::backupEverything() const
     return ui->backupRadio->isChecked();
 }
 
+bool ExportDialog::restore() const
+{
+    return ui->restoreRadio->isChecked();
+}
+
 QStringList ExportDialog::excludeList() const
 {
     QString txt = ui->excludeEdit->toPlainText();

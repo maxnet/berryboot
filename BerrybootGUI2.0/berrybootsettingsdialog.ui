@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>BerrybootSettingsDialog</class>
  <widget class="QDialog" name="BerrybootSettingsDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>400</width>
-    <height>190</height>
+    <height>207</height>
    </rect>
   </property>
   <property name="windowTitle">

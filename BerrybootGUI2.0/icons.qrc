@@ -5,11 +5,9 @@
         <file>icons/usb.png</file>
         <file>icons/server.png</file>
         <file>icons/remove.png</file>
-        <file>icons/filenew.png</file>
         <file>icons/edit.png</file>
         <file>icons/editcopy.png</file>
         <file>icons/bookmark.png</file>
-        <file>icons/exit.png</file>
         <file>timezones.txt</file>
         <file>country2keyboard.ini</file>
         <file>berryboot.crt</file>
@@ -100,7 +98,6 @@
         <file>qmap/za</file>
         <file>icons/filesave.png</file>
         <file>icons/network_wired.png</file>
-        <file>icons/network_wireless.png</file>
         <file>icons/launch.png</file>
         <file>icons/configure.png</file>
         <file>icons/commandprompt.png</file>
@@ -110,5 +107,17 @@
         <file>icons/document_revert.png</file>
         <file>icons/audio_headset.png</file>
         <file>icons/icon.png</file>
+        <file>icons/edit-rename.png</file>
+        <file>icons/moreoptions.png</file>
+        <file>icons/door_in.png</file>
+        <file>icons/bookmark_large.png</file>
+        <file>icons/filenew.png</file>
+        <file>icons/exit.png</file>
+        <file>icons/network-wireless-connected-25.png</file>
+        <file>icons/network-wireless-connected-50.png</file>
+        <file>icons/network-wireless-connected-75.png</file>
+        <file>icons/network-wireless-connected-100.png</file>
+        <file>icons/network-wireless-disconnected.png</file>
+        <file>icons/install.png</file>
     </qresource>
 </RCC>

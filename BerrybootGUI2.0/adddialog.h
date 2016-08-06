@@ -97,11 +97,14 @@ protected:
      */
     void setProxy();
 
+    QByteArray getXattr(const QByteArray &filename, const QByteArray &key);
+
 protected slots:
     void networkUp();
     void downloadComplete();
     void download2Complete();
     void cancelDownload();
+    void generatePreloadedTab();
 
 private slots:
     void onSelectionChanged();

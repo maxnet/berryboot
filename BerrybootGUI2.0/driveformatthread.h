@@ -66,6 +66,7 @@ protected:
     bool formatBootPartition();
     bool formatDataPartition();
     QString iscsiDevice();
+    bool isBtrfs();
 };
 
 #endif // DRIVEFORMATTHREAD_H

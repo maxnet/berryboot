@@ -4,14 +4,14 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = BerrybootInstaller
 TEMPLATE = app
 
-LIBS += -lcrypto -lcurl
+LIBS += -lcrypto -lcurl -lwpa_client
 
 RPI_USERLAND_DIR=../../staging/usr
 exists($${RPI_USERLAND_DIR}/include/interface/vmcs_host/vc_cecservice.h) {
@@ -45,7 +45,9 @@ SOURCES += main.cpp\
     ceclistener.cpp \
     logindialog.cpp \
     berrybootsettingsdialog.cpp \
-    downloadthread.cpp
+    downloadthread.cpp \
+    statusdialog.cpp \
+    twoiconsdelegate.cpp
 
 HEADERS  += mainwindow.h \
     diskdialog.h \
@@ -69,7 +71,9 @@ HEADERS  += mainwindow.h \
     ceclistener.h \
     logindialog.h \
     berrybootsettingsdialog.h \
-    downloadthread.h
+    downloadthread.h \
+    statusdialog.h \
+    twoiconsdelegate.h
 
 FORMS    += mainwindow.ui \
     diskdialog.ui \
@@ -87,7 +91,8 @@ FORMS    += mainwindow.ui \
     confeditdialog.ui \
     bootmenudialog.ui \
     logindialog.ui \
-    berrybootsettingsdialog.ui
+    berrybootsettingsdialog.ui \
+    statusdialog.ui
 
 RESOURCES += \
     icons.qrc

@@ -30,6 +30,7 @@
 #include <QDialog>
 #include <QCryptographicHash>
 #include <QTime>
+#include <QMap>
 
 namespace Ui {
 class DownloadDialog;
@@ -55,6 +56,7 @@ public:
      * - sha1: SHA1 hash of file
      */
     explicit DownloadDialog(const QString &url, const QString &alternateUrl, const QString &localfilename, Filetype fileType, const QString &sha1 = "", QWidget *parent = NULL);
+    void setAttr(const QByteArray &key, QByteArray &value);
     ~DownloadDialog();
 
 protected:
@@ -65,6 +67,7 @@ protected:
     QFile *_file;
     Filetype _fileType;
     QTime _time;
+    QMap<QByteArray,QByteArray> _xattr;
 
     /*
      * Download progress (expressed in units of 100 kb)

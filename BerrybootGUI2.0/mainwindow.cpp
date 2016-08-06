@@ -37,6 +37,7 @@
 #include "berrybootsettingsdialog.h"
 #include "copythread.h"
 #include "driveformatthread.h"
+#include "wifidialog.h"
 
 #include <QDateTime>
 #include <QMenu>
@@ -46,6 +47,9 @@
 #include <QProgressDialog>
 #include <QFileDialog>
 #include <QListWidgetItem>
+#include <QLabel>
+#include <QtNetwork/QHostAddress>
+#include <QtNetwork/QNetworkInterface>
 
 #include <unistd.h>
 
@@ -62,6 +66,13 @@ MainWindow::MainWindow(Installer *i, QWidget *parent) :
     menu->addAction(QIcon(":/icons/usb.png"),tr("Copy OS from USB stick"), this, SLOT(copyOSfromUSB()));
 
     ui->actionAdd_OS->setMenu(menu);
+
+    /* Hide advanced toolbar by default */
+    QWidget* spacer = new QWidget();
+    spacer->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    ui->mainToolBar->addWidget(spacer);
+    ui->mainToolBar->addAction(ui->actionAdvMenu);
+    ui->advToolbar->setHidden(true);
 
     populate();
 }
@@ -230,7 +241,7 @@ QString MainWindow::externalSDcardDevice()
     QString dirname  = "/sys/class/block";
     QDir    dir(dirname);
     QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-    /* we want to make sure not to overwrite the datadev currently in use. so exclude it as backup destionation */
+    /* we want to make sure not to overwrite the datadev currently in use. so exclude it as backup destination */
     /* datadev partition can be like sda1 or mmcblk0p2, get rid of digit and p, as we want to know the drive */
     QString datadev = _i->datadev();
     datadev.chop(1);
@@ -354,7 +365,11 @@ void MainWindow::on_actionExport_triggered()
     ExportDialog ed(isImageSelected, this);
     if (ed.exec() == QDialog::Accepted)
     {
-        if (ed.backupEverything() )
+        if (ed.restore() )
+        {
+            copyOSfromUSB();
+        }
+        else if (ed.backupEverything() )
         {
             /* Clone entire SD card */
 
@@ -620,10 +635,11 @@ void MainWindow::on_actionRepair_file_system_triggered()
         cmd = "fsck.btrfs -y "+datadev;
     else
         cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
-    cmd2 = "/sbin/fsck.fat -a /dev/mmcblk0p1";
+    cmd2 = "/sbin/fsck.fat -a /dev/"+_i->bootdev();
 
     if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1'\n'%2'\n on tty5?").arg(cmd, cmd2), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
     {
+        QProcess::execute("killall udevd");
         _i->umountSystemPartition();
         QProcess::execute("umount "+datadev);
 
@@ -640,4 +656,9 @@ void MainWindow::on_actionRepair_file_system_triggered()
         QProcess::execute("mount "+datadev+" /mnt");
         _i->switchConsole(1);
     }
+}
+
+void MainWindow::on_actionAdvMenu_toggled(bool arg1)
+{
+    ui->advToolbar->setHidden(!arg1);
 }

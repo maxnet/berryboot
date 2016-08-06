@@ -46,10 +46,13 @@ DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesy
 
     _reformatBoot = (_dev == "mmcblk0" || _bootdev != "mmcblk0p1");
 
+    _datadev += "2";
+    /*
     if (_reformatBoot)
         _datadev += "2";
     else
         _datadev += "1";
+    */
 }
 
 void DriveFormatThread::run()
@@ -79,19 +82,22 @@ void DriveFormatThread::run()
         }
     }
 
-    emit statusUpdate(tr("Zeroing partition table"));
-    if (!zeroMbr())
+    if (_fs != "existing")
     {
-        emit error(tr("Error zero'ing MBR/GPT. SD card may be broken or advertising wrong capacity."));
-        return;
-    }
+        emit statusUpdate(tr("Zeroing partition table"));
+        if (!zeroMbr())
+        {
+            emit error(tr("Error zero'ing MBR/GPT. SD card may be broken or advertising wrong capacity."));
+            return;
+        }
 
-    emit statusUpdate(tr("Creating partitions"));
+        emit statusUpdate(tr("Creating partitions"));
 
-    if (!partitionDrive())
-    {
-        emit error(tr("Error partitioning"));
-        return;
+        if (!partitionDrive())
+        {
+            emit error(tr("Error partitioning"));
+            return;
+        }
     }
 
     if (_reformatBoot)
@@ -117,7 +123,8 @@ void DriveFormatThread::run()
         if (_initializedata)
         {
             emit statusUpdate(tr("Copying boot files to storage"));
-            _i->mountSystemPartition();
+            //_i->mountSystemPartition();
+            QProcess::execute("mount /dev/"+_bootdev+" /boot");
             _i->restoreBootFiles();
 
             emit statusUpdate(tr("Finish writing boot files to disk (sync)"));
@@ -125,11 +132,14 @@ void DriveFormatThread::run()
         }
     }
 
-    emit statusUpdate(tr("Formatting data partition (%1)").arg(_fs));
-    if (!formatDataPartition())
+    if (_fs != "existing")
     {
-        emit error(tr("Error Formatting data partition (%1)").arg(_fs));
-        return;
+        emit statusUpdate(tr("Formatting data partition (%1)").arg(_fs));
+        if (!formatDataPartition())
+        {
+            emit error(tr("Error Formatting data partition (%1)").arg(_fs));
+            return;
+        }
     }
 
     if (_initializedata)
@@ -141,7 +151,7 @@ void DriveFormatThread::run()
 
         /* Data dev setting */
         QByteArray param;
-        if (_fs == "btrfs")
+        if (_fs == "btrfs" || (_fs == "existing" && isBtrfs()) )
             param += " fstype=btrfs";
         if (_iscsi)
             param += " datadev=iscsi";
@@ -149,6 +159,8 @@ void DriveFormatThread::run()
             param += " datadev="+_datadev;
         if (_password)
             param += " luks";
+        if (_bootdev != "mmcblk0p1")
+            param += " bootdev="+_bootdev;
 
         /* Static MAC setting */
         if (_i->fixateMAC())
@@ -167,6 +179,9 @@ void DriveFormatThread::run()
         QByteArray qmap = _i->keyboardlayout().toLatin1();
         if (!qmap.isEmpty() && qmap != "us")
             param += " qmap="+qmap;
+
+        if (_i->skipConfig())
+            param += " reconfigure";
 
         QFile f("/boot/cmdline.txt");
         f.open(QIODevice::ReadOnly);
@@ -203,6 +218,12 @@ void DriveFormatThread::run()
             configdata.replace("disable_overscan=1", "");
             configchanged = true;
         }
+        if (configdata.contains("program_usb_boot_mode=1"))
+        {
+            configdata.replace("program_usb_boot_mode=1", "");
+            configchanged = true;
+        }
+
         if (configchanged)
         {
             f.open(QIODevice::WriteOnly);
@@ -224,7 +245,8 @@ void DriveFormatThread::run()
         f.close();
 
         emit statusUpdate(tr("Mounting boot partition again"));
-        _i->mountSystemPartition();
+        //_i->mountSystemPartition();
+        QProcess::execute("mount /dev/"+_bootdev+" /boot");
 
         /* Verify that cmdline.txt was written correctly */
         f.setFileName("/boot/cmdline.txt");
@@ -247,9 +269,8 @@ bool DriveFormatThread::partitionDrive()
     int size_boot_part_in_sectors = 2048 * SIZE_BOOT_PART;
     int start_main_part = size_boot_part_in_sectors + 2048;
 
-    if (_reformatBoot)
+    //if (_reformatBoot)
         partitionTable = "2048,"+QByteArray::number(size_boot_part_in_sectors)+",0E\n"; /* FAT partition LBA */
-//        partitionTable = "0,128,6\n"; /* 64 MB FAT partition */
 
     partitionTable += QByteArray::number(start_main_part)+",,L\n"; /* Linux partition with all remaining space */
     partitionTable += "0,0\n";
@@ -313,7 +334,9 @@ bool DriveFormatThread::formatDataPartition()
     if (_fs == "btrfs")
         cmd = QString("/usr/bin/mkfs.btrfs -f -L berryboot /dev/")+dev;
     else if (_fs == "ext4")
-        cmd = QString("/usr/sbin/mkfs.ext4 -L berryboot /dev/")+dev;
+        cmd = QString("/usr/sbin/mkfs.ext4 -O ^huge_file -L berryboot /dev/")+dev;
+    else if (_fs == "ext4 nolazy")
+        cmd = QString("/usr/sbin/mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 -O ^huge_file -L berryboot /dev/")+dev;
     else
         cmd = QString("/usr/sbin/mkfs.ext4 -E nodiscard -L berryboot /dev/")+dev;
 
@@ -382,4 +405,21 @@ QString DriveFormatThread::bootdev()
 QString DriveFormatThread::datadev()
 {
     return _datadev;
+}
+
+bool DriveFormatThread::isBtrfs()
+{
+    QProcess proc;
+    proc.start("/sbin/blkid /dev/"+_datadev);
+    if (proc.waitForFinished() && proc.exitCode() == 0)
+    {
+        QByteArray res = proc.readAll();
+
+        if (res.contains("TYPE=\"btrfs\""))
+        {
+            return true;
+        }
+    }
+
+    return false;
 }

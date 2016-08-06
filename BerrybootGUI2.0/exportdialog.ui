@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>ExportDialog</class>
  <widget class="QDialog" name="ExportDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>500</width>
-    <height>447</height>
+    <height>459</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -25,6 +28,16 @@
       <string>Backup to SD card or export to USB stick</string>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="2" column="2">
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Make backup to external USB SD card reader</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item row="7" column="1" colspan="2">
        <widget class="QRadioButton" name="dataRadio">
         <property name="text">
@@ -32,23 +45,6 @@
         </property>
         <property name="checked">
          <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QRadioButton" name="backupRadio">
-        <property name="text">
-         <string>Clone SD card</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="4" column="0">
-       <widget class="QLabel" name="label_2">
-        <property name="text">
-         <string>Export single image</string>
         </property>
        </widget>
       </item>
@@ -60,78 +56,6 @@
         <property name="checked">
          <bool>false</bool>
         </property>
-       </widget>
-      </item>
-      <item row="8" column="2">
-       <widget class="QLabel" name="label_4">
-        <property name="text">
-         <string>Export an image that includes all modifications I made.</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="0">
-       <widget class="QLabel" name="label">
-        <property name="text">
-         <string>Backup everything</string>
-        </property>
-       </widget>
-      </item>
-      <item row="6" column="2">
-       <widget class="QLabel" name="label_3">
-        <property name="text">
-         <string>Export the original file system image as downloaded from the Internet</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="2">
-       <widget class="QLabel" name="label_5">
-        <property name="text">
-         <string>Make backup to external USB SD card reader</string>
-        </property>
-        <property name="wordWrap">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="2">
-       <widget class="QGroupBox" name="excludeGroupbox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>50</height>
-         </size>
-        </property>
-        <property name="title">
-         <string>Exclude the following files</string>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout">
-         <item>
-          <widget class="QPlainTextEdit" name="excludeEdit">
-           <property name="plainText">
-            <string>/etc/udev/rules.d/
-/etc/ssh/ssh_host_dsa_key
-/etc/ssh/ssh_host_dsa_key.pub
-/etc/ssh/ssh_host_rsa_key
-/etc/ssh/ssh_host_rsa_key.pub
-/etc/ssh/ssh_host_ecdsa_key.pub
-/etc/ssh/ssh_host_ecdsa_key
-</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
        </widget>
       </item>
       <item row="3" column="2">
@@ -178,6 +102,99 @@
         </property>
         <property name="wordWrap">
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="6" column="2">
+       <widget class="QLabel" name="label_3">
+        <property name="text">
+         <string>Export the original file system image as downloaded from the Internet</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="9" column="2">
+       <widget class="QGroupBox" name="excludeGroupbox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>50</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Exclude the following files</string>
+        </property>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPlainTextEdit" name="excludeEdit">
+           <property name="plainText">
+            <string>/etc/udev/rules.d/
+/etc/ssh/ssh_host_dsa_key
+/etc/ssh/ssh_host_dsa_key.pub
+/etc/ssh/ssh_host_rsa_key
+/etc/ssh/ssh_host_rsa_key.pub
+/etc/ssh/ssh_host_ecdsa_key.pub
+/etc/ssh/ssh_host_ecdsa_key
+</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="label_2">
+        <property name="text">
+         <string>Export single image</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>Backup everything</string>
+        </property>
+       </widget>
+      </item>
+      <item row="10" column="0">
+       <widget class="QLabel" name="label_7">
+        <property name="text">
+         <string>Restore</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QRadioButton" name="backupRadio">
+        <property name="text">
+         <string>Clone SD card</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="8" column="2">
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Export an image that includes all modifications I made.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="11" column="2">
+       <widget class="QRadioButton" name="restoreRadio">
+        <property name="text">
+         <string>Import image from USB stick</string>
         </property>
        </widget>
       </item>

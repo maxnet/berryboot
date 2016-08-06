@@ -43,6 +43,7 @@ class DiskDialog : public QDialog
 public:
     explicit DiskDialog(Installer *i, QWidget *parent = 0);
     ~DiskDialog();
+    bool usbBoot();
     
 protected:
     Ui::DiskDialog *ui;
@@ -50,13 +51,18 @@ protected:
     QTimer _pollDisksTimer;
     QProgressDialog *_qpd;
     Installer *_i;
+    bool _usbboot;
 
+    /*
+     * Test if drive has an existing Berryboot installation
+     */
+    bool hasExistingBerryboot(const QString &drive);
+
+protected slots:
     /*
      * Populate GUI widget with available drives
      */
     void populateDrivelist();
-
-protected slots:
     /*
      * Called periodicly to poll for USB drive insertion
      */
@@ -77,6 +83,8 @@ private slots:
      * Called when "format" button has been clicked by user
      */
     void on_formatButton_clicked();
+    void on_driveList_currentRowChanged(int currentRow);
+    void on_filesystemCombo_currentIndexChanged(const QString &arg1);
 };
 
 #endif // DISKDIALOG_H

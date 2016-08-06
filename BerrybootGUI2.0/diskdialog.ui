@@ -15,7 +15,7 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="5" column="0" colspan="2">
-    <widget class="QLabel" name="label_4">
+    <widget class="QLabel" name="warningLabel">
      <property name="font">
       <font>
        <pointsize>12</pointsize>
@@ -60,7 +60,17 @@
      </item>
      <item>
       <property name="text">
+       <string>ext4 (no lazy init)</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>btrfs</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>use existing files</string>
       </property>
      </item>
     </widget>

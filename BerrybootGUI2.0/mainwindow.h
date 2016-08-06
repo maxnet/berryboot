@@ -44,7 +44,7 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(Installer *i, QWidget *parent = 0);
     ~MainWindow();
-    
+
 private slots:
     void on_actionExit_triggered();
     void on_actionAdd_OS_triggered();
@@ -75,6 +75,8 @@ private slots:
     void on_actionRepair_file_system_triggered();
 
     void on_actionRecover_triggered();
+
+    void on_actionAdvMenu_toggled(bool arg1);
 
 protected:
     Ui::MainWindow *ui;

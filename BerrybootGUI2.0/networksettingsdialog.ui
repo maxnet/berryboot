@@ -2,12 +2,15 @@
 <ui version="4.0">
  <class>NetworkSettingsDialog</class>
  <widget class="QDialog" name="NetworkSettingsDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
     <width>355</width>
-    <height>339</height>
+    <height>410</height>
    </rect>
   </property>
   <property name="font">

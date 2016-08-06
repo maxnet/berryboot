@@ -53,7 +53,7 @@ if [ -e /sys/devices/platform/rpi_ft5406 ]; then
 fi
 
 # Show GUI, it will write the OS choosen to /tmp/answer
-/usr/bin/BerrybootGUI -qws 2>/tmp/debug 
+/usr/bin/BerrybootGUI -qws 2>/tmp/debug
 killall udevd
 
 # Clear screen

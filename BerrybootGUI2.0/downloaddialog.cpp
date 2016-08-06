@@ -37,8 +37,11 @@
 #include <QProgressDialog>
 #include <QTimer>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/xattr.h>
 #include <QDebug>
 #include <QCloseEvent>
+
 
 #define MB  1048576
 
@@ -56,7 +59,7 @@ DownloadDialog::DownloadDialog(const QString &url, const QString &alternateUrl, 
 
     if (fileType == Image && QFile::exists("/mnt/images/"+localfilename))
     {
-        QMessageBox::critical(this, tr("Error"), tr("You already have an image by that name. Use the 'clone' function if you want a second instance"), QMessageBox::Close);
+        QMessageBox::critical(NULL, tr("Already installed"), tr("You already have an image by that name.\nPress 'more options' -> 'clone' if you want a second instance"), QMessageBox::Close);
         QTimer::singleShot(1, this, SLOT(reject()));
         return;
     }
@@ -107,6 +110,12 @@ void DownloadDialog::onDownloadSuccessful()
         return;
     }
     //qDebug() << "Hash expected:" << _expectedHash << "Hash calculated:" << _hasher.result().toHex();
+
+    QByteArray filename = "/mnt/tmp/"+_localfilename.toLatin1();
+    for (QMap<QByteArray,QByteArray>::const_iterator iter = _xattr.constBegin(); iter != _xattr.constEnd(); iter++)
+    {
+        ::setxattr(filename.constData(), iter.key().constData(), iter.value().constData(), iter.value().length(), 0);
+    }
 
     QProgressDialog *qpd = new QProgressDialog(tr("Finish writing to disk (sync)"), QString(),0,0,this);
     qpd->show();
@@ -167,4 +176,9 @@ void DownloadDialog::closeEvent(QCloseEvent *ev)
     }
 
     QDialog::closeEvent(ev);
+}
+
+void DownloadDialog::setAttr(const QByteArray &key, QByteArray &value)
+{
+    _xattr.insert(key, value);
 }

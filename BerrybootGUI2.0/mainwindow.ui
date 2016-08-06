@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>650</width>
+    <width>671</width>
     <height>300</height>
    </rect>
   </property>
@@ -35,8 +35,14 @@
      <pointsize>12</pointsize>
     </font>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>40</width>
+     <height>40</height>
+    </size>
+   </property>
    <property name="toolButtonStyle">
-    <enum>Qt::ToolButtonTextBesideIcon</enum>
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -46,22 +52,50 @@
    </attribute>
    <addaction name="actionAdd_OS"/>
    <addaction name="actionEdit"/>
-   <addaction name="actionRecover"/>
    <addaction name="actionExport"/>
    <addaction name="actionDelete"/>
    <addaction name="actionSet_default"/>
-   <addaction name="actionExit"/>
    <addaction name="actionAdvanced_configuration"/>
+   <addaction name="actionExit"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QToolBar" name="advToolbar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="font">
+    <font>
+     <pointsize>12</pointsize>
+    </font>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>40</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="toolButtonStyle">
+    <enum>Qt::ToolButtonTextUnderIcon</enum>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>true</bool>
+   </attribute>
+   <addaction name="actionRecover"/>
    <addaction name="actionClone"/>
    <addaction name="actionConsole"/>
    <addaction name="actionSetPassword"/>
    <addaction name="actionRepair_file_system"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
   <action name="actionAdd_OS">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/filenew.png</normaloff>:/icons/filenew.png</iconset>
+     <normaloff>:/icons/install.png</normaloff>:/icons/install.png</iconset>
    </property>
    <property name="text">
     <string>Add OS</string>
@@ -79,10 +113,10 @@
    </property>
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/edit.png</normaloff>:/icons/edit.png</iconset>
+     <normaloff>:/icons/edit-rename.png</normaloff>:/icons/edit-rename.png</iconset>
    </property>
    <property name="text">
-    <string>Edit</string>
+    <string>Rename</string>
    </property>
    <property name="toolTip">
     <string>Edit name or memory split</string>
@@ -121,7 +155,7 @@
    </property>
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/bookmark.png</normaloff>:/icons/bookmark.png</iconset>
+     <normaloff>:/icons/bookmark_large.png</normaloff>:/icons/bookmark_large.png</iconset>
    </property>
    <property name="text">
     <string>Set default</string>
@@ -133,7 +167,7 @@
   <action name="actionExit">
    <property name="icon">
     <iconset resource="icons.qrc">
-     <normaloff>:/icons/exit.png</normaloff>:/icons/exit.png</iconset>
+     <normaloff>:/icons/door_in.png</normaloff>:/icons/door_in.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -208,10 +242,25 @@
      <normaloff>:/icons/document_revert.png</normaloff>:/icons/document_revert.png</iconset>
    </property>
    <property name="text">
-    <string>Recover</string>
+    <string>Reset OS</string>
    </property>
    <property name="toolTip">
     <string>Restore original image</string>
+   </property>
+  </action>
+  <action name="actionAdvMenu">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/moreoptions.png</normaloff>:/icons/moreoptions.png</iconset>
+   </property>
+   <property name="text">
+    <string>More options</string>
+   </property>
+   <property name="toolTip">
+    <string>Display extra buttons</string>
    </property>
   </action>
  </widget>
