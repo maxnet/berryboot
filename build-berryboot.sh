@@ -36,14 +36,6 @@ if [ -e buildroot-2015.02/output/images/rpi-firmware ]; then
 	rm output/start_db.elf output/fixup_db.dat
 fi
 
-# Pi kernel requires special treatment. Need to run mkknlimg on it, so bootloader knows it has DTB support
-if [ -e buildroot-2015.02/output/images/kernel_rpi_aufs.img ]; then
-	buildroot-2015.02/output/host/usr/bin/mkknlimg buildroot-2015.02/output/images/kernel_rpi_aufs.img output/kernel_rpi_aufs.img
-fi
-if [ -e buildroot-2015.02/output/images/kernel_rpi2_aufs.img ]; then
-	buildroot-2015.02/output/host/usr/bin/mkknlimg buildroot-2015.02/output/images/kernel_rpi2_aufs.img output/kernel_rpi2_aufs.img
-fi
-
 echo
 echo Build finished.
 echo Copy contents of "output" folder to SD card.
