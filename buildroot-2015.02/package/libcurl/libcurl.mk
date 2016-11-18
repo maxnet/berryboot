@@ -57,8 +57,9 @@ endif
 # Berryboot edit for minimal libcurl
 LIBCURL_CONF_OPTS = --disable-verbose --enable-hidden-symbols --disable-ftp --disable-ldap --disable-ldaps \
 	--disable-rtsp --disable-dict --disable-telnet --disable-tftp --disable-pop3 --disable-imap \
-	--disable-smtp --disable-gopher --disable-manual --without-ssl --disable-ntlm-wb
-
+	--disable-smtp --disable-gopher --disable-manual --disable-ntlm-wb \
+	--with-ssl=$(STAGING_DIR)/usr \
+	--with-ca-path=/etc/ssl/certs
 
 define LIBCURL_FIX_DOT_PC
 	printf 'Requires: openssl\n' >>$(@D)/libcurl.pc.in

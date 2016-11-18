@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.8"
+#define BERRYBOOT_VERSION  "v2.9"
 #define SIZE_BOOT_PART  /* 63 */ 127
 
 class QSettings;
