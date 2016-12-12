@@ -1,11 +1,11 @@
-disable_overscan=1
+disable_overscan=0
 
 gpu_mem=128
 gpu_mem_512=256
 cma_lwm=16
 cma_hwm=32
 cma_offline_start=16
-
+vncinstall
 # Berryboot settings, do not change
 kernel=kernel_rpi_aufs.img
 initramfs berryboot.img
