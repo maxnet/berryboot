@@ -136,8 +136,7 @@
          <item>
           <widget class="QPlainTextEdit" name="excludeEdit">
            <property name="plainText">
-            <string>/etc/udev/rules.d/
-/etc/ssh/ssh_host_dsa_key
+            <string>/etc/ssh/ssh_host_dsa_key
 /etc/ssh/ssh_host_dsa_key.pub
 /etc/ssh/ssh_host_rsa_key
 /etc/ssh/ssh_host_rsa_key.pub

@@ -294,7 +294,7 @@ bool DriveFormatThread::partitionDrive()
 
 bool DriveFormatThread::formatBootPartition()
 {
-    return QProcess::execute(QString("/sbin/mkfs.fat /dev/")+_bootdev) == 0;
+    return QProcess::execute(QString("/sbin/mkfs.fat -n boot /dev/")+_bootdev) == 0;
 }
 
 bool DriveFormatThread::formatDataPartition()

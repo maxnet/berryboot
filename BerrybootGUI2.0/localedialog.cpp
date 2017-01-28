@@ -182,6 +182,16 @@ void LocaleDialog::accept()
         _i->setSound("headphones");
     bool wifi = ui->wifiRadio->isChecked();
 
+    if (!wifi && !_i->networkReady())
+    {
+        if (QMessageBox::question(this, tr("Check network"),
+                                  tr("There does not seem to be network connectivity. Are you sure you want to use a wired connection?"),
+                                  QMessageBox::Yes, QMessageBox::No) == QMessageBox::No)
+        {
+            return;
+        }
+    }
+
     if (_gbd)
         _gbd->hide();
 

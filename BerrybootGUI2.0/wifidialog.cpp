@@ -44,6 +44,8 @@
 #include <QTime>
 #include <QDebug>
 #include <QRegExp>
+#include <QtCore>
+#include <QFutureWatcher>
 
 WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
@@ -55,13 +57,13 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     ui->setupUi(this);
     connect(&_timer, SIGNAL(timeout()), this, SLOT(pollScanResults()));
 
-    /* Disable OK button until a network is selected */
-    //ui->buttonBox->button(ui->buttonBox->Ok)->setEnabled(false);
-
     QProgressDialog qpd(tr("Loading drivers"), QString(), 0, 0, this);
+    QFutureWatcher<void> w;
+    connect(&w, SIGNAL(finished()), &qpd, SLOT(hide()));
     qpd.show();
-    QApplication::processEvents();
-    i->loadDrivers();
+    QFuture<void> f = QtConcurrent::run(_i, &Installer::loadDrivers);
+    w.setFuture(f);
+    qpd.exec();
 
     /* Wait up to 4 seconds for wifi device to appear */
     QTime t;

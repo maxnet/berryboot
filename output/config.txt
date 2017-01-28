@@ -1,7 +1,6 @@
 disable_overscan=1
 start_x=1
 gpu_mem=160
-max_usb_current=1
 
 # Enable on-board audio
 dtparam=audio=on
@@ -10,6 +9,10 @@ dtparam=audio=on
 initramfs berryboot.img
 
 kernel=kernel_rpi2_aufs.img
+
+[pi3]
+# Uncomment this line before installation if you want to enable USB boot
+#program_usb_boot_mode=1
 
 [pi0]
 kernel=kernel_rpi_aufs.img
