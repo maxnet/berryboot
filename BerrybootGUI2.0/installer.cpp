@@ -917,7 +917,7 @@ bool Installer::supportsUSBboot()
         QByteArray config = f.readAll();
         f.close();
 
-        return config.contains("program_usb_boot_mode=1");
+        return config.contains("\nprogram_usb_boot_mode=1");
     }
     else
     {

@@ -218,7 +218,7 @@ void DriveFormatThread::run()
             configdata.replace("disable_overscan=1", "");
             configchanged = true;
         }
-        if (configdata.contains("program_usb_boot_mode=1"))
+        if (configdata.contains("\nprogram_usb_boot_mode=1"))
         {
             configdata.replace("program_usb_boot_mode=1", "");
             configchanged = true;
