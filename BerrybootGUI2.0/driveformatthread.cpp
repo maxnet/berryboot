@@ -67,6 +67,12 @@ void DriveFormatThread::run()
             return;
         }
 
+        if (QFile::exists("/lib/modules"))
+        {
+            /* Delete extracted drivers to free up tmpfs space */
+            QProcess::execute("rm -rf /lib/modules");
+        }
+
         if (!_i->saveBootFiles() )
         {
             emit error(tr("Error saving boot files to memory. SD card may be damaged."));
