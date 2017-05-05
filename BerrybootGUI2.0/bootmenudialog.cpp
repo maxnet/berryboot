@@ -178,7 +178,7 @@ void BootMenuDialog::initialize()
                 _i->switchConsole(5);
                 proc.start(QByteArray("openvt -c 5 -w /usr/sbin/fsck.ext4 -yf /dev/"+datadev));
                 QApplication::processEvents();
-                proc.waitForFinished();
+                proc.waitForFinished(-1);
                 success = mountDataPartition(datadev);
                 _i->switchConsole(1);
             }
@@ -572,9 +572,11 @@ QByteArray BootMenuDialog::getBootOptions()
     return _i->bootoptions();
 }
 
-bool BootMenuDialog::mountDataPartition(const QString &dev)
+bool BootMenuDialog::mountDataPartition(const QString &dev, bool rw)
 {
-    QString mountoptions = "-o noatime,ro";
+    QString mountoptions = "-o noatime";
+    if (!rw)
+        mountoptions += ",ro";
 
     if (!QFile::exists("/mnt"))
         mkdir("/mnt", 0755);
@@ -607,7 +609,8 @@ bool BootMenuDialog::mountDataPartition(const QString &dev)
     }
 
     /* Remount read-write in the background */
-    _remountproc.start("mount -o remount,rw /mnt");
+    if (!rw)
+        _remountproc.start("mount -o remount,rw /mnt");
 
     return true;
 }
@@ -623,6 +626,28 @@ void BootMenuDialog::waitForRemountRW()
         if (_remountproc.state() != _remountproc.NotRunning && !_remountproc.waitForFinished())
         {
             QMessageBox::critical(this, tr("Error remounting data partition"), tr("Timed out waiting for remounting data partition read-write to complete"), QMessageBox::Ok);
+        }
+    }
+
+    if (_remountproc.exitCode() != 0)
+    {
+        if (QMessageBox::question(this, tr("Perform fsck?"),
+            tr("Error remounting data partition read-write. Try to repair file system?"), QMessageBox::Yes, QMessageBox::No)
+                == QMessageBox::Yes)
+        {
+            QByteArray datadev = _i->datadev().toLatin1();
+            if (_i->bootoptions().contains("luks"))
+                datadev = "mapper/luks";
+            qDebug() << "killing udev" << QProcess::execute("killall udevd");
+            qDebug() << "unmounting" << QProcess::execute("umount -f /dev/"+datadev);
+
+            QProcess proc;
+            _i->switchConsole(5);
+            proc.start(QByteArray("openvt -c 5 -w /usr/sbin/fsck.ext4 -yf /dev/"+datadev));
+            QApplication::processEvents();
+            proc.waitForFinished(-1);
+            mountDataPartition(datadev, true);
+            _i->switchConsole(1);
         }
     }
 }

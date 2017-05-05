@@ -84,7 +84,7 @@ protected:
     /*
      * Mount data partition
      */
-    bool mountDataPartition(const QString &dev);
+    bool mountDataPartition(const QString &dev, bool rw = false);
     /*
      * Wait for disk device to become available
      */

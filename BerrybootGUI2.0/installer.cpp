@@ -389,6 +389,7 @@ void Installer::reboot()
     if (system("umount -ar") != 0) { }
     sync();
     if (system("ifdown -a") != 0) { }
+
     ::usleep(200000);
     ::reboot(RB_AUTOBOOT);
 }

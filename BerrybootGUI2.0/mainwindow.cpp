@@ -647,10 +647,10 @@ void MainWindow::on_actionRepair_file_system_triggered()
         _i->switchConsole(5);
         proc.start("openvt -c 5 -w "+cmd);
         QApplication::processEvents();
-        proc.waitForFinished();
+        proc.waitForFinished(-1);
 
         proc.start("openvt -c 5 -w "+cmd2);
-        proc.waitForFinished();
+        proc.waitForFinished(-1);
 
         _i->mountSystemPartition();
         QProcess::execute("mount "+datadev+" /mnt");
