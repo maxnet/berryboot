@@ -386,11 +386,16 @@ double Installer::diskSpaceInUse(const QString &path)
 
 void Installer::reboot()
 {
-    if (system("umount -ar") != 0) { }
+    QProcess::execute("killall udevd");
+    ::usleep(100000);
+    QProcess::execute("umount -ar");
     sync();
-    if (system("ifdown -a") != 0) { }
-
-    ::usleep(200000);
+    QProcess::execute("ifdown -a");
+    if (datadev().startsWith("sda"))
+    {
+        /* Spin down drive */
+        QProcess::execute("/sbin/hdparm -Y /dev/sda");
+    }
     ::reboot(RB_AUTOBOOT);
 }
 

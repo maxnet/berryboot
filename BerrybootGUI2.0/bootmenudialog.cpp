@@ -802,8 +802,15 @@ void BootMenuDialog::reboot()
 
 void BootMenuDialog::halt()
 {
+    QProcess::execute("killall udevd");
+    ::usleep(100000);
     QProcess::execute("umount -ar");
     sync();
+    if (_i->datadev().startsWith("sda"))
+    {
+        /* Spin down drive */
+        QProcess::execute("/sbin/hdparm -Y /dev/sda");
+    }
     ::reboot(RB_POWER_OFF);
 }
 
