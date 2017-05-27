@@ -708,7 +708,7 @@ void Installer::loadCryptoModules()
 
 void Installer::loadSoundModule(const QByteArray &channel)
 {
-    if (cpuinfo().contains("BCM2708") || cpuinfo().contains("BCM2709"))
+    if (cpuinfo().contains("BCM2708") || cpuinfo().contains("BCM2709") || cpuinfo().contains("BCM2835"))
     {
         /* Raspberry Pi */
         prepareDrivers();
@@ -781,7 +781,7 @@ void Installer::enableCEC()
     QByteArray cpuinfo = f.readAll();
     f.close();
 
-    if (cpuinfo.contains("BCM2708") || cpuinfo.contains("BCM2709")) /* Only supported on the Raspberry for now */
+    if (cpuinfo.contains("BCM2708") || cpuinfo.contains("BCM2709") || cpuinfo.contains("BCM2835")) /* Only supported on the Raspberry for now */
     {
         CecListener *cec = new CecListener(this);
         connect(cec, SIGNAL(keyPress(int)), this, SLOT(onKeyPress(int)));
