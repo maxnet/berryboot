@@ -99,6 +99,12 @@ if [ "$IMAGE" != "" ]; then
 		echo Executing init script
 		. berryboot-init
 	fi
+	
+	if [ -e /mnt/data/berryboot-init ]; then
+		echo Executing init script
+		. /mnt/data/berryboot-init $IMAGE
+	fi
+
 
 	#
 	# Fedora and Arch symlink /lib to /usr/lib and expect modules in /usr/lib/modules
