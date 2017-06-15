@@ -92,7 +92,7 @@ if [ "$IMAGE" != "" ]; then
 	fi
 	
 	if [ -s /mnt/data/custom-images-update ]; then
-		echo Executing custom images update script
+		echo "Executing custom images update script"
 		. /mnt/data/custom-images-update ${IMAGE}
 	fi
 
