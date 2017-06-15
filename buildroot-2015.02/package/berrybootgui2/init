@@ -90,6 +90,11 @@ if [ "$IMAGE" != "" ]; then
             mv -f ${DATADIR}/storage/.update/SYSTEM ${IMAGEPATH}
             rm -rf ${DATADIR}/storage/.update/*
 	fi
+	
+	if [ -s /mnt/data/custom-images-update ]; then
+		echo Executing custom images update script
+		. /mnt/data/custom-images-update ${IMAGE}
+	fi
 
 	echo Mounting image ${IMAGE}...
 	mount -o loop,ro ${IMAGEPATH} /squashfs
