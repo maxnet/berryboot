@@ -91,7 +91,7 @@ if [ "$IMAGE" != "" ]; then
             rm -rf ${DATADIR}/storage/.update/*
 	fi
 	
-	if [ -s /mnt/data/custom-images-update ]; then
+	if [ -x /mnt/data/custom-images-update ]; then
 		echo "Executing custom images update script"
 		. /mnt/data/custom-images-update ${IMAGE}
 	fi
