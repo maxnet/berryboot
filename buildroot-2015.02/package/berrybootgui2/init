@@ -93,7 +93,7 @@ if [ "$IMAGE" != "" ]; then
 	
 	if [ -x /mnt/data/custom-images-update ]; then
 		echo "Executing custom images update script"
-		. /mnt/data/custom-images-update ${IMAGE}
+		. /mnt/data/custom-images-update
 	fi
 
 	echo Mounting image ${IMAGE}...
