@@ -47,6 +47,8 @@ protected:
     virtual void run();
     static void _cec_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
     void cec_callback(uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4);
+    static void _tv_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2);
+    void tv_callback(uint32_t reason, uint32_t param1, uint32_t param2);
 
     QWaitCondition _waitcond;
 };

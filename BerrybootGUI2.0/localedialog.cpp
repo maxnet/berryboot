@@ -90,6 +90,8 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
         ui->wifiRadio->setText(tr("Wifi (using existing wpa_supplicant.conf settings)"));
         ui->wifiRadio->setChecked(true);
     }
+
+    QTimer::singleShot(3000, this, SLOT(checkIfNetworkNeedsDrivers()));
 }
 
 LocaleDialog::~LocaleDialog()
@@ -111,6 +113,18 @@ void LocaleDialog::checkIfNetworkIsUp()
     {
         /* Network not up yet, check again in a tenth of a second */
         QTimer::singleShot(100, this, SLOT(checkIfNetworkIsUp()));
+    }
+}
+
+void LocaleDialog::checkIfNetworkNeedsDrivers()
+{
+    QFile f("/sys/class/net/eth0");
+    if (!f.exists())
+    {
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        QApplication::processEvents();
+        _i->loadDrivers();
+        QApplication::restoreOverrideCursor();
     }
 }
 

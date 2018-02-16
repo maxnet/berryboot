@@ -58,6 +58,8 @@ void CecListener::run()
 #ifdef RASPBERRY_CEC_SUPPORT
     VCHI_INSTANCE_T vchiq;
     VCHI_CONNECTION_T *conn;
+    uint16_t physaddr;
+    CEC_AllDevices_T logaddr;
     QMutex mutex;
     mutex.lock();
 
@@ -89,6 +91,18 @@ void CecListener::run()
     vc_vchi_cec_init(vchiq, &conn, 1);
     vc_cec_set_osd_name("BerryBoot");
     vc_cec_register_callback(_cec_callback, this);
+    vc_tv_register_callback(_tv_callback, this);
+
+    vc_cec_get_logical_address(&logaddr);
+    if (logaddr == 0xF)
+    {
+        qDebug() << "CEC not initialized yet. Doing now";
+        vc_cec_set_passive(false);
+        vc_cec_alloc_logical_address();
+        QThread::sleep(1);
+        vc_cec_get_physical_address(&physaddr);
+        vc_cec_send_ReportPhysicalAddress(physaddr, CEC_DeviceType_Rec, false);
+    }
 
     qDebug() << "CecListener done initializing";
     /* Wait until we are signaled to quit */
@@ -103,7 +117,7 @@ void CecListener::run()
     static_cast<CecListener *>(userptr)->cec_callback(reason, param1, param2, param3, param4);
 }
 
-void CecListener::cec_callback(uint32_t reason, uint32_t param1, uint32_t, uint32_t, uint32_t)
+void CecListener::cec_callback(uint32_t reason, uint32_t param1, uint32_t param2, uint32_t param3, uint32_t param4)
 {
 #ifdef RASPBERRY_CEC_SUPPORT
     if (CEC_CB_REASON(reason) == VC_CEC_BUTTON_PRESSED)
@@ -144,8 +158,21 @@ void CecListener::cec_callback(uint32_t reason, uint32_t param1, uint32_t, uint3
         if (c)
             emit keyPress(c);
     }
+    else
+    {
+        qDebug() << "CEC:" << CEC_CB_REASON(reason) << param1 << param2 << param3 << param4;
+    }
 #else
     qDebug() << "CEC:" << reason << param1;
 #endif
 }
 
+/*static*/ void CecListener::_tv_callback(void *userptr, uint32_t reason, uint32_t param1, uint32_t param2)
+{
+    static_cast<CecListener *>(userptr)->tv_callback(reason, param1, param2);
+}
+
+void CecListener::tv_callback(uint32_t reason, uint32_t param1, uint32_t param2)
+{
+    qDebug() << "TV:" << reason << param1 << param2;
+}

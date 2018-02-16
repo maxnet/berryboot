@@ -51,6 +51,7 @@ protected:
 protected slots:
     void downloadComplete();
     void checkIfNetworkIsUp();
+    void checkIfNetworkNeedsDrivers();
     virtual void accept();
     virtual void reject();
 private slots:
