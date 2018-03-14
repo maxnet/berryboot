@@ -18,6 +18,7 @@ define RPI_FIRMWARE_INSTALL_DTB
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2708-rpi-b-plus.dtb $(BINARIES_DIR)/rpi-firmware/bcm2708-rpi-b-plus.dtb
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2709-rpi-2-b.dtb $(BINARIES_DIR)/rpi-firmware/bcm2709-rpi-2-b.dtb
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2710-rpi-3-b.dtb $(BINARIES_DIR)/rpi-firmware/bcm2710-rpi-3-b.dtb
+	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2710-rpi-3-b-plus.dtb $(BINARIES_DIR)/rpi-firmware/bcm2710-rpi-3-b-plus.dtb
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2708-rpi-cm.dtb $(BINARIES_DIR)/rpi-firmware/bcm2708-rpi-cm.dtb
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2710-rpi-cm3.dtb $(BINARIES_DIR)/rpi-firmware/bcm2710-rpi-cm3.dtb
 	$(INSTALL) -D -m 0644 $(@D)/boot/bcm2708-rpi-0-w.dtb $(BINARIES_DIR)/rpi-firmware/bcm2708-rpi-0-w.dtb
