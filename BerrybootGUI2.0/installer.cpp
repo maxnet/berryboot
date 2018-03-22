@@ -315,6 +315,25 @@ void Installer::startNetworking()
     proc->start("/sbin/ifup eth0");
 }
 
+/* Only enable interface, but do not obtain DHCP lease */
+void Installer::startNetworkInterface()
+{
+    if (_ethup)
+        return;
+
+    QFile f("/sys/class/net/eth0");
+
+    if (!f.exists())
+    {
+        /* eth0 not available yet, check back in a tenth of a second */
+        QTimer::singleShot(100, this, SLOT(startNetworkInterface()));
+        return;
+    }
+
+    QProcess::startDetached("/sbin/ifconfig eth0 up");
+    _ethup = true;
+}
+
 bool Installer::networkReady()
 {
     /* Once we have a DHCP lease /tmp/resolv.conf is created */

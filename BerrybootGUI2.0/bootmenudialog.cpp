@@ -107,6 +107,10 @@ void BootMenuDialog::initialize()
         {
             startISCSI();
         }
+        else
+        {
+            _i->startNetworkInterface();
+        }
     }
     else
     {

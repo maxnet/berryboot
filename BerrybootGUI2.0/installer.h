@@ -105,6 +105,7 @@ public:
 public slots:
     void startNetworking();
     void startWifi();
+    void startNetworkInterface();
 
 protected:
     QString _keyboardlayout, _timezone, _bootdev;
