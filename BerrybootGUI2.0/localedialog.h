@@ -52,10 +52,13 @@ protected slots:
     void downloadComplete();
     void checkIfNetworkIsUp();
     void checkIfNetworkNeedsDrivers();
+    void wifiCountryDetected(QByteArray countrycode, int numAPs);
     virtual void accept();
     virtual void reject();
 private slots:
     void on_keybCombo_currentIndexChanged(const QString &arg1);
+    void on_wifiRadio_clicked();
+    void on_ethRadio_clicked();
 };
 
 #endif // LOCALEDIALOG_H

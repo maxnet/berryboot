@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "logviewer.h"
 #include "localedialog.h"
 #include "logindialog.h"
-#include "wifidialog.h"
 #include "bootmenudialog.h"
 #include "networksettingsdialog.h"
 #include "statusdialog.h"

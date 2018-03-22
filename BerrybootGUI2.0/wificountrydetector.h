@@ -1,9 +1,9 @@
-#ifndef WIFIDIALOG_H
-#define WIFIDIALOG_H
+#ifndef WIFICOUNTRYDETECTOR_H
+#define WIFICOUNTRYDETECTOR_H
 
-/* Berryboot -- Wifi settings dialog
+/* Berryboot -- wifi country detector
  *
- * Copyright (c) 2012, Floris Bos
+ * Copyright (c) 2018, Floris Bos
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -27,42 +27,27 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include <QThread>
 
-#include <QDialog>
-#include <QTimer>
-
-namespace Ui {
-class WifiDialog;
-}
 class Installer;
-class QProcess;
 
-class WifiDialog : public QDialog
+class WifiCountryDetector : public QThread
 {
     Q_OBJECT
-    
 public:
-    explicit WifiDialog(Installer *i, QWidget *parent = 0);
-    ~WifiDialog();
-    void setCountry(const QByteArray &country);
-    
+    explicit WifiCountryDetector(Installer *i, QObject *parent = 0);
+
 protected:
-    Ui::WifiDialog *ui;
+    virtual void run();
+
     Installer *_i;
-    QTimer _timer;
-    QProcess *_proc;
-    QList<QByteArray> _ssids;
-    bool _firstPoll;
-    QByteArray _country, _config;
 
-    virtual void accept();
+signals:
+    void statusUpdate(QString msg);
+    void countryDetected(QByteArray countrycode, int numAPs);
+    void detectionFailed();
 
-protected slots:
-    void on_networkList_currentRowChanged(int);
-    void pollScanResults();
-    void processScanResults(int exitCode);
-private slots:
-    void on_networkList_itemClicked();
+public slots:
 };
 
-#endif // WIFIDIALOG_H
+#endif // WIFICOUNTRYDETECTOR_H

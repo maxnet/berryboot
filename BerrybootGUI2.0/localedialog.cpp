@@ -31,6 +31,7 @@
 #include "greenborderdialog.h"
 #include "wifidialog.h"
 #include "downloadthread.h"
+#include "wificountrydetector.h"
 
 #include <QStringList>
 #include <QFile>
@@ -61,6 +62,16 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
     f.close();
 
     ui->timezoneCombo->addItems(timezones);
+
+    /* Populate wifi country information */
+    QStringList wificountries;
+    f.setFileName(":/countries.txt");
+    f.open(f.ReadOnly);
+    while ( f.bytesAvailable() )
+        wificountries.append( f.readLine().trimmed() );
+    f.close();
+
+    ui->wificountryCombo->addItems(wificountries);
 
     /* Populate keyboard information */
     QDir dir(":/qmap");
@@ -195,6 +206,13 @@ void LocaleDialog::accept()
     else if (ui->audioHeadphonesRadio->isChecked())
         _i->setSound("headphones");
     bool wifi = ui->wifiRadio->isChecked();
+    QByteArray wifiCountry = ui->wificountryCombo->currentText().toAscii();
+
+    if (wifi && wifiCountry == "--" && !QFile::exists("/boot/wpa_supplicant.conf"))
+    {
+        QMessageBox::critical(this, tr("No wifi country selected"), tr("Please select a wifi country from the list"), QMessageBox::Ok);
+        return;
+    }
 
     if (!wifi && !_i->networkReady())
     {
@@ -212,7 +230,9 @@ void LocaleDialog::accept()
     QDialog::accept();
     if (wifi && !QFile::exists("/boot/wpa_supplicant.conf"))
     {
+        QProcess::execute("/usr/sbin/iw reg set "+wifiCountry);
         WifiDialog wd(_i);
+        wd.setCountry(wifiCountry);
         wd.exec();
     }
     else if (!wifi && QFile::exists("/boot/wpa_supplicant.conf"))
@@ -239,4 +259,61 @@ void LocaleDialog::reject()
 void LocaleDialog::on_keybCombo_currentIndexChanged(const QString &layout)
 {
     _i->setKeyboardLayout(layout);
+}
+
+void LocaleDialog::on_wifiRadio_clicked()
+{
+    ui->wificountryLabel->setEnabled(true);
+    ui->wificountryCombo->setEnabled(true);
+
+    if (!QFile::exists("/boot/wpa_supplicant.conf"))
+    {
+        WifiCountryDetector *w = new WifiCountryDetector(_i, this);
+        QProgressDialog *qpd = new QProgressDialog(QString(), QString(), 0, 0, this);
+        connect(w, SIGNAL(finished()), qpd, SLOT(deleteLater()));
+        connect(w, SIGNAL(statusUpdate(QString)), qpd, SLOT(setLabelText(QString)));
+        connect(w, SIGNAL(countryDetected(QByteArray,int)), this, SLOT(wifiCountryDetected(QByteArray,int)));
+        qpd->show();
+        w->start();
+    }
+}
+
+
+void LocaleDialog::on_ethRadio_clicked()
+{
+    ui->wificountryLabel->setEnabled(false);
+    ui->wificountryCombo->setEnabled(false);
+}
+
+void LocaleDialog::wifiCountryDetected(QByteArray cc, int numAPs)
+{
+    ui->locationLabel->setText(QString("%1 (advertised by %2 APs)").arg(cc, QString::number(numAPs)));
+    int idx = ui->wificountryCombo->findText(cc, Qt::MatchExactly);
+    if (idx != -1)
+    {
+        ui->wificountryCombo->setCurrentIndex(idx);
+    }
+
+    if (ui->timezoneCombo->currentIndex() == 0 && ui->keybCombo->currentText() == "us")
+    {
+        // Look up timezone for country (there could be more than one though)
+        QSettings country2timezone(":/country2timezone.ini", QSettings::IniFormat);
+        if (country2timezone.contains(cc))
+        {
+            idx = ui->timezoneCombo->findText(country2timezone.value(cc).toString());
+            if (idx != -1)
+                ui->timezoneCombo->setCurrentIndex(idx);
+        }
+
+        // Check if the country is known to use a specific keyboard layout
+        QSettings country2keyboard(":/country2keyboard.ini", QSettings::IniFormat);
+        if (country2keyboard.contains(cc))
+        {
+            idx = ui->keybCombo->findText(country2keyboard.value(cc).toString());
+            if (idx != -1)
+                ui->keybCombo->setCurrentIndex(idx);
+        }
+    }
+
+    ui->keybtestEdit->setFocus();
 }

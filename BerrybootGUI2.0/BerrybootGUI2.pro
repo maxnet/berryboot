@@ -47,7 +47,8 @@ SOURCES += main.cpp\
     berrybootsettingsdialog.cpp \
     downloadthread.cpp \
     statusdialog.cpp \
-    twoiconsdelegate.cpp
+    twoiconsdelegate.cpp \
+    wificountrydetector.cpp
 
 HEADERS  += mainwindow.h \
     diskdialog.h \
@@ -73,7 +74,8 @@ HEADERS  += mainwindow.h \
     berrybootsettingsdialog.h \
     downloadthread.h \
     statusdialog.h \
-    twoiconsdelegate.h
+    twoiconsdelegate.h \
+    wificountrydetector.h
 
 FORMS    += mainwindow.ui \
     diskdialog.ui \
@@ -99,4 +101,6 @@ RESOURCES += \
 
 OTHER_FILES += \
     timezones.txt \
-    country2keyboard.ini
+    country2keyboard.ini \
+    countries.txt \
+    country2timezone.ini

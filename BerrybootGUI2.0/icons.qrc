@@ -119,5 +119,7 @@
         <file>icons/network-wireless-connected-100.png</file>
         <file>icons/network-wireless-disconnected.png</file>
         <file>icons/install.png</file>
+        <file>countries.txt</file>
+        <file>country2timezone.ini</file>
     </qresource>
 </RCC>

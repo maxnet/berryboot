@@ -65,6 +65,20 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     w.setFuture(f);
     qpd.exec();
 
+    QFile conffile("/boot/wpa_supplicant.conf");
+    if (conffile.exists())
+    {
+        conffile.open(conffile.ReadOnly);
+        _config = conffile.readAll();
+        conffile.close();
+
+        QRegExp rp("country=\"?([A-Za-z]{2})\"?");
+        if (rp.indexIn(_config) != -1)
+        {
+            _country = rp.cap(1).toAscii();
+        }
+    }
+
     /* Wait up to 4 seconds for wifi device to appear */
     QTime t;
     t.start();
@@ -91,6 +105,11 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
 WifiDialog::~WifiDialog()
 {
     delete ui;
+}
+
+void WifiDialog::setCountry(const QByteArray &country)
+{
+    _country = country;
 }
 
 void WifiDialog::pollScanResults()
@@ -172,12 +191,8 @@ void WifiDialog::processScanResults(int exitCode)
                     ui->networkList->setCurrentItem(items.first());
 
                     /* Fetch password from wpa_supplicant.conf */
-                    QFile f("/boot/wpa_supplicant.conf");
-                    f.open(f.ReadOnly);
-                    QByteArray config = f.readAll();
-                    f.close();
                     QRegExp rp("psk=\"([^\"]+)\"");
-                    if (rp.indexIn(config) != -1)
+                    if (rp.indexIn(_config) != -1)
                     {
                         ui->passEdit->setText(rp.cap(1));
                     }
@@ -220,6 +235,8 @@ void WifiDialog::accept()
 
     QFile f("/etc/wpa_supplicant.conf");
     f.open(f.WriteOnly);
+    if (!_country.isEmpty())
+        f.write("country="+_country+"\n");
     f.write(
         "ctrl_interface=DIR=/var/run/wpa_supplicant GROUP=netdev\n"
         "ap_scan=1\n\n"
@@ -256,4 +273,9 @@ void WifiDialog::accept()
         QFile::remove("/boot/wpa_supplicant.conf");
     QFile::copy("/etc/wpa_supplicant.conf", "/boot/wpa_supplicant.conf");
     QDialog::accept();
+}
+
+void WifiDialog::on_networkList_itemClicked()
+{
+    ui->passEdit->setFocus();
 }
