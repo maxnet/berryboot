@@ -24,6 +24,7 @@ define BERRYBOOTGUI2_INSTALL_TARGET_CMDS
         $(INSTALL) -m 0755 package/berrybootgui2/chroot_image $(TARGET_DIR)/usr/sbin
         $(INSTALL) -m 0755 package/berrybootgui2/hotplug $(TARGET_DIR)/sbin/hotplug
         $(INSTALL) -D -m 0644 package/berrybootgui2/blacklist-dvb.conf $(TARGET_DIR)/etc/modprobe.d/blacklist-dvb.conf
+        $(INSTALL) -D -m 0644 package/berrybootgui2/install-i2cdev.conf $(TARGET_DIR)/etc/modprobe.d/install-i2cdev.conf
 endef
 
 $(eval $(generic-package))
