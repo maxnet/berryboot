@@ -52,6 +52,7 @@ protected slots:
     void downloadComplete();
     void checkIfNetworkIsUp();
     void checkIfNetworkNeedsDrivers();
+    void checkFlow();
     void wifiCountryDetected(QByteArray countrycode, int numAPs);
     virtual void accept();
     virtual void reject();

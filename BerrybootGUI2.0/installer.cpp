@@ -341,6 +341,11 @@ bool Installer::networkReady()
     return f.exists() && f.size() > 0;
 }
 
+bool Installer::eth0Up()
+{
+    return _ethup;
+}
+
 bool Installer::umountSystemPartition()
 {
     if ( QProcess::execute("umount /boot") != 0)

@@ -33,6 +33,15 @@
 #include "downloadthread.h"
 #include "wificountrydetector.h"
 
+#include <unistd.h>
+#include <linux/ethtool.h>
+#include <linux/sockios.h>
+#include <sys/ioctl.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <sys/ioctl.h>
+#include <net/if.h>
+
 #include <QStringList>
 #include <QFile>
 #include <QProgressDialog>
@@ -119,6 +128,8 @@ void LocaleDialog::checkIfNetworkIsUp()
         DownloadThread *download = new DownloadThread(GEOIP_SERVER);
         connect(download, SIGNAL(finished()), this, SLOT(downloadComplete()));
         download->start();
+        if (_i->eth0Up() && _i->cpuinfo().contains("BCM2835"))
+            checkFlow();
     }
     else
     {
@@ -137,6 +148,36 @@ void LocaleDialog::checkIfNetworkNeedsDrivers()
         _i->loadDrivers();
         QApplication::restoreOverrideCursor();
     }
+}
+
+void LocaleDialog::checkFlow()
+{
+    struct ethtool_cmd c;
+    struct ifreq ifr;
+    ::memset(&c, 0, sizeof(c));
+    ::memset(&ifr, 0, sizeof(ifr));
+    ::strcpy(ifr.ifr_name, "eth0");
+    int fd = ::socket(AF_INET, SOCK_DGRAM, 0);
+
+    if (fd < 0)
+        return;
+
+    c.cmd = ETHTOOL_GSET;
+    ifr.ifr_data = (char *) &c;
+    if (::ioctl(fd, SIOCETHTOOL, &ifr) == 0)
+    {
+        if ( c.speed == SPEED_1000
+             && !(c.advertising & c.lp_advertising & ADVERTISED_Pause)
+             && !(c.advertising & c.lp_advertising & ADVERTISED_Asym_Pause))
+        {
+            QMessageBox::critical(this, tr("Check your switch settings"),
+                                  tr("Flow control seems to be disabled on your Ethernet switch.\n"
+                                     "This can cause network performance problems on the Pi 3+\n"
+                                     "If possible change your switch settings to enable flow control."), QMessageBox::Close);
+        }
+    }
+
+    ::close(fd);
 }
 
 void LocaleDialog::downloadComplete()

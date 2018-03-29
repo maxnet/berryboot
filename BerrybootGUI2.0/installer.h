@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.903"
+#define BERRYBOOT_VERSION  "v2.904"
 #define SIZE_BOOT_PART  /* 63 */ 127
 
 class QSettings;
@@ -51,6 +51,7 @@ public:
     bool mountSystemPartition();
     bool umountSystemPartition();
     bool networkReady();
+    bool eth0Up();
     QString datadev();
     QString bootdev();
     QString findBootPart();
