@@ -410,11 +410,6 @@ void Installer::reboot()
     QProcess::execute("umount -ar");
     sync();
     QProcess::execute("ifdown -a");
-    if (datadev().startsWith("sda"))
-    {
-        /* Spin down drive */
-        QProcess::execute("/sbin/hdparm -Y /dev/sda");
-    }
     ::reboot(RB_AUTOBOOT);
 }
 
