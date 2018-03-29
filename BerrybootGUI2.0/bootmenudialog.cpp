@@ -467,12 +467,14 @@ void BootMenuDialog::reconfigureLocale()
 void BootMenuDialog::startISCSI()
 {
     loadModule("iscsi_tcp");
+    _i->loadDrivers();
 
     QProgressDialog qpd(tr("Waiting for network to be ready"), QString(), 0, 0, this);
     connect(_i, SIGNAL(networkInterfaceUp()), &qpd, SLOT(close()));
+    _i->startNetworking();
+
     while (!_i->networkReady())
     {
-        _i->startNetworking();
         qpd.exec();
     }
 
