@@ -86,7 +86,7 @@ protected:
     bool scanUSBdevices(bool mountrw = false);
     QString externalSDcardDevice();
     void populate();
-    void mksquashfs(QString imagename, QString destfileName, QStringList exclList);
+    void mksquashfs(QString imagename, QString destfileName, QStringList exclList, bool compress);
 
     virtual void closeEvent(QCloseEvent *event);
     void setButtonsEnabled(bool enable);

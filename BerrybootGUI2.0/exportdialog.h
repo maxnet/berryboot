@@ -54,6 +54,11 @@ public:
     bool exportData() const;
 
     /*
+     * True if image should be compressed
+     */
+    bool compress() const;
+
+    /*
      * True if import from USB stick is selected
      */
     bool restore() const;

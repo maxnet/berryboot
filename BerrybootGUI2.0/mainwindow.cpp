@@ -437,7 +437,7 @@ void MainWindow::on_actionExport_triggered()
             {
                 if (ed.exportData() && QFile::exists("/mnt/data/"+imagename))
                 {
-                    mksquashfs(imagename, fileName, ed.excludeList());
+                    mksquashfs(imagename, fileName, ed.excludeList(), ed.compress());
                 }
                 else
                 {
@@ -458,7 +458,7 @@ void MainWindow::on_actionExport_triggered()
     }
 }
 
-void MainWindow::mksquashfs(QString imagename, QString destfileName, QStringList exclList)
+void MainWindow::mksquashfs(QString imagename, QString destfileName, QStringList exclList, bool compress)
 {
     QProgressDialog *qpd = new QProgressDialog(tr("Mounting image..."), QString(),0,0,this);
     qpd->show();
@@ -486,9 +486,11 @@ void MainWindow::mksquashfs(QString imagename, QString destfileName, QStringList
         return;
     }
 
-
     QStringList args;
-    args << "/aufs" << destfileName << "-comp" << "lzo" << "-noF" << "-noD" << "-no-progress" << "-read-queue" << "16" << "-write-queue" << "16" << "-fragment-queue" << "16";
+    args << "/aufs" << destfileName << "-comp" << "lzo" << "-no-progress" << "-read-queue" << "16" << "-write-queue" << "16" << "-fragment-queue" << "16";
+    if (!compress)
+        args << "-noF" << "-noD";
+
     foreach (QString exclude, exclList)
     {
         if (exclude.startsWith("/"))

@@ -37,6 +37,7 @@ ExportDialog::ExportDialog(bool allowSingleImage, QWidget *parent) :
     {
         ui->origRadio->setEnabled(false);
         ui->dataRadio->setEnabled(false);
+        ui->compressCheck->setEnabled(false);
     }
 }
 
@@ -48,6 +49,11 @@ ExportDialog::~ExportDialog()
 bool ExportDialog::exportData() const
 {
     return ui->dataRadio->isChecked();
+}
+
+bool ExportDialog::compress() const
+{
+    return ui->compressCheck->isChecked();
 }
 
 bool ExportDialog::backupEverything() const
