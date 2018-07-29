@@ -14,6 +14,9 @@ kernel=kernel_rpi2_aufs.img
 # Uncomment this line before installation if you want to enable USB boot
 #program_usb_boot_mode=1
 
+# Uncomment this line to prevent continuous SD card polling if using USB/PXE boot
+#dtoverlay=sdtweak,poll_once
+
 [pi0]
 kernel=kernel_rpi_aufs.img
 

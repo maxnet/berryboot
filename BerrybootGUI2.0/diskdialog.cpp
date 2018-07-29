@@ -190,7 +190,12 @@ void DiskDialog::on_formatButton_clicked()
     //_i->mountSystemPartition() // already done by berryboot
 
     QString bootdev = "mmcblk0p1";
-    if (_i->supportsUSBboot() && !drive.startsWith("mmcblk"))
+    if (drive == "iscsi")
+    {
+        if (!QFile::exists("/dev/"+bootdev))
+            bootdev = "mmcblk0";
+    }
+    else if (_i->supportsUSBboot() && !drive.startsWith("mmcblk"))
     {
         bootdev = drive;
         if (!bootdev.startsWith("sd") && !bootdev.startsWith("hd"))

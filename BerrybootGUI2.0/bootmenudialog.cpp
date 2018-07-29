@@ -466,8 +466,11 @@ void BootMenuDialog::reconfigureLocale()
 
 void BootMenuDialog::startISCSI()
 {
-    loadModule("iscsi_tcp");
-    _i->loadDrivers();
+    if (!QFile::exists("/sys/module/iscsi_tcp"))
+    {
+        loadModule("iscsi_tcp");
+        _i->loadDrivers();
+    }
 
     QProgressDialog qpd(tr("Waiting for network to be ready"), QString(), 0, 0, this);
     connect(_i, SIGNAL(networkInterfaceUp()), &qpd, SLOT(close()));
@@ -478,25 +481,46 @@ void BootMenuDialog::startISCSI()
         qpd.exec();
     }
 
-    qpd.setLabelText(tr("Connecting to iSCSI SAN"));
-    qpd.show();
-    QApplication::processEvents();
-
+    int tries = 1, delay = 5;
     mountSystemPartition();
-    if (system("sh /boot/iscsi.sh 2>/dev/null") != 0)
+
+    while (true)
     {
-        /* Wait a sec and try a second time */
-        processEventSleep(1000);
-        if (system("sh /boot/iscsi.sh 2>/dev/null") != 0)
-        {
-            QMessageBox::critical(this, tr("iSCSI error"), tr("Error connecting to server"), QMessageBox::Ok);
-        }
+        QProcess proc;
+        connect(&proc, SIGNAL(finished(int)), &qpd, SLOT(close()));
+        qpd.setLabelText(tr("Connecting to iSCSI SAN"));
+        proc.start("sh /boot/iscsi.sh");
+
+        while (proc.state() != proc.NotRunning)
+            qpd.exec();
+        if (proc.exitCode() == 0)
+            break;
+
+        /* Wait a while and try again */
+        qpd.setLabelText(tr("Connecting to iSCSI SAN failed. Try # %1. Retrying in %2 seconds.")
+                         .arg(QString::number(tries), QString::number(delay)));
+        processEventSleep(delay * 1000);
+        tries++; delay = qMin(delay * 2, 300);
     }
-    if (symlink("/dev/sda1", "/dev/iscsi"))
+
+    umountSystemPartition();
+
+    /* Detect data partition */
+    QByteArray iscsiDevice = "/dev/"+_i->iscsiDevice().toLatin1();
+    QByteArray iscsiPart;
+
+    if (QFile::exists(iscsiDevice+"2"))
+        iscsiPart = iscsiDevice+"2";
+    else if (QFile::exists(iscsiDevice+"1"))
+        iscsiPart = iscsiDevice+"1";
+    else
+        QMessageBox::critical(this, tr("iSCSI error"), tr("iSCSI target does not have any partitions"), QMessageBox::Ok);
+
+    qDebug() << "iscsi partition:" << iscsiPart;
+    if (symlink(iscsiPart.constData(), "/dev/iscsi"))
     {
         // show error?
     }
-    umountSystemPartition();
 }
 
 void BootMenuDialog::loadModule(const QByteArray &name)

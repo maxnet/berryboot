@@ -36,7 +36,7 @@ DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesy
     if (_dev == "iscsi")
     {
         _iscsi = true;
-        _dev = iscsiDevice();
+        _dev = _i->iscsiDevice();
         _datadev = _dev;
     }
     else if (_dev.startsWith("sd") || _dev.startsWith("hd"))
@@ -44,9 +44,12 @@ DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesy
     else
         _datadev = _dev+"p"; // mmcblk0p1 instead of mmcblk01
 
-    _reformatBoot = (_dev == "mmcblk0" || _bootdev != "mmcblk0p1");
+    _reformatBoot = (_dev == "mmcblk0" || !_bootdev.startsWith("mmcblk0"));
 
-    _datadev += "2";
+    if (_iscsi)
+        _datadev += "1";
+    else
+        _datadev += "2";
     /*
     if (_reformatBoot)
         _datadev += "2";
@@ -276,12 +279,13 @@ bool DriveFormatThread::partitionDrive()
     int start_main_part = size_boot_part_in_sectors + 2048;
 
     //if (_reformatBoot)
+    if (!_iscsi)
         partitionTable = "2048,"+QByteArray::number(size_boot_part_in_sectors)+",0E\n"; /* FAT partition LBA */
 
     partitionTable += QByteArray::number(start_main_part)+",,L\n"; /* Linux partition with all remaining space */
     partitionTable += "0,0\n";
     partitionTable += "0,0\n";
-    if (!_reformatBoot)
+    if (_iscsi)
         partitionTable += "0,0\n";
 
     //QString cmd = QString("/sbin/sfdisk -H 32 -S 32 /dev/")+_dev;
@@ -378,24 +382,6 @@ bool DriveFormatThread::installUbootSPL()
 {
     return (QProcess::execute("/bin/dd bs=1024 seek=8 if=/tmp/boot/sunxi-spl.bin of=/dev/"+_dev) == 0)
         && (QProcess::execute("/bin/dd bs=1024 seek=32 if=/tmp/boot/u-boot.bin of=/dev/"+_dev) == 0);
-}
-
-QString DriveFormatThread::iscsiDevice()
-{
-    /* Scan for storage devices */
-    QString dirname  = "/sys/class/block";
-    QDir    dir(dirname);
-    QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
-
-    foreach (QString dev, list)
-    {
-        if (QFile::symLinkTarget("/sys/class/block/"+dev).contains("/session"))
-        {
-            return dev;
-        }
-    }
-
-    return "";
 }
 
 QString DriveFormatThread::drive()

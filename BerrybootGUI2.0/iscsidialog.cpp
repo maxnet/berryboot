@@ -64,11 +64,10 @@ void iSCSIDialog::accept()
     qpd.show();
     QApplication::processEvents();
 
-    if ( !QFile::exists("/lib/modules") )
+    if (!QFile::exists("/sys/module/iscsi_tcp"))
     {
-        /* TODO: error handling */
-        if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }
-        if (system("modprobe iscsi_tcp") != 0) { }
+        _i->prepareDrivers();
+        QProcess::execute("/sbin/modprobe iscsi_tcp");
     }
 
     qpd.setLabelText(tr("Connecting to iSCSI server..."));

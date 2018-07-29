@@ -949,3 +949,22 @@ bool Installer::supportsUSBboot()
         return false;
     }
 }
+
+QString Installer::iscsiDevice()
+{
+    /* Scan for storage devices */
+    QString dirname  = "/sys/class/block";
+    QDir    dir(dirname);
+    QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
+
+    foreach (QString dev, list)
+    {
+        if (QFile::symLinkTarget("/sys/class/block/"+dev).contains("/session")
+                && !QFile::exists("/sys/class/block/"+dev+"/partition"))
+        {
+            return dev;
+        }
+    }
+
+    return "";
+}

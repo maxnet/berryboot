@@ -65,7 +65,6 @@ protected:
     bool partitionDrive();
     bool formatBootPartition();
     bool formatDataPartition();
-    QString iscsiDevice();
     bool isBtrfs();
 };
 

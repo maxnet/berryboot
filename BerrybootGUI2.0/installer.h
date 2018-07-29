@@ -33,7 +33,7 @@
 #include <QMap>
 #include <QFile>
 
-#define BERRYBOOT_VERSION  "v2.905"
+#define BERRYBOOT_VERSION  "v2.907"
 #define SIZE_BOOT_PART  /* 63 */ 127
 
 class QSettings;
@@ -102,6 +102,7 @@ public:
     void setBootoptions(const QByteArray &newOptions);
     QByteArray model();
     bool supportsUSBboot();
+    QString iscsiDevice();
 
 public slots:
     void startNetworking();
