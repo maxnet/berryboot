@@ -643,7 +643,7 @@ void MainWindow::on_actionRepair_file_system_triggered()
     {
         QProcess::execute("killall udevd");
         _i->umountSystemPartition();
-        QProcess::execute("umount "+datadev);
+        QProcess::execute("umount /mnt");
 
         QProcess proc;
         _i->switchConsole(5);
