@@ -26,6 +26,7 @@
 
 #include "clonedialog.h"
 #include "ui_clonedialog.h"
+#include <QRegExpValidator>
 
 CloneDialog::CloneDialog(QWidget *parent) :
     QDialog(parent),

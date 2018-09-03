@@ -280,6 +280,9 @@ void Installer::initializeDataPartition(const QString &dev)
 
 bool Installer::mountSystemPartition()
 {
+    if (isPxeBoot())
+        return true;
+
     return QProcess::execute("mount /dev/"+bootdev()+" /boot") == 0;
 }
 
@@ -348,6 +351,9 @@ bool Installer::eth0Up()
 
 bool Installer::umountSystemPartition()
 {
+    if (isPxeBoot())
+        return true;
+
     if ( QProcess::execute("umount /boot") != 0)
     {
         log_error(tr("Error unmounting system partition"));
@@ -356,8 +362,6 @@ bool Installer::umountSystemPartition()
 
     return true;
 }
-
-
 
 void Installer::log_error(const QString &msg)
 {
@@ -967,4 +971,9 @@ QString Installer::iscsiDevice()
     }
 
     return "";
+}
+
+bool Installer::isPxeBoot()
+{
+    return !bootParam("iscsiscript").isEmpty();
 }

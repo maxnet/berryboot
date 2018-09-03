@@ -791,9 +791,9 @@ void AddDialog::generatePreloadedTab()
     QFileInfoList list = dir.entryInfoList(namefilters, QDir::Files, QDir::Name);
     foreach (QFileInfo fi, list)
     {
-        QByteArray name = fi.fileName().replace('_',' ').toAscii();
+        QByteArray name = fi.fileName().replace('_',' ').toLatin1();
         QByteArray memsplit;
-        QByteArray absfilename = fi.absoluteFilePath().toAscii();
+        QByteArray absfilename = fi.absoluteFilePath().toLatin1();
         QByteArray description = getXattr(absfilename, "user.description");
         QByteArray icon_b64    = getXattr(absfilename, "user.icon_b64");
         QByteArray sha1        = getXattr(absfilename, "user.sha1");

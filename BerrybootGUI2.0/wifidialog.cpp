@@ -44,8 +44,6 @@
 #include <QTime>
 #include <QDebug>
 #include <QRegExp>
-#include <QtCore>
-#include <QFutureWatcher>
 
 WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
@@ -58,12 +56,10 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
     connect(&_timer, SIGNAL(timeout()), this, SLOT(pollScanResults()));
 
     QProgressDialog qpd(tr("Loading drivers"), QString(), 0, 0, this);
-    QFutureWatcher<void> w;
-    connect(&w, SIGNAL(finished()), &qpd, SLOT(hide()));
     qpd.show();
-    QFuture<void> f = QtConcurrent::run(_i, &Installer::loadDrivers);
-    w.setFuture(f);
-    qpd.exec();
+    QApplication::processEvents();
+    _i->loadDrivers();
+    qpd.hide();
 
     QFile conffile("/boot/wpa_supplicant.conf");
     if (conffile.exists())
@@ -75,7 +71,7 @@ WifiDialog::WifiDialog(Installer *i, QWidget *parent) :
         QRegExp rp("country=\"?([A-Za-z]{2})\"?");
         if (rp.indexIn(_config) != -1)
         {
-            _country = rp.cap(1).toAscii();
+            _country = rp.cap(1).toLatin1();
         }
     }
 

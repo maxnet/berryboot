@@ -74,6 +74,12 @@ MainWindow::MainWindow(Installer *i, QWidget *parent) :
     ui->mainToolBar->addAction(ui->actionAdvMenu);
     ui->advToolbar->setHidden(true);
 
+    if (_i->isPxeBoot())
+    {
+        ui->actionAdvanced_configuration->setVisible(false);
+        ui->actionSetPassword->setVisible(false);
+    }
+
     populate();
 }
 
@@ -626,7 +632,7 @@ void MainWindow::on_actionSetPassword_triggered()
 
 void MainWindow::on_actionRepair_file_system_triggered()
 {
-    QString datadev, cmd, cmd2;
+    QString datadev, cmd, cmd2, fstype;
 
     if (_i->bootoptions().contains("luks"))
         datadev = "/dev/mapper/luks";
@@ -634,10 +640,17 @@ void MainWindow::on_actionRepair_file_system_triggered()
         datadev = "/dev/"+_i->datadev().toLatin1();
 
     if (_i->bootoptions().contains("btrfs"))
+    {
         cmd = "fsck.btrfs -y "+datadev;
+        fstype = "btrfs";
+    }
     else
+    {
         cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
-    cmd2 = "/sbin/fsck.fat -a /dev/"+_i->bootdev();
+        fstype = "ext4";
+    }
+    if (!_i->isPxeBoot())
+        cmd2 = "/sbin/fsck.fat -a /dev/"+_i->bootdev();
 
     if (QMessageBox::question(this, tr("Confirm"), tr("Run '%1'\n'%2'\n on tty5?").arg(cmd, cmd2), QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
     {
@@ -655,7 +668,7 @@ void MainWindow::on_actionRepair_file_system_triggered()
         proc.waitForFinished(-1);
 
         _i->mountSystemPartition();
-        QProcess::execute("mount "+datadev+" /mnt");
+        QProcess::execute("mount -t "+fstype+" "+datadev+" /mnt");
         _i->switchConsole(1);
     }
 }

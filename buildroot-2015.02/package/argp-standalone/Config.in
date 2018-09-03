@@ -1,6 +1,0 @@
-config BR2_PACKAGE_ARGP_STANDALONE
-	bool "argp-standalone"
-	help
-	  Glibc hierarchical argument parsing standalone library.
-
-	  http://www.lysator.liu.se/~nisse/misc/

@@ -1,0 +1,2 @@
+source "$BR2_EXTERNAL_BERRYBOOT_PATH/package/berrybootgui2/Config.in"
+source "$BR2_EXTERNAL_BERRYBOOT_PATH/package/openiscsi/Config.in"

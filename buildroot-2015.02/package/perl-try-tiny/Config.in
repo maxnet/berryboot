@@ -1,6 +1,0 @@
-config BR2_PACKAGE_PERL_TRY_TINY
-	bool "perl-try-tiny"
-	help
-	  minimal try/catch with proper preservation of $@
-
-	  http://metacpan.org/release/Try-Tiny

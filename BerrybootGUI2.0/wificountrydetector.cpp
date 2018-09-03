@@ -71,7 +71,7 @@ void WifiCountryDetector::run()
         QByteArray line = p.readLine();
         if (rx.indexIn(line) != -1)
         {
-            QByteArray country = rx.cap(1).toAscii();
+            QByteArray country = rx.cap(1).toLatin1();
             if (country != "EU")
             {
                 if (countries.contains(country))

@@ -179,6 +179,7 @@ void DownloadThread::run()
         case CURLE_WRITE_ERROR:
             deleteDownloadedFile();
             emit downloadError(tr("Error writing to SD card"));
+            break;
         case CURLE_ABORTED_BY_CALLBACK:
             qDebug() << "Download cancelled";
             break;
@@ -270,5 +271,5 @@ void DownloadThread::deleteDownloadedFile()
 
 void DownloadThread::setCacheDirectory(const QString &dir)
 {
-    _cachedir = dir.toAscii();
+    _cachedir = dir.toLatin1();
 }

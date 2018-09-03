@@ -1,7 +1,11 @@
 #!/bin/sh
 
 set -e
-cd buildroot-2015.02
+
+BUILDROOT=buildroot-2018.08
+EXTERNAL="$PWD/external"
+
+cd $BUILDROOT
 
 if [ -n "$1" ]; then
 	if [ ! -e "../configs/$1" ]; then
@@ -10,7 +14,7 @@ if [ -n "$1" ]; then
 	fi
 
 	support/kconfig/merge_config.sh -m ../configs/berryboot_defconfig ../configs/$1
-	make olddefconfig
+	make BR2_EXTERNAL=$EXTERNAL olddefconfig
 fi
 
 if [ ! -e .config ]; then
@@ -24,16 +28,18 @@ if [ ! -e .config ]; then
 fi
 
 # Let buildroot build everything
-make
+make BR2_EXTERNAL=$EXTERNAL
 
 cd ..
 cp -n LICENSE.berryboot output
-cp -f buildroot-2015.02/output/images/rootfs.cpio.uboot output/berryboot.img
-cp -f buildroot-2015.02/output/images/kernel*.img buildroot-2015.02/output/images/shared.tgz output || true
+cp -f $BUILDROOT/output/images/rootfs.cpio.uboot output/berryboot.img
+cp -f $BUILDROOT/output/images/kernel*.img $BUILDROOT/output/images/shared.tgz output || true
 
-if [ -e buildroot-2015.02/output/images/rpi-firmware ]; then
-	cp -rf buildroot-2015.02/output/images/rpi-firmware/* output
-	rm output/start_db.elf output/fixup_db.dat
+if [ -e $BUILDROOT/output/images/rpi-firmware ]; then
+	cp -rf $BUILDROOT/output/images/rpi-firmware/* output
+	cp -rf $BUILDROOT/output/images/bcm27*.dtb output
+	cp -rf $BUILDROOT/output/images/overlays output
+	rm -f output/start_db.elf output/fixup_db.dat
 fi
 
 echo

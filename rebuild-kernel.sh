@@ -2,7 +2,9 @@
 
 set -e
 
+BUILDROOT=buildroot-2018.08
+
 # Force rebuild of Linux kernel
-(cd buildroot-2015.02 ; make linux-dirclean)
+make -C $BUILDROOT linux-dirclean
 ./build-berryboot.sh "$@"
 

@@ -245,9 +245,14 @@ int main(int argc, char *argv[])
     mw.setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignCenter, mw.size(), a.desktop()->availableGeometry()));
     mw.show();
 
-    StatusDialog* sd = new StatusDialog(&i);
-    sd->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignBottom, sd->size(), a.desktop()->availableGeometry()));
-    sd->show();
+#ifdef WPA_CLIENT
+    if (!i.isPxeBoot())
+    {
+        StatusDialog* sd = new StatusDialog(&i);
+        sd->setGeometry(QStyle::alignedRect(Qt::LeftToRight, Qt::AlignHCenter | Qt::AlignBottom, sd->size(), a.desktop()->availableGeometry()));
+        sd->show();
+    }
+#endif
 
     return a.exec();
 }

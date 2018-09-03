@@ -721,6 +721,8 @@ void BootMenuDialog::mountSystemPartition()
 
     if (!QFile::exists("/boot"))
         mkdir("/boot", 0755);
+    if (_i->isPxeBoot())
+        return;
 
     QString bootdev = _i->bootdev();
     if (bootdev == "mmcblk0p1")
@@ -751,6 +753,9 @@ void BootMenuDialog::mountSystemPartition()
 
 void BootMenuDialog::umountSystemPartition()
 {
+    if (_i->isPxeBoot())
+        return;
+
     QProcess::execute("umount /boot");
 }
 

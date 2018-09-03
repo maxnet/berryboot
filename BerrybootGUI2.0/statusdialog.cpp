@@ -34,6 +34,7 @@
 #include <QDebug>
 #include <QtNetwork/QHostAddress>
 #include <QtNetwork/QNetworkInterface>
+#include <wpa_ctrl.h>
 
 StatusDialog::StatusDialog(Installer *i, QWidget *parent) :
     QDialog(parent),

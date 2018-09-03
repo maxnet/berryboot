@@ -1,4 +1,0 @@
-config BR2_PACKAGE_XFONT_FONT_SUN_MISC
-	bool "font-sun-misc"
-	help
-	  No description available

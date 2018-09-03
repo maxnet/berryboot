@@ -31,12 +31,12 @@
 #include <QTimer>
 #include <QDateTime>
 #include <QSocketNotifier>
-#include <wpa_ctrl.h>
 
 namespace Ui {
 class StatusDialog;
 }
 class Installer;
+struct wpa_ctrl;
 
 class StatusDialog : public QDialog
 {

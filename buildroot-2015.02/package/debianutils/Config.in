@@ -1,7 +1,0 @@
-config BR2_PACKAGE_DEBIANUTILS
-	bool "debianutils"
-	depends on BR2_USE_MMU # fork()
-	help
-	  Miscellaneous utilities specific to Debian.
-
-	  https://tracker.debian.org/pkg/debianutils
