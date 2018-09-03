@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BerrybootInstaller
 TEMPLATE = app
 
-LIBS += -lcrypto -lcurl -lwpa_client
+LIBS += -lcurl -lssl -lcrypto -lz
 
 RPI_USERLAND_DIR=../../staging/usr
 exists($${RPI_USERLAND_DIR}/include/interface/vmcs_host/vc_cecservice.h) {
@@ -20,6 +20,16 @@ exists($${RPI_USERLAND_DIR}/include/interface/vmcs_host/vc_cecservice.h) {
     DEFINES += RASPBERRY_CEC_SUPPORT
 } else {
     message(Disabling CEC support for Raspberry Pi - rpi-userland headers not found at $${RPI_USERLAND_DIR})
+}
+
+exists($${RPI_USERLAND_DIR}/include/wpa_ctrl.h) {
+    LIBS += -lwpa_client
+    DEFINES += WPA_CLIENT
+    SOURCES += statusdialog.cpp
+    HEADERS += statusdialog.h
+    FORMS += statusdialog.ui
+} else {
+    message(Not building wifi status dialog - wpa_ctrl.h not found)
 }
 
 SOURCES += main.cpp\
@@ -46,7 +56,6 @@ SOURCES += main.cpp\
     logindialog.cpp \
     berrybootsettingsdialog.cpp \
     downloadthread.cpp \
-    statusdialog.cpp \
     twoiconsdelegate.cpp \
     wificountrydetector.cpp
 
@@ -73,7 +82,6 @@ HEADERS  += mainwindow.h \
     logindialog.h \
     berrybootsettingsdialog.h \
     downloadthread.h \
-    statusdialog.h \
     twoiconsdelegate.h \
     wificountrydetector.h
 
@@ -93,8 +101,7 @@ FORMS    += mainwindow.ui \
     confeditdialog.ui \
     bootmenudialog.ui \
     logindialog.ui \
-    berrybootsettingsdialog.ui \
-    statusdialog.ui
+    berrybootsettingsdialog.ui
 
 RESOURCES += \
     icons.qrc
