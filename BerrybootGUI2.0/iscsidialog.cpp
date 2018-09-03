@@ -33,6 +33,7 @@
 #include <QProcess>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 
 iSCSIDialog::iSCSIDialog(Installer *i, QWidget *parent) :
     QDialog(parent),
@@ -71,18 +72,30 @@ void iSCSIDialog::accept()
     }
 
     qpd.setLabelText(tr("Connecting to iSCSI server..."));
-    QApplication::processEvents();
+    QProcess proc;
+    QTimer timer;
+    timer.setSingleShot(true);
+    connect(&proc, SIGNAL(finished(int)), &qpd, SLOT(close()));
+    connect(&timer, SIGNAL(timeout()), &proc, SLOT(kill()));
 
     // TODO: properly escape characters
     QString cmd = "/sbin/iscsistart -i \""+ui->initiatorEdit->text()+"\""+" -g 1 -t \""+ui->targetEdit->text()+"\" -a \""+ui->serverEdit->text()+"\"";
     if ( !ui->passEdit->text().isEmpty() )
         cmd += " -u \""+ui->userEdit->text()+"\" -w \""+ui->passEdit->text()+"\"";
 
-    if ( QProcess::execute(cmd) != 0 )
+    proc.start(cmd);
+    timer.start(5000);
+
+    while (proc.state() != proc.NotRunning)
+        qpd.exec();
+
+    if (proc.exitCode() != 0 || !timer.isActive())
     {
+        timer.stop();
         QMessageBox::critical(this, tr("Error"), tr("Error connecting to target. Check settings"), QMessageBox::Close);
         return;
     }
+    timer.stop();
 
     QFile f("/boot/iscsi.sh");
     f.open(f.WriteOnly);

@@ -36,7 +36,13 @@ DriveFormatThread::DriveFormatThread(const QString &drive, const QString &filesy
     if (_dev == "iscsi")
     {
         _iscsi = true;
-        _dev = _i->iscsiDevice();
+        for (int i=0; i<50; i++)
+        {
+            _dev = _i->iscsiDevice();
+            if (!_dev.isEmpty())
+                break;
+            QThread::msleep(100);
+        }
         _datadev = _dev;
     }
     else if (_dev.startsWith("sd") || _dev.startsWith("hd"))
@@ -94,9 +100,16 @@ void DriveFormatThread::run()
     if (_fs != "existing")
     {
         emit statusUpdate(tr("Zeroing partition table"));
+
+        if (_iscsi && _dev.isEmpty())
+        {
+            emit error(tr("Unable to find my iSCSI device"));
+            return;
+        }
+
         if (!zeroMbr())
         {
-            emit error(tr("Error zero'ing MBR/GPT. SD card may be broken or advertising wrong capacity."));
+            emit error(tr("Error zero'ing MBR/GPT of device '%1'. SD card may be broken or advertising wrong capacity.").arg(_dev) );
             return;
         }
 
@@ -289,7 +302,8 @@ bool DriveFormatThread::partitionDrive()
         partitionTable += "0,0\n";
 
     //QString cmd = QString("/sbin/sfdisk -H 32 -S 32 /dev/")+_dev;
-    QString cmd = QString("/sbin/sfdisk -H 255 -S 63 -u S /dev/")+_dev;
+    //QString cmd = QString("/sbin/sfdisk -H 255 -S 63 -u S /dev/")+_dev;
+    QString cmd = QString("/sbin/sfdisk -u S /dev/")+_dev;
     QProcess proc;
     proc.setProcessChannelMode(proc.MergedChannels);
     proc.start(cmd);
@@ -344,11 +358,11 @@ bool DriveFormatThread::formatDataPartition()
     if (_fs == "btrfs")
         cmd = QString("/usr/bin/mkfs.btrfs -f -L berryboot /dev/")+dev;
     else if (_fs == "ext4")
-        cmd = QString("/usr/sbin/mkfs.ext4 -O ^huge_file -L berryboot /dev/")+dev;
+        cmd = QString("/sbin/mkfs.ext4 -O ^huge_file -L berryboot /dev/")+dev;
     else if (_fs == "ext4 nolazy")
-        cmd = QString("/usr/sbin/mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 -O ^huge_file -L berryboot /dev/")+dev;
+        cmd = QString("/sbin/mkfs.ext4 -E lazy_itable_init=0,lazy_journal_init=0 -O ^huge_file -L berryboot /dev/")+dev;
     else
-        cmd = QString("/usr/sbin/mkfs.ext4 -E nodiscard -L berryboot /dev/")+dev;
+        cmd = QString("/sbin/mkfs.ext4 -E nodiscard -L berryboot /dev/")+dev;
 
     return QProcess::execute(cmd) == 0;
 }
