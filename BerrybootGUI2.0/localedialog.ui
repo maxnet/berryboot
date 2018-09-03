@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>493</width>
+    <width>514</width>
     <height>490</height>
    </rect>
   </property>
@@ -26,7 +26,7 @@
      </property>
     </widget>
    </item>
-   <item row="2" column="0" rowspan="2" colspan="3">
+   <item row="2" column="0" rowspan="2" colspan="2">
     <widget class="QGroupBox" name="overscanGroupBox">
      <property name="minimumSize">
       <size>
@@ -70,85 +70,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="0">
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>240</width>
-       <height>95</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="title">
-      <string>Network connection</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QRadioButton" name="ethRadio">
-        <property name="text">
-         <string>Wired</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/network_wired.png</normaloff>:/icons/network_wired.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="fixMACbox">
-        <property name="font">
-         <font>
-          <pointsize>12</pointsize>
-         </font>
-        </property>
-        <property name="text">
-         <string>Make MAC-address static</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="wifiRadio">
-        <property name="text">
-         <string>Wifi</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/network-wireless-connected-100.png</normaloff>:/icons/network-wireless-connected-100.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="3">
+   <item row="5" column="0" colspan="2">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="minimumSize">
       <size>
@@ -275,91 +197,7 @@
      </layout>
     </widget>
    </item>
-   <item row="4" column="1" colspan="2">
-    <widget class="QGroupBox" name="groupBox">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>95</height>
-      </size>
-     </property>
-     <property name="font">
-      <font>
-       <pointsize>12</pointsize>
-      </font>
-     </property>
-     <property name="title">
-      <string>Audio</string>
-     </property>
-     <layout class="QVBoxLayout" name="verticalLayout">
-      <item>
-       <widget class="QRadioButton" name="audioAutoRadio">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>Auto</string>
-        </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="audioHDMIradio">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text">
-         <string>HDMI</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QRadioButton" name="audioHeadphonesRadio">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>0</width>
-          <height>22</height>
-         </size>
-        </property>
-        <property name="text">
-         <string>Headphones</string>
-        </property>
-        <property name="icon">
-         <iconset resource="icons.qrc">
-          <normaloff>:/icons/audio_headset.png</normaloff>:/icons/audio_headset.png</iconset>
-        </property>
-        <property name="iconSize">
-         <size>
-          <width>22</width>
-          <height>22</height>
-         </size>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </item>
-   <item row="1" column="0" colspan="3">
+   <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="label_2">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
@@ -380,7 +218,7 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="3">
+   <item row="6" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -388,6 +226,84 @@
      <property name="standardButtons">
       <set>QDialogButtonBox::Ok</set>
      </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>240</width>
+       <height>95</height>
+      </size>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>12</pointsize>
+      </font>
+     </property>
+     <property name="title">
+      <string>Network connection</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <widget class="QRadioButton" name="ethRadio">
+        <property name="text">
+         <string>Wired</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/network_wired.png</normaloff>:/icons/network_wired.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="fixMACbox">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>Make MAC-address static</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="wifiRadio">
+        <property name="text">
+         <string>Wifi</string>
+        </property>
+        <property name="icon">
+         <iconset resource="icons.qrc">
+          <normaloff>:/icons/network-wireless-connected-100.png</normaloff>:/icons/network-wireless-connected-100.png</iconset>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </item>
   </layout>
@@ -399,9 +315,6 @@
   <tabstop>ethRadio</tabstop>
   <tabstop>fixMACbox</tabstop>
   <tabstop>wifiRadio</tabstop>
-  <tabstop>audioAutoRadio</tabstop>
-  <tabstop>audioHDMIradio</tabstop>
-  <tabstop>audioHeadphonesRadio</tabstop>
   <tabstop>timezoneCombo</tabstop>
   <tabstop>keybCombo</tabstop>
   <tabstop>keybtestEdit</tabstop>

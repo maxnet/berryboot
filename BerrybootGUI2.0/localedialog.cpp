@@ -102,7 +102,6 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
 
     //ui->overscanGroupBox->setHidden(!_i->hasOverscanSettings());
     ui->fixMACbox->setHidden(!_i->hasDynamicMAC());
-
     ui->keybtestEdit->setFocus();
 
     if (QFile::exists("/boot/wpa_supplicant.conf"))
@@ -242,12 +241,8 @@ void LocaleDialog::accept()
     _i->setTimezone(ui->timezoneCombo->currentText());
     _i->setDisableOverscan(ui->disableOverscanRadio->isChecked());
     _i->setFixateMAC(_i->hasDynamicMAC() && ui->fixMACbox->isChecked());
-    if (ui->audioHDMIradio->isChecked())
-        _i->setSound("hdmi");
-    else if (ui->audioHeadphonesRadio->isChecked())
-        _i->setSound("headphones");
     bool wifi = ui->wifiRadio->isChecked();
-    QByteArray wifiCountry = ui->wificountryCombo->currentText().toAscii();
+    QByteArray wifiCountry = ui->wificountryCombo->currentText().toLatin1();
 
     if (wifi && wifiCountry == "--" && !QFile::exists("/boot/wpa_supplicant.conf"))
     {
