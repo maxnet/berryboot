@@ -97,7 +97,7 @@ if [ "$IMAGE" != "" ]; then
 
 	if [ -e berryboot-init ]; then
 		echo Executing init script
-		. berryboot-init
+		. ./berryboot-init
 	fi
 
 	#
