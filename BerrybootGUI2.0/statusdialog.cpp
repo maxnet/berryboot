@@ -239,7 +239,7 @@ QString StatusDialog::ip()
 
     foreach (QHostAddress a, addresses)
     {
-        if (a != QHostAddress::LocalHost && a != QHostAddress::LocalHostIPv6)
+        if (a != QHostAddress::LocalHost && a.protocol() == QAbstractSocket::IPv4Protocol)
         {
             return a.toString();
         }
