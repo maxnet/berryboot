@@ -291,9 +291,21 @@ bool DriveFormatThread::partitionDrive()
     int size_boot_part_in_sectors = 2048 * SIZE_BOOT_PART;
     int start_main_part = size_boot_part_in_sectors + 2048;
 
-    //if (_reformatBoot)
+    QFile f("/sys/class/block/"+_dev+"/size");
+    f.open(f.ReadOnly);
+    qulonglong blocks = f.readAll().trimmed().toULongLong();
+    f.close();
+    bool gpt = (blocks > 4294967295ULL);
+
     if (!_iscsi)
-        partitionTable = "2048,"+QByteArray::number(size_boot_part_in_sectors)+",0E\n"; /* FAT partition LBA */
+    {
+        partitionTable = "2048,"+QByteArray::number(size_boot_part_in_sectors);
+
+        if (gpt)
+            partitionTable += ",U\n"; /* EFI system partition */
+        else
+            partitionTable += ",0E\n"; /* FAT partition LBA */
+    }
 
     partitionTable += QByteArray::number(start_main_part)+",,L\n"; /* Linux partition with all remaining space */
     partitionTable += "0,0\n";
@@ -304,6 +316,8 @@ bool DriveFormatThread::partitionDrive()
     //QString cmd = QString("/sbin/sfdisk -H 32 -S 32 /dev/")+_dev;
     //QString cmd = QString("/sbin/sfdisk -H 255 -S 63 -u S /dev/")+_dev;
     QString cmd = QString("/sbin/sfdisk -u S /dev/")+_dev;
+    if (gpt)
+        cmd += " --label gpt";
     QProcess proc;
     proc.setProcessChannelMode(proc.MergedChannels);
     proc.start(cmd);
