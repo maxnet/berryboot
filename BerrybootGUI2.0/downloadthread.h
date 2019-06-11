@@ -30,8 +30,8 @@
 #include <QThread>
 #include <QCryptographicHash>
 #include <time.h>
+#include <curl/curl.h>
 
-typedef void CURL;
 class QFile;
 
 class DownloadThread : public QThread
@@ -117,14 +117,14 @@ public:
      * libcurl callbacks
      */
     size_t _writeData(const char *buf, size_t len);
-    bool _progress(double dltotal, double dlnow, double ultotal, double ulnow);
+    bool _progress(curl_off_t dltotal, curl_off_t  dlnow, curl_off_t  ultotal, curl_off_t  ulnow);
     void _header(QByteArray &header);
 
 protected:
     virtual void run();
 
     CURL *_c;
-    double _lastDlTotal, _lastDlNow;
+    curl_off_t _lastDlTotal, _lastDlNow, _startOffset;
     QByteArray _url, _useragent, _buf, _cachedir;
     static QByteArray _proxy;
     bool _cancelled, _successful;

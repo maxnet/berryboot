@@ -37,7 +37,7 @@ QByteArray DownloadThread::_proxy;
 
 
 DownloadThread::DownloadThread(const QByteArray &url, const QString &localfilename, QObject *parent) :
-    QThread(parent), _lastDlTotal(0), _lastDlNow(0), _url(url), _cancelled(false), _successful(false),
+    QThread(parent), _lastDlTotal(0), _lastDlNow(0), _startOffset(0), _url(url), _cancelled(false), _successful(false),
     _lastModified(0), _serverTime(0), _file(NULL), _hasher(QCryptographicHash::Sha1)
 {
     curl_global_init(CURL_GLOBAL_DEFAULT);
@@ -72,7 +72,7 @@ static size_t _curl_write_callback(char *ptr, size_t size, size_t nmemb, void *u
     return static_cast<DownloadThread *>(userdata)->_writeData(ptr, size * nmemb);
 }
 
-static int _curl_progress_callback(void *userdata, double dltotal, double dlnow, double ultotal, double ulnow)
+static int _curl_progress_callback(void *userdata, curl_off_t dltotal, curl_off_t dlnow, curl_off_t ultotal, curl_off_t ulnow)
 {
     return (static_cast<DownloadThread *>(userdata)->_progress(dltotal, dlnow, ultotal, ulnow) == false);
 }
@@ -101,7 +101,7 @@ void DownloadThread::run()
     curl_easy_setopt(_c, CURLOPT_NOSIGNAL, 1);
     curl_easy_setopt(_c, CURLOPT_WRITEFUNCTION, &_curl_write_callback);
     curl_easy_setopt(_c, CURLOPT_WRITEDATA, this);
-    curl_easy_setopt(_c, CURLOPT_PROGRESSFUNCTION, &_curl_progress_callback);
+    curl_easy_setopt(_c, CURLOPT_XFERINFOFUNCTION, &_curl_progress_callback);
     curl_easy_setopt(_c, CURLOPT_PROGRESSDATA, this);
     curl_easy_setopt(_c, CURLOPT_NOPROGRESS, 0);
     curl_easy_setopt(_c, CURLOPT_URL, _url.constData());
@@ -136,6 +136,14 @@ void DownloadThread::run()
     }
 
     CURLcode ret = curl_easy_perform(_c);
+    while (!_cancelled && ret == CURLE_PARTIAL_FILE)
+    {
+        qDebug() << "Received partial file. Sleeping 10 seconds and then try to resume download.";
+        QThread::sleep(10);
+         _startOffset = _lastDlNow;
+        curl_easy_setopt(_c, CURLOPT_RESUME_FROM_LARGE, _startOffset);
+        ret = curl_easy_perform(_c);
+    }
 
     if (_file)
         _file->close();
@@ -203,8 +211,11 @@ size_t DownloadThread::_writeData(const char *buf, size_t len)
     }
 }
 
-bool DownloadThread::_progress(double dltotal, double dlnow, double /*ultotal*/, double /*ulnow*/)
+bool DownloadThread::_progress(curl_off_t dltotal, curl_off_t dlnow, curl_off_t /*ultotal*/, curl_off_t /*ulnow*/)
 {
+    dltotal += _startOffset;
+    dlnow += _startOffset;
+
     /* libcurl regulary calls back even if no progress is made, but we only signal if there is progress */
     if (dltotal != _lastDlTotal || dlnow != _lastDlNow)
     {
