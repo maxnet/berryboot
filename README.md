@@ -13,7 +13,7 @@ Source code available at: https://github.com/maxnet/berryboot
 
 Website: http://www.berryterminal.com/doku.php/berryboot 
 
-===
+
 Folders
 ===
 
@@ -21,26 +21,26 @@ BerrybootGUI2.0 - source of the graphical boot menu and installer interface (use
 buildroot - build system to create a minimal Linux operating system to run the boot menu under
 buildroot/package/berrybootgui2/init - script that gets executed on boot, starts BerrybootGUI
 
-==
+
 Build requirements
-==
+===
 
 Berryboot uses Buildroot to build a minimal Linux operating system to run under.
 Buildroot requires that the following packages are installed: http://www.buildroot.org/downloads/manual/manual.html#requirement
 
-===
-To build for the Raspberry Pi 2
+
+To build for the Raspberry Pi
 ===
 
 ```
-./build-berryboot.sh device_pi2
+./build-berryboot.sh device_pi0123
 ```
 
 The files in the output folder must be copied to an empty FAT formatted SD card. 
 
-===
+
 To add support for a new ARM device
-==
+===
 
 Create a file buildroot/berryboot-configs/device-mydevice with the buildroot configuration options to build a kernel and supporting files for your device. 
 E.g.:

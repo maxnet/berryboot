@@ -6,9 +6,9 @@ gpu_mem=160
 dtparam=audio=on
 
 # Berryboot settings, do not change
-initramfs berryboot.img
+initramfs bbloader.img
 
-kernel=kernel_rpi2_aufs.img
+kernel=kernel_rpi0123_aufs.img
 
 [pi3]
 # Uncomment this line before installation if you want to enable USB boot
@@ -16,18 +16,6 @@ kernel=kernel_rpi2_aufs.img
 
 # Uncomment this line to prevent continuous SD card polling if using USB/PXE boot
 #dtoverlay=sdtweak,poll_once
-
-[pi0]
-kernel=kernel_rpi_aufs.img
-
-[pi1]
-kernel=kernel_rpi_aufs.img
-
-# Warning: CMA does not work properly in newer firmware versions
-#
-#cma_lwm=16
-#cma_hwm=32
-#cma_offline_start=16
 
 [all]
 
