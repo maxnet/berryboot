@@ -1,0 +1,79 @@
+#!/bin/sh
+# Routine to mount FAT file system, uncompress and boot initramfs
+# Doing it this way is faster than letting bootloader do it on some systems
+# And we could potentially add splash screen here
+
+mount_boot()
+{
+	for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 \
+		21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40; do
+
+		if [ -n "$BOOTDEV" ]; then
+			mount -o ro "$BOOTDEV" /mnt 2>/dev/null
+		else
+			mount -o ro /dev/mmcblk0p1 /mnt 2>/dev/null || mount -o ro /dev/mmcblk0 /mnt 2>/dev/null
+		fi
+		if [ "$?" -eq "0" ]; then
+			if [ "$i" -gt "1" ]; then
+				echo ""
+			fi
+			return 0
+		fi
+
+		echo -n "."
+		sleep 0.5
+	done
+	echo ""
+
+	return 1
+}
+
+mount -t proc proc /proc
+mount -t devtmpfs dev /dev
+mount -t sysfs sysfs /sys
+mkdir -p mnt bb
+# New root must be mount point
+mount -t tmpfs roottmpfs /bb
+
+for p in $(cat /proc/cmdline); do
+	if [ "${p%%=*}" == "bootdev" ]; then
+		BOOTDEV="${p#*=}"
+		if [ $BOOTDEV == sd* ]; then
+			BOOTDEV="/dev/$BOOTDEV"
+		fi
+	fi
+done
+
+echo "Berryboot"
+if [ -f "/proc/device-tree/model" ]; then
+	echo -n "Running on: "
+	cat /proc/device-tree/model
+	echo ""
+fi
+
+sleep 0.1
+mount_boot
+if [ "$?" -ne "0" ]; then
+	echo "Error finding or mounting boot partition. :-("
+	sleep 86400
+	exit 1
+fi
+if [ ! -f "/mnt/berryboot.img" ]; then
+	echo "Unable to locate berryboot.img on boot partition. :-("
+	sleep 86400
+	exit 1
+fi
+
+cd bb
+lzop -dc /mnt/berryboot.img | cpio -i -d 2>/dev/null
+if [ "$?" -ne "0" ]; then
+	echo "Error uncompressing berryboot.img. :-("
+	sleep 86400
+	exit 1
+fi
+
+umount /mnt
+umount /dev
+umount /sys
+umount /proc
+exec switch_root . init

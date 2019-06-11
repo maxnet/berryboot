@@ -32,7 +32,9 @@ make BR2_EXTERNAL=$EXTERNAL
 
 cd ..
 cp -n LICENSE.berryboot output
-cp -f $BUILDROOT/output/images/rootfs.cpio.uboot output/berryboot.img
+#cp -f $BUILDROOT/output/images/rootfs.cpio.uboot output/berryboot.img
+cp -f $BUILDROOT/output/images/rootfs.cpio.lzo output/berryboot.img
+cp -f $BUILDROOT/output/images/bbloader.img output/
 cp -f $BUILDROOT/output/images/kernel*.img $BUILDROOT/output/images/shared.tgz output || true
 
 if [ -e $BUILDROOT/output/images/rpi-firmware ]; then
