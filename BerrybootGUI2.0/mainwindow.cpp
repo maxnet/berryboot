@@ -636,17 +636,19 @@ void MainWindow::on_actionRepair_file_system_triggered()
 
     if (_i->bootoptions().contains("luks"))
         datadev = "/dev/mapper/luks";
+    else if (_i->datadev().contains('='))
+        datadev = _i->getDeviceByUuid(_i->datadev());
     else
-        datadev = "/dev/"+_i->datadev().toLatin1();
+        datadev = "/dev/"+_i->datadev();
 
     if (_i->bootoptions().contains("btrfs"))
     {
-        cmd = "fsck.btrfs -y "+datadev;
+        cmd = "/usr/sbin/fsck.btrfs -y "+datadev;
         fstype = "btrfs";
     }
     else
     {
-        cmd = "/usr/sbin/fsck.ext4 -yf "+datadev;
+        cmd = "/sbin/fsck.ext4 -yf "+datadev;
         fstype = "ext4";
     }
     if (!_i->isPxeBoot())

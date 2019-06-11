@@ -52,9 +52,9 @@ public:
     bool umountSystemPartition();
     bool networkReady();
     bool eth0Up();
-    QString datadev();
-    QString bootdev();
-    QString findBootPart();
+    QByteArray datadev();
+    QByteArray bootdev();
+    QByteArray findBootPart();
     double availableDiskSpace(const QString &path = "/mnt");
     double diskSpaceInUse(const QString &path = "/mnt");
     void reboot();
@@ -104,6 +104,11 @@ public:
     bool supportsUSBboot();
     QString iscsiDevice();
     bool isPxeBoot();
+    QByteArray uuidOfDevice(QByteArray device);
+    QByteArray getDeviceByLabel(const QByteArray &label);
+    QByteArray getDeviceByUuid(const QByteArray &uuid);
+    QByteArray getPartitionByLabel(const QByteArray &label);
+    QByteArray getPartitionByUuid(const QByteArray &uuid);
 
 public slots:
     void startNetworking();
@@ -111,10 +116,10 @@ public slots:
     void startNetworkInterface();
 
 protected:
-    QString _keyboardlayout, _timezone, _bootdev;
+    QString _keyboardlayout, _timezone;
     bool _disableOverscan, _fixMAC, _ethup, _skipConfig;
     QSettings *_settings;
-    QByteArray _bootoptions, _sound;
+    QByteArray _bootoptions, _sound, _bootdev;
 
     void log_error(const QString &msg);
 

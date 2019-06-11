@@ -153,7 +153,7 @@ void BootMenuDialog::initialize()
                 processEventSleep(1000);
             }
 
-            datadev = getPartitionByLabel();
+            datadev = _i->getPartitionByLabel("berryboot");
         }
 
         if (!datadev.isEmpty())
@@ -602,7 +602,7 @@ QByteArray BootMenuDialog::getBootOptions()
     return _i->bootoptions();
 }
 
-bool BootMenuDialog::mountDataPartition(const QString &dev, bool rw)
+bool BootMenuDialog::mountDataPartition(const QByteArray &dev, bool rw)
 {
     QString mountoptions = "-o noatime";
     if (!rw)
@@ -665,9 +665,11 @@ void BootMenuDialog::waitForRemountRW()
             tr("Error remounting data partition read-write. Try to repair file system?"), QMessageBox::Yes, QMessageBox::No)
                 == QMessageBox::Yes)
         {
-            QByteArray datadev = _i->datadev().toLatin1();
+            QByteArray datadev = _i->datadev();
             if (_i->bootoptions().contains("luks"))
                 datadev = "mapper/luks";
+            else if (datadev.contains('='))
+                datadev = _i->getPartitionByUuid(_i->datadev());
             qDebug() << "killing udev" << QProcess::execute("killall udevd");
             qDebug() << "unmounting" << QProcess::execute("umount -f /dev/"+datadev);
 
@@ -682,13 +684,19 @@ void BootMenuDialog::waitForRemountRW()
     }
 }
 
-bool BootMenuDialog::waitForDevice(const QString &dev)
+bool BootMenuDialog::waitForDevice(QByteArray &dev)
 {
     QTime t;
     t.start();
 
-    while (t.elapsed() < 10000)
+    while (t.elapsed() < 20000)
     {
+        if (dev.contains('='))
+        {
+            QByteArray realDev = _i->getPartitionByUuid(dev);
+            if (!realDev.isEmpty())
+                dev = realDev;
+        }
         if (QFile::exists("/dev/"+dev))
             return true;
 
@@ -696,21 +704,6 @@ bool BootMenuDialog::waitForDevice(const QString &dev)
     }
 
     return false;
-}
-
-QByteArray BootMenuDialog::getPartitionByLabel(const QString &label)
-{
-    QByteArray dev;
-    QProcess proc;
-    proc.start("/sbin/findfs LABEL="+label);
-    if (proc.waitForFinished() && proc.exitCode() == 0)
-    {
-        dev = proc.readAll().trimmed();
-        if (dev.size()>5) /* Remove /dev and trailing \n */
-            dev = dev.mid(5);
-    }
-
-    return dev;
 }
 
 void BootMenuDialog::mountSystemPartition()
@@ -724,9 +717,12 @@ void BootMenuDialog::mountSystemPartition()
     if (_i->isPxeBoot())
         return;
 
-    QString bootdev = _i->bootdev();
+    QByteArray bootdev = _i->bootdev();
     if (bootdev == "mmcblk0p1")
-        waitForDevice("mmcblk0");
+    {
+        QByteArray waitFor = "mmcblk0";
+        waitForDevice(waitFor);
+    }
     else
         waitForDevice(bootdev);
 

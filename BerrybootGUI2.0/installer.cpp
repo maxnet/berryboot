@@ -45,6 +45,7 @@
 #include <sys/reboot.h>
 #include <sys/ioctl.h>
 #include <linux/vt.h>
+#include <blkid/blkid.h>
 
 #ifdef Q_WS_QWS
 #include <QWSServer>
@@ -131,12 +132,12 @@ QByteArray Installer::bootParam(const QByteArray &name)
     }
 }
 
-QString Installer::datadev()
+QByteArray Installer::datadev()
 {
     return bootParam("datadev");
 }
 
-QString Installer::bootdev()
+QByteArray Installer::bootdev()
 {
     if (_bootdev.isEmpty())
     {
@@ -158,16 +159,18 @@ QString Installer::bootdev()
                     _bootdev = findBootPart();
                 }
             }
+        } else if (_bootdev.contains('=')) {
+            _bootdev = getPartitionByUuid(_bootdev);
         }
     }
 
     return _bootdev;
 }
 
-QString Installer::findBootPart()
+QByteArray Installer::findBootPart()
 {
     /* Search for partition with berryboot.img */
-    QString part;
+    QByteArray part;
     QString dirname  = "/sys/class/block";
     QDir    dir(dirname);
     QStringList list = dir.entryList(QDir::Dirs | QDir::NoDotAndDotDot);
@@ -184,7 +187,7 @@ QString Installer::findBootPart()
             if (QFile::exists("/boot/berryboot.img"))
             {
                 qDebug() << "Found berryboot.img at" << devname;
-                part = devname;
+                part = devname.toLatin1();
             }
 
             QProcess::execute("umount /boot");
@@ -976,4 +979,73 @@ QString Installer::iscsiDevice()
 bool Installer::isPxeBoot()
 {
     return !bootParam("iscsiscript").isEmpty();
+}
+
+QByteArray Installer::uuidOfDevice(QByteArray device)
+{
+    QByteArray uuid = device;
+
+    if (!device.startsWith("/dev/"))
+        device = "/dev/"+device;
+
+    char *uuid_cstr = blkid_get_tag_value(NULL, "UUID", device.constData());
+
+    if (uuid_cstr)
+    {
+        uuid = QByteArray("UUID=")+uuid_cstr;
+        free(uuid_cstr);
+    }
+
+    return uuid;
+}
+
+QByteArray Installer::getDeviceByLabel(const QByteArray &label)
+{
+    QByteArray dev;
+    char *cstr = blkid_get_devname(NULL, "LABEL", label.constData());
+
+    if (cstr)
+    {
+        dev = cstr;
+        free(cstr);
+    }
+
+    return dev;
+}
+
+QByteArray Installer::getDeviceByUuid(const QByteArray &uuid)
+{
+    QByteArray dev;
+    char *cstr;
+
+    if (uuid.contains('='))
+        cstr = blkid_get_devname(NULL, uuid.constData(), NULL);
+    else
+        cstr = blkid_get_devname(NULL, "UUID", uuid.constData());
+
+    if (cstr)
+    {
+        dev = cstr;
+        free(cstr);
+    }
+
+    return dev;
+}
+
+QByteArray Installer::getPartitionByLabel(const QByteArray &label)
+{
+    QByteArray p = getDeviceByLabel(label);
+    if (p.size()>5) /* remove /dev */
+        p = p.mid(5);
+
+    return p;
+}
+
+QByteArray Installer::getPartitionByUuid(const QByteArray &uuid)
+{
+    QByteArray p = getDeviceByUuid(uuid);
+    if (p.size()>5) /* remove /dev */
+        p = p.mid(5);
+
+    return p;
 }

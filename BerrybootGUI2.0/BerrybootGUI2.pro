@@ -11,7 +11,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = BerrybootInstaller
 TEMPLATE = app
 
-LIBS += -lcurl -lssl -lcrypto -lz
+LIBS += -lcurl -lssl -lcrypto -lz -lblkid
 
 RPI_USERLAND_DIR=../../staging/usr
 exists($${RPI_USERLAND_DIR}/include/interface/vmcs_host/vc_cecservice.h) {

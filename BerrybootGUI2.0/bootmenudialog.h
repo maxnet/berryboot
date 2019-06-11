@@ -84,15 +84,11 @@ protected:
     /*
      * Mount data partition
      */
-    bool mountDataPartition(const QString &dev, bool rw = false);
+    bool mountDataPartition(const QByteArray &dev, bool rw = false);
     /*
      * Wait for disk device to become available
      */
-    bool waitForDevice(const QString &dev);
-    /*
-     * Get disk device by file system label
-     */
-    QByteArray getPartitionByLabel(const QString &label = "berryboot");
+    bool waitForDevice(QByteArray &dev);
     /*
      * Mount boot partition
      */

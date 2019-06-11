@@ -177,12 +177,14 @@ void DriveFormatThread::run()
             param += " fstype=btrfs";
         if (_iscsi)
             param += " datadev=iscsi";
+        else if (_datadev == "mmcblk0p2")
+            param += " datadev=mmcblk0p2";
         else
-            param += " datadev="+_datadev;
+            param += " datadev="+_i->uuidOfDevice(_datadev.toLatin1());
         if (_password)
             param += " luks";
         if (_bootdev != "mmcblk0p1")
-            param += " bootdev="+_bootdev;
+            param += " bootdev="+_i->uuidOfDevice(_bootdev.toLatin1());
 
         /* Static MAC setting */
         if (_i->fixateMAC())
@@ -216,11 +218,14 @@ void DriveFormatThread::run()
 
         /* Data dev setting in uEnv.txt (for A10 devices) */
         f.setFileName("/boot/uEnv.txt");
-        f.open(QIODevice::ReadWrite);
-        line = f.readAll().trimmed();
-        f.seek(0);
-        f.write(line+param+"\n");
-        f.close();
+        if (f.exists())
+        {
+            f.open(QIODevice::ReadWrite);
+            line = f.readAll().trimmed();
+            f.seek(0);
+            f.write(line+param+"\n");
+            f.close();
+        }
 
         /* Overscan setting */
         bool configchanged = false;
