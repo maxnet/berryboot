@@ -110,7 +110,8 @@ LocaleDialog::LocaleDialog(Installer *i, QWidget *parent) :
         ui->wifiRadio->setChecked(true);
     }
 
-    QTimer::singleShot(3000, this, SLOT(checkIfNetworkNeedsDrivers()));
+    //QTimer::singleShot(3000, this, SLOT(checkIfNetworkNeedsDrivers()));
+    QTimer::singleShot(100, _i, SLOT(loadDrivers()));
 }
 
 LocaleDialog::~LocaleDialog()

@@ -211,13 +211,24 @@ void Installer::initializeDataPartition(const QString &dev)
     QDir dir;
     dir.mkdir("/mnt/images");
     dir.mkdir("/mnt/data");
-    dir.mkdir("/mnt/shared");
-    dir.mkdir("/mnt/shared/etc");
-    dir.mkdir("/mnt/shared/etc/default");
+    dir.mkpath("/mnt/shared/etc/default");
+    dir.mkpath("/mnt/shared/lib/udev/rules.d");
     dir.mkdir("/mnt/tmp");
-    int result = system("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared");
-    if (result != 0)
-        log_error(tr("Error extracting shared.tgz ")+QString::number(result) );
+
+    QFileInfo fi("/boot/shared.tgz");
+    if (fi.exists() && fi.size())
+    {
+        int result = system("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared");
+        if (result != 0)
+            log_error(tr("Error extracting shared.tgz ")+QString::number(result) );
+    }
+    fi.setFile("/boot/shared.img");
+    if (fi.exists())
+    {
+        int result = system("/usr/bin/unsquashfs -d /mnt/shared -f /boot/shared.img");
+        if (result != 0)
+            log_error(tr("Error extracting shared.img ")+QString::number(result) );
+    }
 
     if (!_timezone.isEmpty())
     {
@@ -246,6 +257,11 @@ void Installer::initializeDataPartition(const QString &dev)
         QFile::copy("/boot/wpa_supplicant.conf", "/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf");
         QFile::setPermissions("/mnt/shared/etc/wpa_supplicant/wpa_supplicant.conf", QFile::ReadOwner | QFile::WriteOwner);
     }
+    /* Tell udisks not to auto-mount Berryboot partition */
+    QFile fu("/mnt/shared/lib/udev/rules.d/80-berryboot.rules");
+    fu.open(fu.WriteOnly);
+    fu.write("ENV{ID_FS_LABEL}==\"berryboot\", ENV{UDISKS_IGNORE}=\"1\"\n");
+    fu.close();
 
     if (!bootParam("ipv4").isEmpty())
     {
@@ -505,10 +521,20 @@ void Installer::deleteImage(const QString &name)
     if (name.isEmpty())
         return;
 
-    QStringList param;
+    QString datadir = "/mnt/data/"+name;
+    QString workdir = datadir+".work";
     bool wasDefaultImage = (getDefaultImage() == name);
-    param << "-rf" << "/mnt/data/"+name;
-    QProcess::execute("rm", param); /* TODO write proper Qt function for recursive delete*/
+
+    if (QFile::exists(datadir))
+    {
+        QStringList param;
+        param << "-rf" << datadir;
+
+        if (QFile::exists(workdir))
+            param << workdir;
+
+        QProcess::execute("rm", param); /* TODO write proper Qt function for recursive delete*/
+    }
     QFile::remove("/mnt/images/"+name);
 
     if (wasDefaultImage)
@@ -668,11 +694,38 @@ void Installer::prepareDrivers()
                 // show error?
             }
         }
+        else if (QFile::exists("/boot/shared.img"))
+        {
+            /* Not yet installed, but shared.img squahsfs file with drivers available */
+            QDir dir;
+            dir.mkdir("/mnt_shared_img");
+            QProcess::execute("mount -o loop,ro /boot/shared.img /mnt_shared_img");
+            if (symlink("/mnt_shared_img/lib/modules", "/lib/modules")
+             || symlink("/mnt_shared_img/lib/firmware", "/lib/firmware"))
+            {
+                // show error?
+            }
+        }
         else
         {
             /* Not yet installed, uncompress shared.tgz from boot partition into ramfs */
             if (system("gzip -dc /boot/shared.tgz | tar x -C /") != 0) { }
         }
+    }
+}
+
+void Installer::cleanupDrivers()
+{
+    QDir dir;
+
+    if (dir.exists("/mnt_shared_img"))
+    {
+        QProcess::execute("killall udevd");
+        ::usleep(100000);
+        QProcess::execute("umount /mnt_shared_img");
+        dir.rmdir("/mnt_shared_img");
+        dir.rmdir("/lib/modules");
+        dir.rmdir("/lib/firmware");
     }
 }
 
@@ -729,7 +782,12 @@ void Installer::loadCryptoModules()
     QProcess::execute("/sbin/modprobe dm_crypt");
     QProcess::execute("/sbin/modprobe aes");
     QProcess::execute("/sbin/modprobe sha256");
+    QProcess::execute("/sbin/modprobe aes_arm_bs");
+    QProcess::execute("/sbin/modprobe aes_arm");
+    QProcess::execute("/sbin/modprobe xts");
+    QProcess::execute("/sbin/modprobe hmac");
     QProcess::execute("/sbin/modprobe algif_hash");
+    QProcess::execute("/sbin/modprobe algif_skcipher");
 }
 
 void Installer::loadSoundModule(const QByteArray &channel)
@@ -992,7 +1050,7 @@ QByteArray Installer::uuidOfDevice(QByteArray device)
 
     if (uuid_cstr)
     {
-        uuid = QByteArray("UUID=")+uuid_cstr;
+        uuid = QByteArray("UUID=")+QByteArray(uuid_cstr);
         free(uuid_cstr);
     }
 

@@ -52,7 +52,7 @@ protected:
     Ui::AddDialog *ui;
     QProgressDialog *_qpd;
     Installer *_i;
-    QString _cachedir, _device, _kernelversion;
+    QString _cachedir, _device, _kernelversion, _prefmirror;
     QSettings *_ini;
     QByteArray _reposerver, _repouser, _repopass, _reposerver2;
     DownloadThread *_download, *_download2;

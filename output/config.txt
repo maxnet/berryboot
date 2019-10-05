@@ -2,20 +2,26 @@ disable_overscan=1
 start_x=1
 gpu_mem=160
 
+# Uncomment to enable serial console
+#enable_uart=1
+#dtoverlay=pi3-disable-bt
+
 # Enable on-board audio
 dtparam=audio=on
 
 # Berryboot settings, do not change
 initramfs bbloader.img
 
+# Prevent continuous SD card polling if using USB/PXE boot
+dtoverlay=sdtweak,poll_once
+
+# New VC4 graphics driver
+dtoverlay=vc4-fkms-v3d
+
+# 32-bit kernel for Pi 0 1 2 3
 kernel=kernel_rpi0123_aufs.img
 
-[pi3]
-# Uncomment this line before installation if you want to enable USB boot
-#program_usb_boot_mode=1
-
-# Uncomment this line to prevent continuous SD card polling if using USB/PXE boot
-#dtoverlay=sdtweak,poll_once
-
-[all]
-
+[pi4]
+# 64-bit stuff for Pi 4
+kernel=kernel_rpi64.img
+arm_64bit=1

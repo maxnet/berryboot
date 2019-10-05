@@ -69,6 +69,7 @@ void DriveFormatThread::run()
     if (_reformatBoot)
     {
         emit statusUpdate(tr("Saving boot files to memory"));
+        _i->cleanupDrivers();
 
         if (_i->sizeofBootFilesInKB() > SIZE_BOOT_PART * 1000)
         {
@@ -353,10 +354,11 @@ bool DriveFormatThread::formatDataPartition()
     {
         dev = "mapper/luks";
         _i->loadCryptoModules();
+        _i->cleanupDrivers();
 
         /* For added security, let the cryptsetup program ask for the password in a text console */
         QProcess proc;
-        proc.start(QByteArray("openvt -c 5 -w /usr/sbin/cryptsetup luksFormat /dev/")+_datadev);
+        proc.start(QByteArray("openvt -c 5 -w /usr/sbin/cryptsetup -q luksFormat /dev/")+_datadev);
         _i->switchConsole(5);
         proc.waitForFinished();
 

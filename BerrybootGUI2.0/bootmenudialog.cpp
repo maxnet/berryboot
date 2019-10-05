@@ -376,7 +376,6 @@ void BootMenuDialog::startInstaller()
 {
     _i->startNetworking();
     mountSystemPartition();
-    waitForRemountRW();
     accept();
 }
 
@@ -466,6 +465,8 @@ void BootMenuDialog::reconfigureLocale()
 
 void BootMenuDialog::startISCSI()
 {
+    mountSystemPartition();
+
     if (!QFile::exists("/sys/module/iscsi_tcp"))
     {
         loadModule("iscsi_tcp");
@@ -482,7 +483,6 @@ void BootMenuDialog::startISCSI()
     }
 
     int tries = 1, delay = 5;
-    mountSystemPartition();
 
     while (true)
     {
@@ -532,12 +532,12 @@ void BootMenuDialog::loadModule(const QByteArray &name)
         if (!QFile::exists("/mnt/shared"))
         {
             /* Mount boot partition, and uncompress /boot/shared.tgz to memory */
-            mountSystemPartition();
+            //mountSystemPartition();
             qpd.setLabelText(tr("Uncompressing drivers"));
             qpd.show();
             QApplication::processEvents();
             _i->prepareDrivers();
-            umountSystemPartition();
+            //umountSystemPartition();
         }
         else
         {
@@ -752,6 +752,7 @@ void BootMenuDialog::umountSystemPartition()
     if (_i->isPxeBoot())
         return;
 
+    _i->cleanupDrivers();
     QProcess::execute("umount /boot");
 }
 
@@ -860,10 +861,9 @@ void BootMenuDialog::processEventSleep(int ms)
 
 void BootMenuDialog::askLuksPassword(const QString &datadev)
 {
-    loadModule("dm_crypt");
-    loadModule("aes");
-    loadModule("sha256");
-    loadModule("algif_hash");
+    mountSystemPartition();
+    _i->loadCryptoModules();
+    umountSystemPartition();
 
     /* For added security let cryptsetup ask for password in a text console,
      * as it can remain in memory if we do it in the GUI.

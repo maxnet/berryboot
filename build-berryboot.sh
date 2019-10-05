@@ -35,13 +35,15 @@ cp -n LICENSE.berryboot output
 #cp -f $BUILDROOT/output/images/rootfs.cpio.uboot output/berryboot.img
 cp -f $BUILDROOT/output/images/rootfs.cpio.lzo output/berryboot.img
 cp -f $BUILDROOT/output/images/bbloader.img output/
-cp -f $BUILDROOT/output/images/kernel*.img $BUILDROOT/output/images/shared.tgz output || true
+cp -f $BUILDROOT/output/images/kernel*.img $BUILDROOT/output/images/shared.img output || true
 
 if [ -e $BUILDROOT/output/images/rpi-firmware ]; then
 	cp -rf $BUILDROOT/output/images/rpi-firmware/* output
-	cp -rf $BUILDROOT/output/images/bcm27*.dtb output
+	for f in $BUILDROOT/output/images/bcm27*.dtb $BUILDROOT/output/images/broadcom/bcm27*.dtb; do
+		[ -f "$f" ] && cp -f "$f" output
+	done
 	cp -rf $BUILDROOT/output/images/overlays output
-	rm -f output/start_db.elf output/fixup_db.dat
+	rm -f output/start_db.elf output/start4db.elf output/fixup_db.dat output/fixup4db.dat
 fi
 
 echo

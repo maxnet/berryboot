@@ -59,7 +59,7 @@ public:
     double diskSpaceInUse(const QString &path = "/mnt");
     void reboot();
     void prepareDrivers();
-    void loadDrivers();
+    void cleanupDrivers();
     void loadCryptoModules();
     void loadSoundModule(const QByteArray &channel);
     void loadFilesystemModule(const QByteArray &fs);
@@ -114,6 +114,7 @@ public slots:
     void startNetworking();
     void startWifi();
     void startNetworkInterface();
+    void loadDrivers();
 
 protected:
     QString _keyboardlayout, _timezone;

@@ -2,14 +2,14 @@
 
 if [ -e output/target/lib/modules ]; then
 
-	echo Making shared.tgz with modules
+	echo Making shared.img with modules
 	mkdir -p output/shared/lib
 	cp -af output/target/lib/modules output/shared/lib
 	cp -af output/target/lib/firmware output/shared/lib || true
 	rm -rf output/target/lib/modules output/target/lib/firmware || true
-	(cd output/shared ; tar czvf ../images/shared.tgz *)
+	#(cd output/shared ; tar czvf ../images/shared.tgz *)
+	mksquashfs output/shared output/images/shared.img -all-root -noappend
 fi
-
 
 # Remove redudant fonts
 if [ -e output/target/usr/lib/fonts/VeraBd.ttf ]; then

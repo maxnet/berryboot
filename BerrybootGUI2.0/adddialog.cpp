@@ -46,6 +46,7 @@
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/xattr.h>
+#include <sys/utsname.h>
 #include <QScreen>
 #include <QSettings>
 
@@ -75,6 +76,27 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
         resize(width(), 400);
 #endif
 
+    /* Populate sourceforge mirror list. FIXME: this shouldn't be static */
+    //ui->mirrorBox->addItem("Astute Internet (Vancouver, BC, Canada)", "astuteinternet");
+    ui->mirrorBox->addItem("Ayera Technologies, Inc. (Modesto, CA, USA)", "ayera");
+    //ui->mirrorBox->addItem("CFH Cable (USA)", "cfhcable");
+    //ui->mirrorBox->addItem("Free France (Paris, France)", "freefr");
+    //ui->mirrorBox->addItem("GigeNET (Chicago, IL, USA)", "gigenet");
+    ui->mirrorBox->addItem("iWeb Technologies (Montreal, QC, Canada)", "iweb");
+    //ui->mirrorBox->addItem("Japan Advanced Institute of Science and Technology (Nomi, Japan)", "jaist");
+    ui->mirrorBox->addItem("Liquid Telecom (Kenya)", "liquidtelecom");
+    //ui->mirrorBox->addItem("ManagedWay (Detroit, MI, USA)", "managedway");
+    //ui->mirrorBox->addItem("National Center for High-Peformance Computing (Taipei, Taiwan)", "nchc");
+    //ui->mirrorBox->addItem("NetCologne GmbH (Cologne, Germany)", "netcologne");
+    //ui->mirrorBox->addItem("NetIX (Bulgaria)", "netix");
+    //ui->mirrorBox->addItem("NewContinuum (West Chicago, IL, USA)", "newcontinuum");
+    ui->mirrorBox->addItem("PhoenixNAP (Tempe, AZ, USA)", "phoenixnap");
+    //ui->mirrorBox->addItem("Razao Info (Passo Fundo, Brazil)", "razaoinfo");
+    ui->mirrorBox->addItem("Silicon Valley Web Hosting (San Jose, CA, USA)", "svwh");
+    //ui->mirrorBox->addItem("TENET: The Tertiary Education and Research Network (Wynberg, South Africa)", "tenet");
+    ui->mirrorBox->addItem("Centro de Computacao Cientifica e Software Livre (Curitiba, Brazil)", "ufpr");
+    ui->mirrorBox->addItem("Versaweb (Las Vegas, NV, USA)", "versaweb");
+
     /* Check if we have any special proxy server or repo settings */
     if (_i->hasSettings())
     {
@@ -87,13 +109,14 @@ AddDialog::AddDialog(Installer *i, QWidget *parent) :
     f.open(f.ReadOnly);
     QByteArray cpuinfo = f.readAll();
     f.close();
+    struct utsname uts;
 
     if (cpuinfo.contains("ARMv7"))
         _device = "armv7";
     else if (cpuinfo.contains("BCM2708"))
         _device = "rpi";
-    else
-        _device = "other";
+    else if (::uname(&uts) == 0)
+        _device = uts.machine;
 
     f.setFileName("/proc/version");
     /* 'Linux version 3.6.2' -> 36 */
@@ -454,7 +477,9 @@ QByteArray AddDialog::sha1file(const QString &filename)
     QByteArray buf;
     QCryptographicHash h(QCryptographicHash::Sha1);
 
-    f.open(f.ReadOnly);
+    if (!f.open(f.ReadOnly))
+        return "";
+
     while ( f.bytesAvailable() )
     {
         buf = f.read(4096);
@@ -490,7 +515,8 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
             QApplication::processEvents();
 
             _i->mountSystemPartition();
-            QString sha1shared = sha1file("/boot/shared.tgz");
+            QString sha1shared    = sha1file("/boot/shared.tgz");
+            QString sha1sharedimg = sha1file("/boot/shared.img");
 
             qpd.setLabelText(tr("Extracting update to boot partition"));
             QApplication::processEvents();
@@ -502,7 +528,8 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
             }
             QFile::remove(localfile);
 
-            if (sha1file("/boot/shared.tgz") != sha1shared)
+            QFileInfo fi("/boot/shared.tgz");
+            if (fi.size() && sha1file("/boot/shared.tgz") != sha1shared)
             {
                 qpd.setLabelText(tr("Extracting updated shared.tgz"));
                 QApplication::processEvents();
@@ -521,6 +548,27 @@ void AddDialog::selfUpdate(const QString &updateurl, const QString &sha1)
                 if (system("/bin/gzip -dc /boot/shared.tgz | /bin/tar x -C /mnt/shared") != 0)
                 {
                     QMessageBox::critical(this, tr("Error"), tr("Error extracting updated shared.tgz"), QMessageBox::Close);
+                }
+            }
+            if (sha1file("/boot/shared.img") != sha1sharedimg)
+            {
+                qpd.setLabelText(tr("Extracting updated shared.img"));
+                QApplication::processEvents();
+
+                /* Normalize shared after workarounds for Arch/Fedora */
+                if (QFile::exists("/mnt/shared/usr/lib/modules"))
+                {
+                    if (system("mv /mnt/shared/usr/lib /mnt/shared/lib") != 0 || system("mv /mnt/shared/usr/sbin /mnt/shared/sbin") != 0)
+                    {
+                    }
+                    QDir dir;
+                    dir.remove("/mnt/shared/usr");
+                }
+
+                /* Shared.img has changed. Extract it to /mnt */
+                if (system("/usr/bin/unsquashfs -d /mnt/shared -f /boot/shared.img") != 0)
+                {
+                    QMessageBox::critical(this, tr("Error"), tr("Error extracting updated shared.img"), QMessageBox::Close);
                 }
             }
 
@@ -603,6 +651,25 @@ void AddDialog::accept()
             url = mirrors.at(qrand() % mirrors.count());
         }
 
+        /* If sourceforge, take into account local mirror preference */
+        QString prefMirror = ui->mirrorBox->itemData(ui->mirrorBox->currentIndex()).toString();
+        if (prefMirror != _prefmirror)
+        {
+            QSettings *s = _i->settings();
+            s->beginGroup("repo");
+            s->setValue("sourceforgeMirror", prefMirror);
+            s->endGroup();
+            s->sync();
+            _prefmirror = prefMirror;
+        }
+        if (!prefMirror.isEmpty())
+        {
+            if (url.contains("downloads.sourceforge.net/"))
+                url.replace("downloads.sourceforge.net/", prefMirror+".dl.sourceforge.net/");
+            else if (url.contains("sourceforge.net/"))
+                url += "?use_mirror="+prefMirror;
+        }
+
         _ini->endGroup();
     }
     else
@@ -621,6 +688,7 @@ void AddDialog::accept()
         return;
     }
 
+    qDebug() << "Downloading: " << url;
     DownloadDialog dd(url, alternateUrl, filename, DownloadDialog::Image, sha1, this);
     if (!description.isEmpty())
     {
@@ -679,6 +747,17 @@ void AddDialog::setProxy()
         _repouser = _repopass = "";
     }
     _reposerver2 = s->value("url2").toByteArray();
+
+    _prefmirror = s->value("sourceforgeMirror").toString();
+    if (!_prefmirror.isEmpty())
+    {
+        int idx = ui->mirrorBox->findData(_prefmirror);
+        if (idx != -1)
+        {
+            ui->mirrorBox->setCurrentIndex(idx);
+        }
+    }
+
     s->endGroup();
 }
 

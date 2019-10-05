@@ -333,6 +333,16 @@ config BR2_LINUX_KERNEL_IMAGE_INSTALL_NAME
 	help
 	  File name to use when installing the kernel
 
+config BR2_LINUX_KERNEL_OVERRIDE_ARCH
+	string "Override kernel arch"
+	help
+	  Specify arm64 here if you want to build 64-bit ARM kernel with 32-bit Berryboot userspace
+
+config BR2_LINUX_KERNEL_OVERRIDE_CROSS
+	string "Override CROSS_COMPILE"
+	help
+	  Specify a cross-compiler like "aarch64-linux-gnu-" here to build 64-bit ARM kernel with 32-bit Berryboot userspace
+
 config BR2_LINUX_KERNEL_UIMAGE_LOADADDR
 	string "load address (for 3.7+ multi-platform image)"
 	depends on BR2_arm || BR2_armeb

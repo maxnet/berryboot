@@ -52,6 +52,9 @@ if [ -e /sys/devices/platform/rpi_ft5406 ]; then
 	export QWS_MOUSE_PROTO="linuxinput:/dev/input/event0:grab=1 intellimouse:/dev/input/mice"
 fi
 
+# Feed random number generator at least something
+dmesg > /dev/urandom
+
 # Show GUI, it will write the OS choosen to /tmp/answer
 /usr/bin/BerrybootGUI -qws 2>/tmp/debug
 killall udevd
@@ -61,6 +64,7 @@ clear
 
 IMAGE=`cat /tmp/answer`
 DATADIR="/mnt/data/$IMAGE"
+WORKDIR="/mnt/data/${IMAGE}.work"
 SHAREDDIR="/mnt/shared"
 IMAGEPATH="/mnt/images/$IMAGE"
 rm /tmp/answer
@@ -76,8 +80,18 @@ else
 fi
 
 if [ "$IMAGE" != "" ]; then
-	mkdir -p /squashfs /aufs $DATADIR
+	mkdir -p /squashfs /merged
 	clear
+
+	OVERLAYTYPE="overlay"
+
+	if [ -e "$DATADIR" ]; then
+		if [ ! -e "$WORKDIR" ]; then
+			OVERLAYTYPE="aufs"
+		fi
+	else
+		mkdir -p $DATADIR $WORKDIR
+	fi
 
 	if [ -s ${DATADIR}/storage/.kodi/temp/oe_update/SYSTEM ]; then
             echo "Updating OpenELEC"
@@ -129,13 +143,17 @@ if [ "$IMAGE" != "" ]; then
 				mount -o remount,ro /mnt
 				mkdir /tmpfs
 				mount -t tmpfs none /tmpfs
-				mount -t aufs -o br:/tmpfs:${SHAREDDIR}:/squashfs none /aufs
+				mount -t aufs -o br:/tmpfs:${SHAREDDIR}:/squashfs none /merged
 			else
 				echo Mounting RW data directory on top
-				mount -t aufs -o br:${DATADIR}:${SHAREDDIR}:/squashfs none /aufs
+				if [ "$OVERLAYTYPE" == "overlay" ]; then
+					mount -t overlay -o redirect_dir=on,lowerdir=${SHAREDDIR}:/squashfs,upperdir=${DATADIR},workdir=${WORKDIR} none /merged
+				else
+					mount -t aufs -o br:${DATADIR}:${SHAREDDIR}:/squashfs none /merged
+				fi
 			fi
 
-			cd /aufs
+			cd /merged
 			mount -o move /dev dev
 			mount -o move /sys sys
 			mount -o move /proc proc
