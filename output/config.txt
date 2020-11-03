@@ -18,8 +18,13 @@ dtoverlay=sdtweak,poll_once
 # New VC4 graphics driver
 dtoverlay=vc4-fkms-v3d
 
-# 32-bit kernel for Pi 0 1 2 3
+# 32-bit kernel for Pi 0 1 2
 kernel=kernel_rpi0123_aufs.img
+
+[pi3]
+# 64-bit stuff for Pi 3
+kernel=kernel_rpi64.img
+arm_64bit=1
 
 [pi4]
 # 64-bit stuff for Pi 4
