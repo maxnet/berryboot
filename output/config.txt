@@ -4,7 +4,7 @@ gpu_mem=160
 
 # Uncomment to enable serial console
 #enable_uart=1
-#dtoverlay=pi3-disable-bt
+#dtoverlay=disable-bt
 
 # Enable on-board audio
 dtparam=audio=on
