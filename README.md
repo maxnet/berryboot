@@ -36,6 +36,8 @@ To build for the Raspberry Pi
 ./build-berryboot.sh device_pi0123
 ```
 
+or `./build-berryboot.sh device_pi64` for the newer Raspberry Pi in 64-bit mode.
+
 The files in the output folder must be copied to an empty FAT formatted SD card. 
 
 
