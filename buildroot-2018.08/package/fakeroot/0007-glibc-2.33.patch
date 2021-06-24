@@ -1,72 +1,37 @@
-From feda578ca3608b7fc9a28a3a91293611c0ef47b7 Mon Sep 17 00:00:00 2001
+From 03bc0ee07fb6e293d081ffd8af1654788b434f6a Mon Sep 17 00:00:00 2001
 From: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
-Date: Thu, 11 Feb 2021 21:00:04 -0800
-Subject: [PATCH] libfakeroot.c: add wrappers for new glibc 2.33+ symbols
+Date: Thu, 11 Feb 2021 20:59:25 -0800
+Subject: [PATCH] libfakeroot.c: define _STAT_VER if not already defined
+
+Based on patch from Jan Pazdziora:
+https://lists.fedoraproject.org/archives/list/devel@lists.fedoraproject.org/message/SMQ3RYXEYTVZH6PLQMKNB3NM4XLPMNZO/
 
 Signed-off-by: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
 ---
- libfakeroot.c | 48 ++++++++++++++++++++++++++++++++++++++++++++++++
- 1 file changed, 48 insertions(+)
+ libfakeroot.c | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
 diff --git a/libfakeroot.c b/libfakeroot.c
-index 14cdbc4..d75c51f 100644
+index 3e80e38..14cdbc4 100644
 --- a/libfakeroot.c
 +++ b/libfakeroot.c
-@@ -1352,6 +1352,54 @@ int renameat(int olddir_fd, const char *oldpath,
- #endif /* HAVE_FSTATAT */
+@@ -90,6 +90,16 @@
+ #define SEND_GET_XATTR64(a,b,c) send_get_xattr64(a,b)
+ #endif
  
- 
-+#if defined(__GLIBC__) && __GLIBC_PREREQ(2,33)
-+/* Glibc 2.33 exports symbols for these functions in the shared lib */
-+  int lstat(const char *file_name, struct stat *statbuf) {
-+     return WRAP_LSTAT LSTAT_ARG(_STAT_VER, file_name, statbuf);
-+  }
-+  int stat(const char *file_name, struct stat *st) {
-+     return WRAP_STAT STAT_ARG(_STAT_VER, file_name, st);
-+  }
-+  int fstat(int fd, struct stat *st) {
-+     return WRAP_FSTAT FSTAT_ARG(_STAT_VER, fd, st);
-+  }
++#ifndef _STAT_VER
++ #if defined (__aarch64__)
++  #define _STAT_VER 0
++ #elif defined (__x86_64__)
++  #define _STAT_VER 1
++ #else
++  #define _STAT_VER 3
++ #endif
++#endif
 +
-+  #ifdef HAVE_FSTATAT
-+    int fstatat(int dir_fd, const char *path, struct stat *st, int flags) {
-+       return WRAP_FSTATAT FSTATAT_ARG(_STAT_VER, dir_fd, path, st, flags);
-+    }
-+  #endif
-+
-+  #ifdef STAT64_SUPPORT
-+    int lstat64(const char *file_name, struct stat64 *st) {
-+       return WRAP_LSTAT64 LSTAT64_ARG(_STAT_VER, file_name, st);
-+    }
-+    int stat64(const char *file_name, struct stat64 *st) {
-+       return WRAP_STAT64 STAT64_ARG(_STAT_VER, file_name, st);
-+    }
-+    int fstat64(int fd, struct stat64 *st) {
-+       return WRAP_FSTAT64 FSTAT64_ARG(_STAT_VER, fd, st);
-+    }
-+
-+    #ifdef HAVE_FSTATAT
-+      int fstatat64(int dir_fd, const char *path, struct stat64 *st, int flags) {
-+	 return WRAP_FSTATAT64 FSTATAT64_ARG(_STAT_VER, dir_fd, path, st, flags);
-+      }
-+    #endif
-+  #endif
-+
-+  int mknod(const char *pathname, mode_t mode, dev_t dev) {
-+     return WRAP_MKNOD MKNOD_ARG(_STAT_VER, pathname, mode, &dev);
-+  }
-+
-+  #if defined(HAVE_FSTATAT) && defined(HAVE_MKNODAT)
-+    int mknodat(int dir_fd, const char *pathname, mode_t mode, dev_t dev) {
-+       return WRAP_MKNODAT MKNODAT_ARG(_STAT_VER, dir_fd, pathname, mode, &dev);
-+    }
-+  #endif
-+#endif /* GLIBC_PREREQ */
-+
-+
- #ifdef FAKEROOT_FAKENET
- pid_t fork(void)
- {
+ /*
+    These INT_* (which stands for internal) macros should always be used when
+    the fakeroot library owns the storage of the stat variable.
 -- 
 GitLab
 
