@@ -1,0 +1,48 @@
+From 01671986b4ee8eb76dc7f63dfe034a7faf4a4c28 Mon Sep 17 00:00:00 2001
+From: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Date: Sat, 13 Feb 2021 19:35:31 -0800
+Subject: [PATCH] libfakeroot.c: fix fts_read and fts_children
+
+Apply Debian patch from [0], since glibc is usually built without LFS.
+__USE_LARGEFILE64 and FTSENT64 should be used anyway for proper support
+of this, if needed. See [1] for more details.
+
+[0]: https://sources.debian.org/patches/fakeroot/1.25.3-1.1/eglibc-fts-without-LFS/
+[1]: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=676428
+
+Signed-off-by: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+---
+ libfakeroot.c | 8 --------
+ 1 file changed, 8 deletions(-)
+
+diff --git a/libfakeroot.c b/libfakeroot.c
+index 31480f8..169f4da 100644
+--- a/libfakeroot.c
++++ b/libfakeroot.c
+@@ -2066,11 +2066,7 @@ FTSENT *fts_read(FTS *ftsp) {
+             || r->fts_info == FTS_NS || r->fts_info == FTS_NSOK))
+     r->fts_statp = NULL;  /* Otherwise fts_statp may be a random pointer */
+   if(r && r->fts_statp) {  /* Should we bother checking fts_info here? */
+-# if defined(STAT64_SUPPORT) && !defined(__APPLE__)
+-    SEND_GET_STAT64(r->fts_statp, _STAT_VER);
+-# else
+     SEND_GET_STAT(r->fts_statp, _STAT_VER);
+-# endif
+   }
+ 
+   return r;
+@@ -2089,11 +2085,7 @@ FTSENT *fts_children(FTS *ftsp, int options) {
+   first=next_fts_children(ftsp, options);
+   for(r = first; r; r = r->fts_link) {
+     if(r && r->fts_statp) {  /* Should we bother checking fts_info here? */
+-# if defined(STAT64_SUPPORT) && !defined(__APPLE__)
+-      SEND_GET_STAT64(r->fts_statp, _STAT_VER);
+-# else
+       SEND_GET_STAT(r->fts_statp, _STAT_VER);
+-# endif
+     }
+   }
+ 
+-- 
+GitLab
+

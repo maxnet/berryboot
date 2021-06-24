@@ -1,0 +1,26 @@
+From d074aaa34d6928989308a3870738d6b1c28f2bae Mon Sep 17 00:00:00 2001
+From: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+Date: Thu, 11 Feb 2021 21:00:20 -0800
+Subject: [PATCH] libfakeroot.c: fix compile error with DEBUG enabled
+
+Signed-off-by: Ilya Lipnitskiy <ilya.lipnitskiy@gmail.com>
+---
+ libfakeroot.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/libfakeroot.c b/libfakeroot.c
+index d75c51f..31480f8 100644
+--- a/libfakeroot.c
++++ b/libfakeroot.c
+@@ -2525,7 +2525,7 @@ int statx (int dirfd, const char *path, int flags, unsigned int mask, struct sta
+ 
+ #ifdef LIBFAKEROOT_DEBUGGING
+   if (fakeroot_debug) {
+-    fprintf(stderr, "statx fd %d\n", fd);
++    fprintf(stderr, "statx fd %d\n", dirfd);
+   }
+ #endif /* LIBFAKEROOT_DEBUGGING */
+   r=INT_NEXT_FSTATAT(dirfd, path, &st, flags);
+-- 
+GitLab
+
