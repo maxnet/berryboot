@@ -30,10 +30,10 @@ diff --git a/libfakeroot.c b/libfakeroot.c
 index 169f4da..7593dd6 100644
 --- a/libfakeroot.c
 +++ b/libfakeroot.c
-@@ -122,8 +122,16 @@
+@@ -110,8 +110,16 @@
+ #define INT_NEXT_FSTATAT(a,b,c,d) NEXT_FSTATAT(_STAT_VER,a,b,c,d)
  #define INT_SEND_STAT(a,b) SEND_STAT(a,b,_STAT_VER)
  #define INT_SEND_GET_XATTR(a,b) SEND_GET_XATTR(a,b,_STAT_VER)
- #define INT_SEND_GET_STAT(a,b) SEND_GET_STAT(a,b)
 +
 +/* 10.10 uses id_t in getpriority/setpriority calls, so pretend
 +   id_t is used everywhere, just happens to be int on some OSes */
