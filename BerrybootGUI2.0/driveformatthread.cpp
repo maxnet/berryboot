@@ -154,6 +154,10 @@ void DriveFormatThread::run()
             sync();
         }
     }
+    else
+    {
+        QProcess::execute("/sbin/fatlabel /dev/"+_bootdev+" boot");
+    }
 
     if (_fs != "existing")
     {
