@@ -3,6 +3,22 @@
 # Doing it this way is faster than letting bootloader do it on some systems
 # And we could potentially add splash screen here
 
+search_for_berryboot_img()
+{
+	for sclbd in /sys/class/block/*1; do
+		d=${sclbd##*/}
+
+		mount -o ro "/dev/$d" /mnt
+		if [ -f /mnt/berryboot.img ]; then
+			echo "Found berryboot.img at /dev/$d"
+			return 0
+		fi
+		umount /mnt
+	done
+	
+	return 1
+}
+
 mount_boot()
 {
 	for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 \
@@ -10,6 +26,8 @@ mount_boot()
 
 		if [ -n "$BOOTDEV" ]; then
 			mount -o ro "$BOOTDEV" /mnt 2>/dev/null
+		elif [ "$i" -gt "5" ]; then
+			search_for_berryboot_img
 		else
 			mount -o ro /dev/mmcblk0p1 /mnt 2>/dev/null || mount -o ro /dev/mmcblk0 /mnt 2>/dev/null
 		fi

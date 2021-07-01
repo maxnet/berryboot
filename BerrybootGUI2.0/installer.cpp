@@ -1011,7 +1011,7 @@ bool Installer::supportsUSBboot()
     }
     else
     {
-        return false;
+        return !QFile::exists("/dev/mmcblk0") && !QFile::exists("/dev/mmcblk0p1");
     }
 }
 
