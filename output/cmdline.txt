@@ -1,1 +1,1 @@
-elevator=deadline quiet bootmenutimeout=10
+quiet bootmenutimeout=10
